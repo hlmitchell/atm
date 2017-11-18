@@ -13,8 +13,9 @@ using namespace std;
 class Savings : public Accounts
 {
     protected:
+        string accountTYPE;
+        string accountName;
         double savingsTotal;
-        bool activated;
     public:
         Savings();
         void mainMenu();
@@ -27,8 +28,9 @@ class Savings : public Accounts
 
 Savings::Savings()
 {
+    accountTYPE = "savings";
+    accountName = "";
     savingsTotal = 0;
-    activated = false;
 }
 
 void Savings::mainMenu()
@@ -39,16 +41,6 @@ void Savings::mainMenu()
 void Savings::editSavingsTotal(double num)
 {
     savingsTotal += num;
-}
-
-void Savings::openStatus(bool x)
-{
-    activated = x;
-}
-
-bool Savings::getActivated()
-{
-    return activated;
 }
 
 double Savings::getSavingsTotal()

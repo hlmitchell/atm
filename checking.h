@@ -13,8 +13,9 @@ using namespace std;
 class Checking : public Accounts
 {
     protected:
+        string accountTYPE;
+        string accountName;
         double checkingTotal;
-        bool activated;
     public:
         Checking();
         void mainMenu();
@@ -27,8 +28,9 @@ class Checking : public Accounts
 
 Checking::Checking()
 {
+    accountTYPE = "checking";
+    accountName = "";
     checkingTotal = 0;
-    activated = false;
 }
 
 void Checking::mainMenu()
@@ -39,16 +41,6 @@ void Checking::mainMenu()
 void Checking::editCheckingTotal(double num)
 {
     checkingTotal += num;
-}
-
-void Checking::openStatus(bool x)
-{
-    activated = x;
-}
-
-bool Checking::getActivated()
-{
-    return activated;
 }
 
 double Checking::getCheckingTotal()

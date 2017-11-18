@@ -38,6 +38,7 @@ int main()
         {
             case 1:
             {
+                /*
                 //request user ID
                 cout << endl << "Please Enter User ID: ";
                 cin.ignore();
@@ -58,7 +59,13 @@ int main()
                     {break;}
 
                 //calls object user
-                User myClient(clientFile);
+                User myClient(clientFile);*/
+
+                //temporary shortcut
+                id = "hlmitchell";
+                checkID(id, clientFile);
+                clientFile.close();
+                User myClient(id);
                 
                 break;
             }
@@ -72,8 +79,6 @@ int main()
         }
 
     } while (userSelection1 != 3);
-
-    clientFile.close();
 }
 
 

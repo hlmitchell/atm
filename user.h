@@ -1,3 +1,8 @@
+//error list
+    //starting pin with 0
+    //pin being all 0
+    //menu hopping from multiple number inputs
+
 #ifndef USER_H
 #define USER_H
 
@@ -29,9 +34,11 @@ class User
 
     public:
         User();
-        User(fstream&);
+        User(string);
+        ~User();
         void mainMenu();
-        void storeUserInfo();
+        void advancedOptionsMenu();
+        void editUserInfo();
         
         //input error checking functions
         void checkPin(int&);
@@ -43,6 +50,7 @@ class User
         void cinFail(T&);
 };
 
+//Gathers user information for a new user
 User::User()
 {
     //collect basic information from user
@@ -68,29 +76,152 @@ User::User()
         //check for valid input for age
     boundsCheck(age, 16, 125);
 
-    storeUserInfo();
     mainMenu();
 }
 
-User::User(fstream &file)
+//uploads user information from a previous user
+User::User(string i)
 {
-    cout << endl << "Welcome Back " << first << " !" << endl;
+    //reopen file for editting
+    fileName = i;
+    myFile.open(i.c_str());
+
+    //save user info
+    myFile >> pin;
+    myFile >> id;
+    myFile >> first;
+    myFile >> last;
+    myFile >> age;
+    cout << endl << "Welcome Back " << first << "!" << endl;
 
     mainMenu();
+}
+
+//uploads user contents to file
+User::~User()
+{
+    //close and reopen file in truncated mode to clear file contents
+    myFile.close();
+    myFile.open(fileName.c_str(), fstream::out|fstream::trunc);
+    
+    //add new data
+    myFile << pin << endl;
+    myFile << id << endl;
+    myFile << first << endl;
+    myFile << last << endl;
+    myFile << age << endl;
+
+    myFile.close();
 }
 
 void User::mainMenu()
 {
     do {
-        cout << "Now I gots to figures outs some menu shits" << endl;
+        //main menu
+        cout << endl << "*** Main Menu ***" << endl;
+        cout << "1. Make a Withdrawal" << endl;
+        cout << "2. Make a Deposit" << endl;
+        cout << "3. Edit User Information" << endl;
+        cout << "4. Advanced Account Options" << endl;
+        cout << "5. Log Out" << endl;
+
+        //validate input
         cin >> userSelection;
-    } while (userSelection != 0);
+        boundsCheck(userSelection, 1, 5);
+
+        switch(userSelection)
+        {
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                editUserInfo();
+                break;
+            case 4:
+                advancedOptionsMenu();
+                break;
+            default:
+                break;
+        }
+
+    } while (userSelection != 5);
 }
 
-void User::storeUserInfo()
+void User::advancedOptionsMenu()
 {
-    fileName = id + ".txt";
-    myFile.open(fileName.c_str(), fstream::out);
+    do {
+        //advanced options
+        cout << endl << "*** Advanced Options ***" << endl;
+        cout << "1. Create New Account" << endl;
+        cout << "2. Merge Accounts" << endl;
+        cout << "3. Transfer Money Between Accounts" << endl;
+        cout << "4. Back" << endl;
+
+        //validate input
+        cin >> userSelection;
+        boundsCheck(userSelection, 1, 4);
+
+        switch(userSelection)
+        {
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            default:
+                break;
+        }
+
+    } while (userSelection != 4);
+}
+
+void User::editUserInfo()
+{
+    //menu for ammending user information
+    do {
+        cout << endl << "Which of the following would you like to edit: " << endl;
+        cout << "1. Pin" << endl;
+        cout << "2. Name" << endl;
+        cout << "3. Age" << endl;
+        cout << "4. Back" << endl;
+
+        //check input selection
+        cin >> userSelection;
+        boundsCheck(userSelection, 1, 4);
+
+        switch(userSelection)
+        {
+            case 1:
+                //request and store new pin
+                cout << "Enter New Pin: ";
+                cin >> pin;
+                checkPin(pin);
+                cout << endl << "New Pin set to " << pin << "!" << endl;
+                break;
+            case 2:
+                //request and store new name
+                cout << "Enter First Name: ";
+                cin >> first;
+                cout << "Enter Last Name: ";
+                cin >> last;
+                cout << endl << "New Name set to " << first << " " 
+                     << last << "!" << endl;
+                break;
+            case 3:
+                //request and store new age
+                cout << "Enter New Age: ";
+                cin >> age;
+                boundsCheck(age, 16, 125);
+                cout << endl << "New Age set to " << age << "!" << endl;
+                break;
+            default:
+                break;
+        }
+    
+    } while (userSelection != 4);
+
 }
 
 
@@ -101,9 +232,8 @@ void User::storeUserInfo()
 
 void User::checkPin(int &p)
 {
-
     int copy = p;          //copy of p
-    int length = 0;        //length of p
+    int length = 0;        //length of 
 
     while(cin.fail() || length != 4)
     {
@@ -116,6 +246,8 @@ void User::checkPin(int &p)
             copy /= 10;
             length++;
         }
+        //reinitialize copy
+        copy = p;
 
         //if pin length isn't 4 then reprompt
         if (length != 4)
