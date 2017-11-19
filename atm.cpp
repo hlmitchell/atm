@@ -17,7 +17,7 @@ int main()
 {
     //variables
     fstream clientFile;     //client file
-    int userSelection1;     //selection for first menu
+    int userSelection;     //selection for first menu
     string id;              //user ID
     int pin;                //user pin
 
@@ -31,14 +31,14 @@ int main()
         cout << "3. Exit" << endl;
 
         //checks if user input is integer between 1 and 3
-        cin >> userSelection1;
-        checkSelection(userSelection1);
+        cin >> userSelection;
+        checkSelection(userSelection);
 
-        switch (userSelection1)
+        switch (userSelection)
         {
             case 1:
             {
-                /*
+/*
                 //request user ID
                 cout << endl << "Please Enter User ID: ";
                 cin.ignore();
@@ -59,7 +59,7 @@ int main()
                     {break;}
 
                 //calls object user
-                User myClient(clientFile);*/
+                User myClient(id);*/
 
                 //temporary shortcut
                 id = "hlmitchell";
@@ -78,7 +78,7 @@ int main()
                 break;
         }
 
-    } while (userSelection1 != 3);
+    } while (userSelection != 3);
 }
 
 
@@ -107,7 +107,7 @@ bool checkID(string &name, fstream &file)
 
     //check to see if open, otherwise return false
     file.open(name.c_str());
-    if (!file.is_open())
+    if (file.fail())
     {
         cout << "Not a registered user name!" << endl;
         return false;

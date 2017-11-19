@@ -13,39 +13,21 @@ using namespace std;
 class Checking : public Accounts
 {
     protected:
-        string accountTYPE;
-        string accountName;
-        double checkingTotal;
+        
     public:
         Checking();
-        void mainMenu();
-        void openStatus(bool);
-        void editCheckingTotal(double);
-        bool getActivated();
-        double getCheckingTotal();
-
+        void accountMenu();
+        
 };
 
-Checking::Checking()
+Checking::Checking() : Accounts ()
 {
     accountTYPE = "checking";
-    accountName = "";
-    checkingTotal = 0;
 }
 
-void Checking::mainMenu()
+void Checking::accountMenu()
 {
     cout << endl << "Checking Menu" << endl;
-}
-
-void Checking::editCheckingTotal(double num)
-{
-    checkingTotal += num;
-}
-
-double Checking::getCheckingTotal()
-{
-    return checkingTotal;
 }
 
 #endif

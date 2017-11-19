@@ -16,15 +16,20 @@
 
 using namespace std;
 
+struct userInfo {
+    string id;
+    int pin;
+    string first;
+    string last;
+    int age;
+};
+
 class User
 {
     protected:
-        string id;
-        int pin;
-        string first;
-        string last;
-        int age;
         int userSelection;
+
+        userInfo myInfo;
 
         string fileName;
         fstream myFile;
@@ -57,24 +62,24 @@ User::User()
     cout << "Thank you for choosing the People's Bank!" << endl;
     cout << "Please enter a username: ";
     cin.ignore();
-    getline(cin, id);
+    getline(cin, myInfo.id);
 
     cout << "Choose a 4 digit pin: ";
-    cin >> pin;
+    cin >> myInfo.pin;
         //check for valid input for pin
-    checkPin(pin);
+    checkPin(myInfo.pin);
 
     cout << endl << "Now we'll need to know some information about you!" << endl;
     cout << "What is your last name? ";
     cin.ignore();
-    getline(cin, last);
+    getline(cin, myInfo.last);
     cout << "What is your first name? ";
-    getline(cin, first);
+    getline(cin, myInfo.first);
 
     cout << "Please enter your age: ";
-    cin >> age;
+    cin >> myInfo.age;
         //check for valid input for age
-    boundsCheck(age, 16, 125);
+    boundsCheck(myInfo.age, 16, 125);
 
     mainMenu();
 }
@@ -84,15 +89,15 @@ User::User(string i)
 {
     //reopen file for editting
     fileName = i;
-    myFile.open(i.c_str());
+    myFile.open(i.c_str(), fstream::in|fstream::out);
 
     //save user info
-    myFile >> pin;
-    myFile >> id;
-    myFile >> first;
-    myFile >> last;
-    myFile >> age;
-    cout << endl << "Welcome Back " << first << "!" << endl;
+    myFile >> myInfo.pin;
+    myFile >> myInfo.id;
+    myFile >> myInfo.first;
+    myFile >> myInfo.last;
+    myFile >> myInfo.age;
+    cout << endl << "Welcome Back " << myInfo.first << "!" << endl;
 
     mainMenu();
 }
@@ -102,15 +107,15 @@ User::~User()
 {
     //close and reopen file in truncated mode to clear file contents
     myFile.close();
-    myFile.open(fileName.c_str(), fstream::out|fstream::trunc);
+    myFile.open(fileName.c_str(), ios::out);
     
     //add new data
-    myFile << pin << endl;
-    myFile << id << endl;
-    myFile << first << endl;
-    myFile << last << endl;
-    myFile << age << endl;
-
+    myFile << myInfo.pin << endl;
+    myFile << myInfo.id << endl;
+    myFile << myInfo.first << endl;
+    myFile << myInfo.last << endl;
+    myFile << myInfo.age << endl;
+    
     myFile.close();
 }
 
@@ -196,25 +201,25 @@ void User::editUserInfo()
             case 1:
                 //request and store new pin
                 cout << "Enter New Pin: ";
-                cin >> pin;
-                checkPin(pin);
-                cout << endl << "New Pin set to " << pin << "!" << endl;
+                cin >> myInfo.pin;
+                checkPin(myInfo.pin);
+                cout << endl << "New Pin set to " << myInfo.pin << "!" << endl;
                 break;
             case 2:
                 //request and store new name
                 cout << "Enter First Name: ";
-                cin >> first;
+                cin >> myInfo.first;
                 cout << "Enter Last Name: ";
-                cin >> last;
-                cout << endl << "New Name set to " << first << " " 
-                     << last << "!" << endl;
+                cin >> myInfo.last;
+                cout << endl << "New Name set to " << myInfo.first << " " 
+                     << myInfo.last << "!" << endl;
                 break;
             case 3:
                 //request and store new age
                 cout << "Enter New Age: ";
-                cin >> age;
-                boundsCheck(age, 16, 125);
-                cout << endl << "New Age set to " << age << "!" << endl;
+                cin >> myInfo.age;
+                boundsCheck(myInfo.age, 16, 125);
+                cout << endl << "New Age set to " << myInfo.age << "!" << endl;
                 break;
             default:
                 break;

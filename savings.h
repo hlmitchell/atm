@@ -13,39 +13,21 @@ using namespace std;
 class Savings : public Accounts
 {
     protected:
-        string accountTYPE;
-        string accountName;
-        double savingsTotal;
+
     public:
         Savings();
-        void mainMenu();
-        void openStatus(bool);
-        void editSavingsTotal(double);
-        bool getActivated();
-        double getSavingsTotal();
+        void accountMenu();
 
 };
 
-Savings::Savings()
+Savings::Savings() : Accounts()
 {
     accountTYPE = "savings";
-    accountName = "";
-    savingsTotal = 0;
 }
 
-void Savings::mainMenu()
+void Savings::accountMenu()
 {
     cout << endl << "Savings Menu" << endl;
-}
-
-void Savings::editSavingsTotal(double num)
-{
-    savingsTotal += num;
-}
-
-double Savings::getSavingsTotal()
-{
-    return savingsTotal;
 }
 
 #endif
