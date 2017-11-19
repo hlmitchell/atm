@@ -17,8 +17,8 @@
 using namespace std;
 
 struct userInfo {
-    string id;
     int pin;
+    string id;
     string first;
     string last;
     int age;
@@ -87,16 +87,13 @@ User::User()
 //uploads user information from a previous user
 User::User(string i)
 {
-    //reopen file for editting
+    //reopen file for editting with binary
     fileName = i;
-    myFile.open(i.c_str(), fstream::in|fstream::out);
+    myFile.open(i.c_str(), ios::in|ios::binary);
 
-    //save user info
-    myFile >> myInfo.pin;
-    myFile >> myInfo.id;
-    myFile >> myInfo.first;
-    myFile >> myInfo.last;
-    myFile >> myInfo.age;
+    //read userInfo using binary
+    myFile.read(reinterpret_cast<char *>(&myInfo), sizeof(myInfo));
+
     cout << endl << "Welcome Back " << myInfo.first << "!" << endl;
 
     mainMenu();
@@ -105,16 +102,12 @@ User::User(string i)
 //uploads user contents to file
 User::~User()
 {
-    //close and reopen file in truncated mode to clear file contents
+    //close and reopen file in binary
     myFile.close();
-    myFile.open(fileName.c_str(), ios::out);
-    
-    //add new data
-    myFile << myInfo.pin << endl;
-    myFile << myInfo.id << endl;
-    myFile << myInfo.first << endl;
-    myFile << myInfo.last << endl;
-    myFile << myInfo.age << endl;
+    myFile.open(fileName.c_str(), ios::out|ios::binary);
+
+    //write to file using binary
+    myFile.write(reinterpret_cast<char *>(&myInfo), sizeof(myInfo));
     
     myFile.close();
 }
