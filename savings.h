@@ -16,17 +16,11 @@ class Savings : public Accounts
 
     public:
         Savings();
-        void accountMenu();
 
 };
 
 Savings::Savings() : Accounts()
 {
-}
-
-void Savings::accountMenu()
-{
-    cout << endl << "Savings Menu" << endl;
 }
 
 #endif

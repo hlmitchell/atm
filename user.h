@@ -118,53 +118,21 @@ void User::mainMenu()
     do {
         //main menu
         cout << endl << "*** Main Menu ***" << endl;
-        cout << "1. Make a Withdrawal" << endl;
-        cout << "2. Make a Deposit" << endl;
+        cout << "1. Select an Account" << endl;
+        cout << "2. Create an Account" << endl;
         cout << "3. Edit User Information" << endl;
-        cout << "4. Advanced Account Options" << endl;
-        cout << "5. Log Out" << endl;
+        cout << "4. Log Out" << endl;
 
         //validate input
         cin >> userSelection;
-        boundsCheck(userSelection, 1, 5);
+        boundsCheck(userSelection, 1, 4);
 
         switch(userSelection)
         {
             case 1:
-                break;
-            case 2:
-                break;
-            case 3:
-                editUserInfo();
-                break;
-            case 4:
                 advancedOptionsMenu();
                 break;
-            default:
-                break;
-        }
-
-    } while (userSelection != 5);
-}
-
-void User::advancedOptionsMenu()
-{
-    do {
-        //advanced options
-        cout << endl << "*** Advanced Options ***" << endl;
-        cout << "1. Create New Account" << endl;
-        cout << "2. Delete Account" << endl;
-        cout << "3. Merge Accounts" << endl;
-        cout << "4. Transfer Money Between Accounts" << endl;
-        cout << "5. Back" << endl;
-
-        //validate input
-        cin >> userSelection;
-        boundsCheck(userSelection, 1, 5);
-
-        switch(userSelection)
-        {
-            case 1:
+            case 2:
                 //Menu requesting checking or savings account
                 cout << endl << "Which type of account would you like to create?" << endl;
                 chooseAccountType();
@@ -176,40 +144,50 @@ void User::advancedOptionsMenu()
                 else
                     {cout << "Savings";}
                 break;
-
-            case 2:
-                //Menu requesting checking or savings account
-                cout << endl << "Which type of account would you like to delete?" << endl;
-                chooseAccountType();
-
-                //delete node for checking in class Checking
-                if (userSelection == 1)
-                    {cout << "Checking";}
-                //delete node for savings in class savings
-                else
-                    {cout << "Savings";}
-                break;
-
             case 3:
-                //Menu requesting checking or savings account
-                cout << endl << "Which type of accounts would you like to merge?" << endl;
-                chooseAccountType();
-
-                //merge nodes for checking in class Checking
-                if (userSelection == 1)
-                    {cout << "Checking";}
-                //merge nodes for savings in class savings
-                else
-                    {cout << "Savings";}
-                break;
-            case 4:
-                //different
+                editUserInfo();
                 break;
             default:
                 break;
         }
 
-    } while (userSelection != 5);
+    } while (userSelection != 4);
+}
+
+void User::advancedOptionsMenu()
+{
+    do {
+        //advanced options
+        cout << endl << "*** Advanced Options ***" << endl;
+        cout << "1. Withdraw" << endl;
+        cout << "2. Deposit" << endl;
+        cout << "3. Merge Accounts" << endl;
+        cout << "4. Transfer Money" << endl;
+        cout << "5. Delete Account" << endl;
+        cout << "6. Back" << endl;
+
+        //validate input
+        cin >> userSelection;
+        boundsCheck(userSelection, 1, 6);
+
+        switch(userSelection)
+        {
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 5:
+                break;
+            default:
+                mainMenu();
+                break;
+        }
+
+    } while (userSelection != 6);
 }
 
 void User::editUserInfo()
