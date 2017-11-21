@@ -1,7 +1,6 @@
 //error list
     //starting pin with 0
     //pin being all 0
-    //menu hopping from multiple number inputs
 
 #ifndef USER_H
 #define USER_H
@@ -49,11 +48,13 @@ class User
         //input error checking functions
         void checkPin(int&);
 
-        template <class T>
-        void boundsCheck(T&, const T, const T);
+        template <class T1, class T2>
+        void boundsCheck(T1&, const T2, const T2);
 
         template <class T>
         void cinFail(T&);
+
+        void clearField();
 };
 
 //Gathers user information for a new user
@@ -67,8 +68,9 @@ User::User()
 
     cout << "Choose a 4 digit pin: ";
     cin >> myInfo.pin;
-        //check for valid input for pin
+    //check for valid input for pin
     checkPin(myInfo.pin);
+    clearField();
 
     cout << endl << "Now we'll need to know some information about you!" << endl;
     cout << "What is your last name? ";
@@ -79,8 +81,9 @@ User::User()
 
     cout << "Please enter your age: ";
     cin >> myInfo.age;
-        //check for valid input for age
+    //check for valid input for age
     boundsCheck(myInfo.age, 16, 125);
+    clearField();
 
     mainMenu();
 }
@@ -173,6 +176,7 @@ void User::advancedOptionsMenu()
         //validate input
         cin >> userSelection;
         boundsCheck(userSelection, 1, 6);
+        clearField();
 
         switch(userSelection)
         {
@@ -209,6 +213,7 @@ void User::editUserInfo()
         //check input selection
         cin >> userSelection;
         boundsCheck(userSelection, 1, 4);
+        clearField();
 
         switch(userSelection)
         {
@@ -217,6 +222,7 @@ void User::editUserInfo()
                 cout << "Enter New Pin: ";
                 cin >> myInfo.pin;
                 checkPin(myInfo.pin);
+                clearField();
                 cout << endl << "New Pin set to " << myInfo.pin << "!" << endl;
                 break;
             case 2:
@@ -233,6 +239,7 @@ void User::editUserInfo()
                 cout << "Enter New Age: ";
                 cin >> myInfo.age;
                 boundsCheck(myInfo.age, 16, 125);
+                clearField();
                 cout << endl << "New Age set to " << myInfo.age << "!" << endl;
                 break;
             default:
@@ -255,11 +262,8 @@ void User::chooseAccountType()
 }
 
 
+//ERROR GARBAGE
 
-//ERROR CHECKING FUNCTIONS ALL BELOW HERE
-
-
-//checks pin for validity
 void User::checkPin(int &p)
 {
     int copy = p;          //copy of p
@@ -292,9 +296,8 @@ void User::checkPin(int &p)
     }
 }
 
-//checks bounds for integers
-template <class T>
-void User::boundsCheck(T &var, const T lower, const T upper)
+template <class T1, class T2>
+void User::boundsCheck(T1 &var, const T2 lower, const T2 upper)
 {
     while (cin.fail() || var < lower || var > upper)
     {
@@ -302,27 +305,33 @@ void User::boundsCheck(T &var, const T lower, const T upper)
         cinFail(var);
 
         //check for in bounds
-        while (var < lower || var > upper)
+        while (var < lower || var > upper || var)
         {
             cout << "Invalid Entry. Please try again: ";
             cin >> var;
-            cinFail(var);
         }
     }
 }
 
-//checks for input error
 template <class T>
 void User::cinFail(T &var)
 {
     while (cin.fail())
     {
-        cin.clear();
-        cin.ignore(1000, '\n');
+        clearField();
 
         cout << "Invalid Entry. Please try again: ";
         cin >> var;
     }
+}
+
+/*********************************/
+//function clear input field
+/*********************************/
+void User::clearField()
+{
+    cin.clear();
+    cin.ignore(1000, '\n');
 }
 
 #endif
