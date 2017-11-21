@@ -86,11 +86,11 @@ User::User()
 }
 
 //uploads user information from a previous user
-User::User(string i)
+User::User(string name)
 {
     //reopen file for editting with binary
-    fileName = i;
-    myFile.open(i.c_str(), ios::in|ios::binary);
+    fileName = name;
+    myFile.open(name.c_str(), ios::in|ios::binary);
 
     //read userInfo using binary
     myFile.read(reinterpret_cast<char *>(&myInfo), sizeof(myInfo));
@@ -130,6 +130,10 @@ void User::mainMenu()
         switch(userSelection)
         {
             case 1:
+                myChecking.displayAccounts();
+                mySavings.displayAccounts();
+                
+                //after an account is selected
                 advancedOptionsMenu();
                 break;
             case 2:
@@ -142,7 +146,7 @@ void User::mainMenu()
                     {myChecking.createAccount();}
                 //create node for savings in class savings
                 else
-                    {cout << "Savings";}
+                    {mySavings.createAccount();}
                 break;
             case 3:
                 editUserInfo();
@@ -183,11 +187,13 @@ void User::advancedOptionsMenu()
             case 5:
                 break;
             default:
-                mainMenu();
                 break;
         }
 
     } while (userSelection != 6);
+    
+    //return to main menu
+    mainMenu();
 }
 
 void User::editUserInfo()

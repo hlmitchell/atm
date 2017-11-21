@@ -16,11 +16,18 @@ class Savings : public Accounts
 
     public:
         Savings();
+        void displayAccounts();
 
 };
 
 Savings::Savings() : Accounts()
 {
+}
+
+void Savings::displayAccounts()
+{
+    cout << endl << "Savings Account(s)" << endl;
+    displayNodes();
 }
 
 #endif

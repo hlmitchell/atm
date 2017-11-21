@@ -24,9 +24,13 @@ class Accounts
     public:
         Accounts();
         virtual ~Accounts();
+        void createAccount();
         void createNode();
         accountNode *findNode(string);
         void deleteNode(string);
+        void displayNodes();
+
+        virtual void displayAccounts() = 0;
 };
 
 Accounts::Accounts()
@@ -55,6 +59,23 @@ Accounts::~Accounts()
         //move nodePtr to next node
         nodePtr = nextNode;
     }
+}
+
+void Accounts::createAccount()
+{
+    accountNode *newNode;
+    //create a new node in the list
+    createNode();
+    //assign the memory address to myNode
+    newNode = findNode("");
+    //name the account
+    cout << endl << "What would you like to name this account? ";
+    cin.ignore();
+    getline(cin, newNode->accountName);
+    //deposit into the account
+    cout << endl << "How much money would you like to deposit (Enter 0 if none)? ";
+    cin >> newNode->total;
+    //boundsCheck(myNode->total, 0, 1000000000000000);
 }
 
 //creates a node
@@ -148,6 +169,25 @@ void Accounts::deleteNode(string name)
             delete nodePtr;
         }
 
+    }
+}
+
+void Accounts::displayNodes()
+{
+    accountNode *nodePtr;
+
+    //initialize nodePtr to head of list
+    nodePtr = head;
+
+    //while nodePtr isn't NULL, move through list
+    while (nodePtr)
+    {
+            //display the account values
+            cout << nodePtr->accountName << endl;
+            cout << "$" << nodePtr->total << endl << endl;
+
+            //move to next node
+            nodePtr = nodePtr->next;
     }
 }
 
