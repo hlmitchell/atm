@@ -27,7 +27,7 @@ int main()
         cout << endl << "Welcome to the People's Bank!" << endl;
         cout << "Please select an option from below." << endl;
         cout << "1. Login" << endl;
-        cout << "2. Create an Account" << endl;
+        cout << "2. Create a User Account" << endl;
         cout << "3. Exit" << endl;
 
         //checks if user input is integer between 1 and 3
