@@ -12,6 +12,7 @@ void checkSelection(int&);
 bool checkID(string&, fstream&);
 void checkPin(int&);
 bool validatePin(int, fstream&);
+void clearField();
 
 int main()
 {
@@ -33,6 +34,7 @@ int main()
         //checks if user input is integer between 1 and 3
         cin >> userSelection;
         checkSelection(userSelection);
+        clearField();
 
         switch (userSelection)
         {
@@ -43,21 +45,19 @@ int main()
                 cout << endl << "Please Enter User ID: ";
                 cin.ignore();
                 getline(cin, id);
-
                 //checks to see if user file exists
                 if (!checkID(id, clientFile))
                     {break;}
-
                 //request user PIN
                 cout << "Please Enter Pin: ";
                 cin >> pin;
+                clearField();
                 
                 //checks if pin is integer
                 checkPin(pin);
                 //checks is pin is accurate for account
                 if(!validatePin(pin, clientFile))
                     {break;}
-
                 //calls object user
                 User myClient(id);*/
 
@@ -89,8 +89,7 @@ void checkSelection(int &input)
 {
     while (cin.fail() || input < 0 || input > 3)
     {
-        cin.clear();
-        cin.ignore(1000, '\n');
+        clearField();
 
         cout << "Invalid Entry. Please try again: ";
         cin >> input;
@@ -123,8 +122,7 @@ void checkPin(int &num)
     //checks to see if input was an integer
     while (cin.fail())
     {
-        cin.clear();
-        cin.ignore(1000, '\n');
+        clearField();
 
         cout << "Invalid Entry. Please try again: ";
         cin >> num;
@@ -145,5 +143,12 @@ bool validatePin(int p, fstream &file)
     }
     return true;
 }
-       
 
+/*********************************/
+//function clear input field
+/*********************************/
+void clearField()
+{
+    cin.clear();
+    cin.ignore(1000, '\n');
+}

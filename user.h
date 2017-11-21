@@ -1,8 +1,6 @@
 //error list
     //starting pin with 0
     //pin being all 0
-    //menu hopping from multiple number inputs
-    //decimals as input
 
 #ifndef USER_H
 #define USER_H
@@ -45,6 +43,7 @@ class User
         void mainMenu();
         void advancedOptionsMenu();
         void editUserInfo();
+        void chooseAccountType();
         
         //input error checking functions
         void checkPin(int&);
@@ -54,6 +53,8 @@ class User
 
         template <class T>
         void cinFail(T&);
+
+        void clearField();
 };
 
 //Gathers user information for a new user
@@ -67,8 +68,9 @@ User::User()
 
     cout << "Choose a 4 digit pin: ";
     cin >> myInfo.pin;
-        //check for valid input for pin
+    //check for valid input for pin
     checkPin(myInfo.pin);
+    clearField();
 
     cout << endl << "Now we'll need to know some information about you!" << endl;
     cout << "What is your last name? ";
@@ -79,18 +81,19 @@ User::User()
 
     cout << "Please enter your age: ";
     cin >> myInfo.age;
-        //check for valid input for age
+    //check for valid input for age
     boundsCheck(myInfo.age, 16, 125);
+    clearField();
 
     mainMenu();
 }
 
 //uploads user information from a previous user
-User::User(string i)
+User::User(string name)
 {
     //reopen file for editting with binary
-    fileName = i;
-    myFile.open(i.c_str(), ios::in|ios::binary);
+    fileName = name;
+    myFile.open(name.c_str(), ios::in|ios::binary);
 
     //read userInfo using binary
     myFile.read(reinterpret_cast<char *>(&myInfo), sizeof(myInfo));
@@ -118,44 +121,10 @@ void User::mainMenu()
     do {
         //main menu
         cout << endl << "*** Main Menu ***" << endl;
-        cout << "1. Make a Withdrawal" << endl;
-        cout << "2. Make a Deposit" << endl;
+        cout << "1. Select an Account" << endl;
+        cout << "2. Create an Account" << endl;
         cout << "3. Edit User Information" << endl;
-        cout << "4. Advanced Account Options" << endl;
-        cout << "5. Log Out" << endl;
-
-        //validate input
-        cin >> userSelection;
-        boundsCheck(userSelection, 1, 5);
-
-        switch(userSelection)
-        {
-            case 1:
-                break;
-            case 2:
-                break;
-            case 3:
-                editUserInfo();
-                break;
-            case 4:
-                advancedOptionsMenu();
-                break;
-            default:
-                break;
-        }
-
-    } while (userSelection != 5);
-}
-
-void User::advancedOptionsMenu()
-{
-    do {
-        //advanced options
-        cout << endl << "*** Advanced Options ***" << endl;
-        cout << "1. Create New Account" << endl;
-        cout << "2. Merge Accounts" << endl;
-        cout << "3. Transfer Money Between Accounts" << endl;
-        cout << "4. Back" << endl;
+        cout << "4. Log Out" << endl;
 
         //validate input
         cin >> userSelection;
@@ -164,16 +133,71 @@ void User::advancedOptionsMenu()
         switch(userSelection)
         {
             case 1:
+                myChecking.displayAccounts();
+                mySavings.displayAccounts();
+                
+                //after an account is selected
+                advancedOptionsMenu();
                 break;
             case 2:
+                //Menu requesting checking or savings account
+                cout << endl << "Which type of account would you like to create?" << endl;
+                chooseAccountType();
+
+                //create node for checking in class Checking
+                if (userSelection == 1)
+                    {myChecking.createAccount();}
+                //create node for savings in class savings
+                else
+                    {mySavings.createAccount();}
                 break;
             case 3:
+                editUserInfo();
                 break;
             default:
                 break;
         }
 
     } while (userSelection != 4);
+}
+
+void User::advancedOptionsMenu()
+{
+    do {
+        //advanced options
+        cout << endl << "*** Advanced Options ***" << endl;
+        cout << "1. Withdraw" << endl;
+        cout << "2. Deposit" << endl;
+        cout << "3. Merge Accounts" << endl;
+        cout << "4. Transfer Money" << endl;
+        cout << "5. Delete Account" << endl;
+        cout << "6. Back" << endl;
+
+        //validate input
+        cin >> userSelection;
+        boundsCheck(userSelection, 1, 6);
+        clearField();
+
+        switch(userSelection)
+        {
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 5:
+                break;
+            default:
+                break;
+        }
+
+    } while (userSelection != 6);
+    
+    //return to main menu
+    mainMenu();
 }
 
 void User::editUserInfo()
@@ -189,6 +213,7 @@ void User::editUserInfo()
         //check input selection
         cin >> userSelection;
         boundsCheck(userSelection, 1, 4);
+        clearField();
 
         switch(userSelection)
         {
@@ -197,6 +222,7 @@ void User::editUserInfo()
                 cout << "Enter New Pin: ";
                 cin >> myInfo.pin;
                 checkPin(myInfo.pin);
+                clearField();
                 cout << endl << "New Pin set to " << myInfo.pin << "!" << endl;
                 break;
             case 2:
@@ -213,6 +239,7 @@ void User::editUserInfo()
                 cout << "Enter New Age: ";
                 cin >> myInfo.age;
                 boundsCheck(myInfo.age, 16, 125);
+                clearField();
                 cout << endl << "New Age set to " << myInfo.age << "!" << endl;
                 break;
             default:
@@ -223,8 +250,16 @@ void User::editUserInfo()
 
 }
 
-
-
+//choose account type for menu options
+void User::chooseAccountType()
+{   
+    //display part of menu and check bounds
+    cout << "1. Checking" << endl;
+    cout << "2. Savings" << endl;
+    cout << "3. Back" << endl;
+    cin >> userSelection;
+    boundsCheck(userSelection, 1, 3);
+}
 
 
 //ERROR GARBAGE
@@ -270,7 +305,7 @@ void User::boundsCheck(T1 &var, const T2 lower, const T2 upper)
         cinFail(var);
 
         //check for in bounds
-        while (var < lower || var > upper)
+        while (var < lower || var > upper || var)
         {
             cout << "Invalid Entry. Please try again: ";
             cin >> var;
@@ -283,12 +318,20 @@ void User::cinFail(T &var)
 {
     while (cin.fail())
     {
-        cin.clear();
-        cin.ignore(1000, '\n');
+        clearField();
 
         cout << "Invalid Entry. Please try again: ";
         cin >> var;
     }
+}
+
+/*********************************/
+//function clear input field
+/*********************************/
+void User::clearField()
+{
+    cin.clear();
+    cin.ignore(1000, '\n');
 }
 
 #endif

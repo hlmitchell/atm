@@ -16,18 +16,18 @@ class Savings : public Accounts
 
     public:
         Savings();
-        void accountMenu();
+        void displayAccounts();
 
 };
 
 Savings::Savings() : Accounts()
 {
-    accountTYPE = "savings";
 }
 
-void Savings::accountMenu()
+void Savings::displayAccounts()
 {
-    cout << endl << "Savings Menu" << endl;
+    cout << endl << "Savings Account(s)" << endl;
+    displayNodes();
 }
 
 #endif

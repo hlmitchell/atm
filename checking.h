@@ -13,21 +13,19 @@ using namespace std;
 class Checking : public Accounts
 {
     protected:
-        
     public:
         Checking();
-        void accountMenu();
+        void displayAccounts();
         
 };
 
 Checking::Checking() : Accounts ()
-{
-    accountTYPE = "checking";
-}
+{}
 
-void Checking::accountMenu()
+void Checking::displayAccounts()
 {
-    cout << endl << "Checking Menu" << endl;
+    cout << endl << "Checking Account(s)" << endl;
+    displayNodes();
 }
 
 #endif
