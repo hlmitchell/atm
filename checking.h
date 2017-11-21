@@ -16,18 +16,17 @@ class Checking : public Accounts
         
     public:
         Checking();
-        void accountMenu();
+        void createAccount();
         
 };
 
 Checking::Checking() : Accounts ()
-{
-    accountTYPE = "checking";
-}
+{}
 
-void Checking::accountMenu()
+void Checking::createAccount()
 {
-    cout << endl << "Checking Menu" << endl;
+    appendNode();
+    cout << endl << "What would you like to name this account? " << endl;
 }
 
 #endif

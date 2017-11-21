@@ -22,7 +22,6 @@ class Savings : public Accounts
 
 Savings::Savings() : Accounts()
 {
-    accountTYPE = "savings";
 }
 
 void Savings::accountMenu()

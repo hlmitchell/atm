@@ -44,6 +44,7 @@ class User
         void mainMenu();
         void advancedOptionsMenu();
         void editUserInfo();
+        void chooseAccountType();
         
         //input error checking functions
         void checkPin(int&);
@@ -152,27 +153,63 @@ void User::advancedOptionsMenu()
         //advanced options
         cout << endl << "*** Advanced Options ***" << endl;
         cout << "1. Create New Account" << endl;
-        cout << "2. Merge Accounts" << endl;
-        cout << "3. Transfer Money Between Accounts" << endl;
-        cout << "4. Back" << endl;
+        cout << "2. Delete Account" << endl;
+        cout << "3. Merge Accounts" << endl;
+        cout << "4. Transfer Money Between Accounts" << endl;
+        cout << "5. Back" << endl;
 
         //validate input
         cin >> userSelection;
-        boundsCheck(userSelection, 1, 4);
+        boundsCheck(userSelection, 1, 5);
 
         switch(userSelection)
         {
             case 1:
+                //Menu requesting checking or savings account
+                cout << endl << "Which type of account would you like to create?" << endl;
+                chooseAccountType();
+
+                //create node for checking in class Checking
+                if (userSelection == 1)
+                    {myChecking.createAccount();}
+                //create node for savings in class savings
+                else
+                    {cout << "Savings";}
                 break;
+
             case 2:
+                //Menu requesting checking or savings account
+                cout << endl << "Which type of account would you like to delete?" << endl;
+                chooseAccountType();
+
+                //delete node for checking in class Checking
+                if (userSelection == 1)
+                    {cout << "Checking";}
+                //delete node for savings in class savings
+                else
+                    {cout << "Savings";}
                 break;
+
             case 3:
+                //Menu requesting checking or savings account
+                cout << endl << "Which type of accounts would you like to merge?" << endl;
+                chooseAccountType();
+
+                //merge nodes for checking in class Checking
+                if (userSelection == 1)
+                    {cout << "Checking";}
+                //merge nodes for savings in class savings
+                else
+                    {cout << "Savings";}
+                break;
+            case 4:
+                //different
                 break;
             default:
                 break;
         }
 
-    } while (userSelection != 4);
+    } while (userSelection != 5);
 }
 
 void User::editUserInfo()
@@ -222,12 +259,23 @@ void User::editUserInfo()
 
 }
 
+//choose account type for menu options
+void User::chooseAccountType()
+{   
+    //display part of menu and check bounds
+    cout << "1. Checking" << endl;
+    cout << "2. Savings" << endl;
+    cout << "3. Back" << endl;
+    cin >> userSelection;
+    boundsCheck(userSelection, 1, 3);
+}
 
 
 
+//ERROR CHECKING FUNCTIONS ALL BELOW HERE
 
-//ERROR GARBAGE
 
+//checks pin for validity
 void User::checkPin(int &p)
 {
     int copy = p;          //copy of p
@@ -260,6 +308,7 @@ void User::checkPin(int &p)
     }
 }
 
+//checks bounds for integers
 template <class T>
 void User::boundsCheck(T &var, const T lower, const T upper)
 {
@@ -273,10 +322,12 @@ void User::boundsCheck(T &var, const T lower, const T upper)
         {
             cout << "Invalid Entry. Please try again: ";
             cin >> var;
+            cinFail(var);
         }
     }
 }
 
+//checks for input error
 template <class T>
 void User::cinFail(T &var)
 {
