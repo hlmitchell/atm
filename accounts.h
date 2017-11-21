@@ -8,15 +8,16 @@
 
 using namespace std;
 
+//node for linked list of accounts
+struct accountNode {
+    string accountName;
+    double total;
+    struct accountNode *next;
+};
+
 class Accounts
 {
     protected:
-        //node for linked list of accounts
-        struct accountNode {
-            string accountName;
-            double total;
-            struct accountNode *next;
-        };
         //node head
         accountNode *head;
 
@@ -43,7 +44,7 @@ Accounts::~Accounts()
     nodePtr = head;
 
     //while nodePtr is not at the end of the list
-    while (nodePtr->next)  //***************(nodePtr!=NULL)
+    while (nodePtr != NULL)
     {
         //save a pointer to the next node
         nextNode = nodePtr->next;
