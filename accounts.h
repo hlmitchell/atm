@@ -24,6 +24,7 @@ class Accounts
     public:
         Accounts();
         virtual ~Accounts();
+        bool getHead();
         void createAccount();
         void createNode();
         accountNode *findNode(string);
@@ -61,19 +62,55 @@ Accounts::~Accounts()
     }
 }
 
+bool Accounts::getHead()
+{
+    if (head)
+        return true;
+    else
+        return false;
+}
+
 void Accounts::createAccount()
 {
     accountNode *newNode;
+    string tempName;
+    accountNode *tempNode;
+    
+    //name the account
+    cout << endl << "What would you like to name this account? ";
+    cin.ignore();
+
+    //assign name to temp variable
+    getline(cin, tempName);
+    tempNode = findNode(tempName);
+    //make sure name isn't repeat or blank
+    while (tempNode != NULL || tempName == "")
+    {
+        //if name is a repeat prompt again
+        if (tempNode != NULL)
+        {
+            cout << "Name already taken! Please try again: ";
+            getline(cin, tempName);
+            tempNode = findNode(tempName);
+        }
+        //if name is blank prompt again
+        else
+        {
+            cout << "Account must have a name! Please try again: ";
+            getline(cin, tempName);
+            tempNode = findNode(tempName);
+        }
+    }
+
     //create a new node in the list
     createNode();
     //assign the memory address to myNode
     newNode = findNode("");
-    //name the account
-    cout << endl << "What would you like to name this account? ";
-    cin.ignore();
-    getline(cin, newNode->accountName);
-    //deposit into the account
-    cout << endl << "How much money would you like to deposit (Enter 0 if none)? ";
+    //assign name
+    newNode->accountName = tempName;
+
+    //deposit money into the account
+    cout << "How much money would you like to deposit (Enter 0 if none)? ";
     cin >> newNode->total;
     //boundsCheck(myNode->total, 0, 1000000000000000);
 }
@@ -102,9 +139,7 @@ void Accounts::createNode()
         nodePtr = head;
         //find the last node in the list
         while (nodePtr->next)
-        {
             nodePtr = nodePtr->next;
-        }
         //insert newNode as the last node
         nodePtr->next = newNode;
     }
@@ -130,8 +165,6 @@ accountNode *Accounts::findNode(string name)
             nodePtr = nodePtr->next;
         }
     }
-
-    cout << endl << "There is no account by that name!" << endl;
     return NULL;
 }
 
@@ -183,8 +216,8 @@ void Accounts::displayNodes()
     while (nodePtr)
     {
             //display the account values
-            cout << nodePtr->accountName << endl;
-            cout << "$" << nodePtr->total << endl << endl;
+            cout << nodePtr->accountName << ": ";
+            cout << "$" << nodePtr->total << endl;
 
             //move to next node
             nodePtr = nodePtr->next;

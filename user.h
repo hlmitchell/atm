@@ -48,8 +48,8 @@ class User
         //input error checking functions
         void checkPin(int&);
 
-        template <class T1, class T2>
-        void boundsCheck(T1&, const T2, const T2);
+        template <class T>
+        void boundsCheck(T&, const T, const T);
 
         template <class T>
         void cinFail(T&);
@@ -129,16 +129,41 @@ void User::mainMenu()
         //validate input
         cin >> userSelection;
         boundsCheck(userSelection, 1, 4);
+        clearField();
 
         switch(userSelection)
         {
             case 1:
-                myChecking.displayAccounts();
-                mySavings.displayAccounts();
-                
+                //Menu requesting checking or savings account
+                cout << endl << "Which account type would you like to access?" << endl;
+                chooseAccountType();
+                //check for existing checking accounts
+                if (userSelection == 1)
+                {
+                    if (!myChecking.getHead()) //if no account exists then break
+                        {
+                            cout << endl << "You have not created a checking account yet!" << endl;
+                            break;
+                        }
+                    else
+                        myChecking.displayAccounts();   //else display all checking accounts
+                }
+                //check for existing savings accounts
+                else
+                {
+                    if (!mySavings.getHead())   //if no account exists then break
+                        {
+                            cout << endl << "You have not created a checking account yet!" << endl;
+                            break;
+                        }
+                    else
+                        mySavings.displayAccounts();    //else display all savings accounts
+                }
+            
                 //after an account is selected
                 advancedOptionsMenu();
                 break;
+
             case 2:
                 //Menu requesting checking or savings account
                 cout << endl << "Which type of account would you like to create?" << endl;
@@ -296,8 +321,8 @@ void User::checkPin(int &p)
     }
 }
 
-template <class T1, class T2>
-void User::boundsCheck(T1 &var, const T2 lower, const T2 upper)
+template <class T>
+void User::boundsCheck(T &var, const T lower, const T upper)
 {
     while (cin.fail() || var < lower || var > upper)
     {
