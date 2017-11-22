@@ -45,9 +45,11 @@ int main()
                 cout << endl << "Please Enter User ID: ";
                 cin.ignore();
                 getline(cin, id);
+
                 //checks to see if user file exists
                 if (!checkID(id, clientFile))
                     {break;}
+
                 //request user PIN
                 cout << "Please Enter Pin: ";
                 cin >> pin;
@@ -58,6 +60,7 @@ int main()
                 //checks is pin is accurate for account
                 if(!validatePin(pin, clientFile))
                     {break;}
+
                 //calls object user
                 User myClient(id);*/
 
