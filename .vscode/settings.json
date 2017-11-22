@@ -12,6 +12,7 @@
         "functional": "cpp",
         "atomic": "cpp",
         "system_error": "cpp",
-        "__locale": "cpp"
+        "__locale": "cpp",
+        "istream": "cpp"
     }
 }
