@@ -47,8 +47,7 @@ class User : public Input
 User::User() : Input()
 {
     //collect basic information from user
-    displayTop();
-    cout << "Thank you for choosing Hannah's Bank!" << endl << endl;
+    cout << endl << "Thank you for choosing Hannah's Bank!" << endl << endl;
     cout << "Please enter a username: ";
     getline(cin, myInfo.id);
 

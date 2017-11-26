@@ -8,10 +8,9 @@
 using namespace std;
 
 //prototypes
-void displayTop();
 void checkSelection(int&);
 bool checkID(string&, fstream&);
-void checkPin(int&);
+void checkPin(string&);
 bool validatePin(string, fstream&);
 void clearField();
 
@@ -25,8 +24,7 @@ int main()
 
     do {
         //display main menu
-        displayTop();
-        cout << "Welcome to Hannah's Bank!" << endl << endl;
+        cout << endl << "Welcome to Hannah's Bank!" << endl << endl;
         cout << "Please select an option from below:" << endl;
         cout << "1. Login" << endl;
         cout << "2. Create a User Account" << endl;
@@ -41,10 +39,9 @@ int main()
         {
             case 1:
             {
-/*
+
                 //request user ID
                 cout << endl << "Please Enter User ID: ";
-                cin.ignore();
                 getline(cin, id);
 
                 //checks to see if user file exists
@@ -54,7 +51,6 @@ int main()
                 //request user PIN
                 cout << "Please Enter Pin: ";
                 getline(cin, pin);
-                clearField();
                 
                 //checks if pin is all integers
                 checkPin(pin);
@@ -63,13 +59,13 @@ int main()
                     {break;}
 
                 //calls object user
-                User myClient(id);*/
-
+                User myClient(id);
+/*
                 //temporary shortcut
                 id = "hlmitchell";
                 checkID(id, clientFile);
                 clientFile.close();
-                User myClient(id);
+                User myClient(id);*/
                 
                 break;
             }
@@ -85,15 +81,6 @@ int main()
     } while (userSelection != 3);
 }
 
-
-/**************************/
-//function checks user input
-/**************************/
-
-void displayTop()
-{
-    for (int i = 0; i < 15; i++) cout << endl;
-}
 
 /**************************/
 //function checks user input
