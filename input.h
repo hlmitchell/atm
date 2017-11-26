@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <iomanip>
+#include <fstream>
 
 using namespace std;
 
@@ -15,9 +16,9 @@ class Input
     public:
         Input();
         int chooseAccountType();
-        void displayTop();
 
         void checkPin(string&);
+        void checkID(string&);
         
         template <class T>
         void boundsCheck(T&, const T, const T);
@@ -44,11 +45,6 @@ int Input::chooseAccountType()
     cin >> userSelection;
     boundsCheck(userSelection, 1, 3);
     return userSelection;
-}
-
-void Input::displayTop()
-{
-    for (int i = 0; i < 15; i++) cout << endl;
 }
 
 void Input::checkPin(string &p)
@@ -78,6 +74,25 @@ void Input::checkPin(string &p)
             }
         }
     } while(p.length() != 4 || valid == false);
+}
+
+//checks for new user ID
+void Input::checkID(string &name)
+{
+    ofstream tempFile;
+    //converts to file name
+    string fileName = name + ".txt";
+
+    //check to see if open, otherwise change id
+    tempFile.open(fileName.c_str());
+    
+    while (!tempFile.fail())
+    {
+        cout << "Username has already been taken! Please try again: ";
+        getline(cin, name);
+        fileName = name + ".txt";
+        tempFile.open(fileName.c_str());
+    }
 }
 
 template <class T>

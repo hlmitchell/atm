@@ -50,6 +50,8 @@ User::User() : Input()
     cout << endl << "Thank you for choosing Hannah's Bank!" << endl << endl;
     cout << "Please enter a username: ";
     getline(cin, myInfo.id);
+    //check if username already exists
+    checkID(myInfo.id);
 
     cout << "Choose a 4 digit pin: ";
     getline(cin, myInfo.pin);
