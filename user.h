@@ -50,7 +50,6 @@ User::User() : Input()
     displayTop();
     cout << "Thank you for choosing Hannah's Bank!" << endl << endl;
     cout << "Please enter a username: ";
-    cin.ignore();
     getline(cin, myInfo.id);
 
     cout << "Choose a 4 digit pin: ";
