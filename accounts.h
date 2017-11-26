@@ -6,6 +6,8 @@
 #include <string>
 #include <iomanip>
 
+#include "input.h"
+
 using namespace std;
 
 //node for linked list of accounts
@@ -15,7 +17,7 @@ struct accountNode {
     struct accountNode *next;
 };
 
-class Accounts
+class Accounts : public Input
 {
     protected:
         //node head
@@ -24,6 +26,8 @@ class Accounts
 
         string activeAccount;
         int userSelection;
+        double withdep;
+        char confirm;     
 
     public:
         Accounts();
@@ -33,6 +37,8 @@ class Accounts
         void createAccount();
         void selectAccount();
         void deleteAccount();
+        void deposit();
+        void merge();
 
         void createNode();
         accountNode *findNode(string);
@@ -41,14 +47,16 @@ class Accounts
 
         virtual void displayAccounts() = 0;
         virtual void accountOptionsMenu() = 0;
+        virtual void transfer() = 0;
 };
 
-Accounts::Accounts()
+Accounts::Accounts() : Input()
 {
     head = NULL;
     selectedAccount = NULL;
     activeAccount = "";
     userSelection = 0;
+    withdep = 0;
 }
 
 //deletes linked list
@@ -76,14 +84,14 @@ Accounts::~Accounts()
     selectedAccount = NULL;
 }
 
+//returns true or false if the list has been created
 bool Accounts::getHead()
 {
-    if (head)
-        return true;
-    else
-        return false;
+    if (head) return true;
+    else return false;
 }
 
+//creates a new account
 void Accounts::createAccount()
 {
     accountNode *newNode;
@@ -126,7 +134,12 @@ void Accounts::createAccount()
     //deposit money into the account
     cout << "How much money would you like to deposit (Enter 0 if none)? ";
     cin >> newNode->total;
-    //boundsCheck(myNode->total, 0, 1000000000000000);
+    boundsCheck(newNode->total, 0.0, 1000000000.0); //error check
+
+    //success message
+    cout << endl << "Successfully created account " << newNode->accountName
+         << " with current value of $" << fixed << setprecision(2)
+         << newNode->total << "!" << endl;
 }
 
 //selects an account to edit 
@@ -159,14 +172,81 @@ void Accounts::deleteAccount()
     }
 
     //confirm deletion
-    char confirm;
     cout << endl << "Delete account " << selectedAccount->accountName << " (Y/N)? ";
-    cin >> confirm; //error catcher
+    cin >> confirm;
+    yesNo(confirm); //error check
 
     if (confirm == 'Y')
     {
         cout << "Account " << selectedAccount->accountName << " has been deleted!" << endl;;
         deleteNode(selectedAccount->accountName);
+    }
+}
+
+//deposit money
+void Accounts::deposit()
+{
+    cout << endl << "Deposit amount: ";
+    cin >> withdep;
+    boundsCheck(withdep, 0.0, 1000000000.0); //error checking
+
+    //add to total
+    selectedAccount->total = selectedAccount->total += withdep;
+    //display deposit amount and new total
+    cout << "Successfully deposited $" << withdep << endl;
+    cout << "New " << selectedAccount->accountName << " total is $" << selectedAccount->total << endl;
+
+    accountOptionsMenu();
+}
+
+//merge two like accounts
+void Accounts::merge()
+{
+    //merger account
+    accountNode *merger;
+    string mergerAccountName;
+
+    //check if other accounts exist for merger
+    if (head->next == NULL)
+    {
+        cout << endl << "There are no other accounts of the same type!" << endl;
+        return;
+    }
+    else
+    {
+        cout << endl << "Other Related Accounts" << endl;
+        displayNodes();
+    }
+
+    //while inputed account name doesn't exist, continue to prompt 
+    do {
+        //get account name
+        cout << endl << "With which account would you like to merge " 
+        << selectedAccount->accountName << "? ";
+        getline(cin, mergerAccountName);
+        //find account address
+        merger = findNode(mergerAccountName);
+        //if address is NULL, account name was not valid
+        if (merger == NULL || merger->accountName == selectedAccount->accountName)
+        {
+            cout << "Not an available account name!" << endl;
+            merger = NULL;
+        }
+    } while (merger == NULL);
+
+    //verify with user
+    cout << "Are you sure you want to merge " << selectedAccount->accountName
+         << " into " << merger->accountName << " (Y/N)? ";
+    cin >> confirm;
+    yesNo(confirm);
+
+    //delete selected account and transfer funds to merger account
+    if (confirm == 'Y')
+    {
+        merger->total += selectedAccount->total;
+        deleteNode(selectedAccount->accountName);
+        selectedAccount = NULL;
+        cout << "Merge Successful!" << endl;
     }
 }
 
@@ -183,18 +263,14 @@ void Accounts::createNode()
     newNode->next = NULL;
 
     //if there are no nodes yet, make the first one
-    if (!head)
-    {
-        head = newNode;
-    }
+    if (!head) head = newNode;
     //else add new node to end of list
     else
     {
         //initialize nodePtr to head of list
         nodePtr = head;
         //find the last node in the list
-        while (nodePtr->next)
-            nodePtr = nodePtr->next;
+        while (nodePtr->next) nodePtr = nodePtr->next;
         //insert newNode as the last node
         nodePtr->next = newNode;
     }
@@ -211,14 +287,8 @@ accountNode *Accounts::findNode(string name)
     //while nodePtr isn't NULL, move through list
     while (nodePtr)
     {
-        if (nodePtr->accountName == name)
-        {
-            return nodePtr;
-        }
-        else
-        {
-            nodePtr = nodePtr->next;
-        }
+        if (nodePtr->accountName == name) return nodePtr;
+        else nodePtr = nodePtr->next;
     }
     return NULL;
 }
@@ -270,12 +340,22 @@ void Accounts::displayNodes()
     //while nodePtr isn't NULL, move through list
     while (nodePtr)
     {
-            //display the account values
-            cout << nodePtr->accountName << ": ";
-            cout << "$" << nodePtr->total << endl;
+        //for merging accounts, the selected account name is not displayed
+        if (selectedAccount != NULL)//avoids segmentation fault
+            if (selectedAccount->accountName == nodePtr->accountName)
+            {
+                nodePtr = nodePtr->next;
+                continue;
+            }
 
-            //move to next node
-            nodePtr = nodePtr->next;
+        //display the account values
+        cout << nodePtr->accountName << ": ";
+        //formatting
+        cout << fixed << setprecision(2);
+        cout << "$" << nodePtr->total << endl;
+
+        //move to next node
+        nodePtr = nodePtr->next;    
     }
 }
 

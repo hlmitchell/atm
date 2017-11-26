@@ -13,12 +13,12 @@ using namespace std;
 class Savings : public Accounts
 {
     protected:
-        int userSelection;
 
     public:
         Savings();
         void displayAccounts();
         void accountOptionsMenu();
+        void transfer();
 
 };
 
@@ -35,8 +35,12 @@ void Savings::displayAccounts()
 void Savings::accountOptionsMenu()
 {   
     do {
+
+        cout << endl << "Current Account: " << selectedAccount->accountName << endl;
+        cout << "Account Funds: $" << selectedAccount->total << endl;
+
         //advanced options
-        cout << endl << "*** Advanced Options ***" << endl;
+        cout << endl << "**** " << selectedAccount->accountName << " Options ****" << endl;
         cout << "1. Deposit" << endl;
         cout << "2. Merge Accounts" << endl;
         cout << "3. Transfer Money" << endl;
@@ -45,28 +49,35 @@ void Savings::accountOptionsMenu()
 
         //validate input
         cin >> userSelection;
-        //boundsCheck(userSelection, 1, 5);
-        //clearField();
+        boundsCheck(userSelection, 1, 5);
+        clearField();
 
         switch(userSelection)
         {
             case 1:
+                deposit();
                 break;
             case 2:
+                merge();
                 break;
             case 3:
                 break;
             case 4:
-                break;
-            case 5:
                 deleteAccount();
                 break;
             default:
+                selectedAccount = NULL;
                 break;
         }
+
+        //if account is deleted or merged, exit this menu automatically
+        if (selectedAccount == NULL) userSelection = 5;
 
     } while (userSelection != 5);
 
 }
+
+void Savings::transfer()
+{}
 
 #endif

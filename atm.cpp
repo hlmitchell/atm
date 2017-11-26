@@ -8,10 +8,11 @@
 using namespace std;
 
 //prototypes
+void displayTop();
 void checkSelection(int&);
 bool checkID(string&, fstream&);
 void checkPin(int&);
-bool validatePin(int, fstream&);
+bool validatePin(string, fstream&);
 void clearField();
 
 int main()
@@ -20,13 +21,13 @@ int main()
     fstream clientFile;     //client file
     int userSelection;     //selection for first menu
     string id;              //user ID
-    int pin;                //user pin
+    string pin;             //user pin
 
     do {
-
         //display main menu
-        cout << endl << "Welcome to the People's Bank!" << endl;
-        cout << "Please select an option from below." << endl;
+        displayTop();
+        cout << "Welcome to Hannah's Bank!" << endl << endl;
+        cout << "Please select an option from below:" << endl;
         cout << "1. Login" << endl;
         cout << "2. Create a User Account" << endl;
         cout << "3. Exit" << endl;
@@ -52,10 +53,10 @@ int main()
 
                 //request user PIN
                 cout << "Please Enter Pin: ";
-                cin >> pin;
+                getline(cin, pin);
                 clearField();
                 
-                //checks if pin is integer
+                //checks if pin is all integers
                 checkPin(pin);
                 //checks is pin is accurate for account
                 if(!validatePin(pin, clientFile))
@@ -84,6 +85,15 @@ int main()
     } while (userSelection != 3);
 }
 
+
+/**************************/
+//function checks user input
+/**************************/
+
+void displayTop()
+{
+    for (int i = 0; i < 15; i++) cout << endl;
+}
 
 /**************************/
 //function checks user input
@@ -120,24 +130,41 @@ bool checkID(string &name, fstream &file)
 /*********************************/
 //function checks if PIN is integer
 /*********************************/
-void checkPin(int &num)
+void checkPin(string &p)
 {
-    //checks to see if input was an integer
-    while (cin.fail())
+    bool valid = true;
+    
+    do
     {
-        clearField();
+        //make sure characters are all ints
+        for (int i = 0; i < p.length(); i++)
+        {
+            if (p[i] < '0' || p[i] > '9')
+                valid = false;
+        }
 
-        cout << "Invalid Entry. Please try again: ";
-        cin >> num;
-    }
+        //if pin length isn't 4 then reprompt
+        if (p.length() != 4 || valid == false)
+        {
+            cout << "Invalid Entry. Please try again: ";
+            getline(cin, p);
+
+            valid = true;
+            for (int i = 0; i < p.length(); i++)
+            {
+                if (p[i] < '0' || p[i] > '9')
+                    valid = false;
+            }
+        }
+    } while(p.length() != 4 || valid == false);
 }
 
 /*********************************/
 //function checks if PIN is valid
 /*********************************/
-bool validatePin(int p, fstream &file)
+bool validatePin(string p, fstream &file)
 {
-    int num;
+    string num;
     file >> num;
     if (num != p)
     {

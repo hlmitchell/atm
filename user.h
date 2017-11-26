@@ -1,6 +1,4 @@
 //error list
-    //starting pin with 0
-    //pin being all 0
     //segmentation fault during user info function
 
 #ifndef USER_H
@@ -17,14 +15,14 @@
 using namespace std;
 
 struct userInfo {
-    int pin;
+    string pin;
     string id;
     string first;
     string last;
     int age;
 };
 
-class User
+class User : public Input
 {
     protected:
         int userSelection;
@@ -43,34 +41,22 @@ class User
         ~User();
         void mainMenu();
         void editUserInfo();
-        void chooseAccountType();
-        
-        //input error checking functions
-        void checkPin(int&);
-
-        template <class T>
-        void boundsCheck(T&, const T, const T);
-
-        template <class T>
-        void cinFail(T&);
-
-        void clearField();
 };
 
 //Gathers user information for a new user
-User::User()
+User::User() : Input()
 {
     //collect basic information from user
-    cout << "Thank you for choosing the People's Bank!" << endl;
+    displayTop();
+    cout << "Thank you for choosing Hannah's Bank!" << endl << endl;
     cout << "Please enter a username: ";
     cin.ignore();
     getline(cin, myInfo.id);
 
     cout << "Choose a 4 digit pin: ";
-    cin >> myInfo.pin;
+    getline(cin, myInfo.pin);
     //check for valid input for pin
     checkPin(myInfo.pin);
-    clearField();
 
     cout << endl << "Now we'll need to know some information about you!" << endl;
     cout << "What is your last name? ";
@@ -88,7 +74,7 @@ User::User()
 }
 
 //uploads user information from a previous user
-User::User(string name)
+User::User(string name) : Input()
 {
     //reopen file for editting with binary
     fileName = name;
@@ -135,7 +121,7 @@ void User::mainMenu()
             case 1:
                 //Menu requesting checking or savings account
                 cout << endl << "Which account type would you like to access?" << endl;
-                chooseAccountType();
+                userSelection = chooseAccountType();
                 //check for existing checking accounts
                 if (userSelection == 1)
                 {
@@ -169,14 +155,12 @@ void User::mainMenu()
             case 2:
                 //Menu requesting checking or savings account
                 cout << endl << "Which type of account would you like to create?" << endl;
-                chooseAccountType();
+                userSelection = chooseAccountType();
 
                 //create node for checking in class Checking
-                if (userSelection == 1)
-                    {myChecking.createAccount();}
+                if (userSelection == 1) myChecking.createAccount();
                 //create node for savings in class savings
-                else if (userSelection == 2)
-                    {mySavings.createAccount();}
+                else if (userSelection == 2) mySavings.createAccount();
                 break;
             case 3:
                 editUserInfo();
@@ -208,9 +192,8 @@ void User::editUserInfo()
             case 1:
                 //request and store new pin
                 cout << "Enter New Pin: ";
-                cin >> myInfo.pin;
+                getline(cin, myInfo.pin);
                 checkPin(myInfo.pin);
-                clearField();
                 cout << endl << "New Pin set to " << myInfo.pin << "!" << endl;
                 break;
             case 2:
@@ -239,90 +222,6 @@ void User::editUserInfo()
     
     mainMenu();
 
-}
-
-//choose account type for menu options
-void User::chooseAccountType()
-{   
-    //display part of menu and check bounds
-    cout << "1. Checking" << endl;
-    cout << "2. Savings" << endl;
-    cout << "3. Back" << endl;
-    cin >> userSelection;
-    boundsCheck(userSelection, 1, 3);
-}
-
-
-//ERROR GARBAGE
-
-void User::checkPin(int &p)
-{
-    int copy = p;          //copy of p
-    int length = 0;        //length of 
-
-    while(cin.fail() || length != 4)
-    {
-        //cin.fail input error check
-        cinFail(copy);
-
-        //find length of pin
-        while (copy > 0)
-        {
-            copy /= 10;
-            length++;
-        }
-        //reinitialize copy
-        copy = p;
-
-        //if pin length isn't 4 then reprompt
-        if (length != 4)
-        {
-            cout << "Invalid Entry. Please try again: ";
-            cin >> copy;
-            length = 0;
-        }
-        //if pin is 4 then continue
-        else {p = copy;}
-
-    }
-}
-
-template <class T>
-void User::boundsCheck(T &var, const T lower, const T upper)
-{
-    while (cin.fail() || var < lower || var > upper)
-    {
-        //cin.fail input error check
-        cinFail(var);
-
-        //check for in bounds
-        while (var < lower || var > upper || var)
-        {
-            cout << "Invalid Entry. Please try again: ";
-            cin >> var;
-        }
-    }
-}
-
-template <class T>
-void User::cinFail(T &var)
-{
-    while (cin.fail())
-    {
-        clearField();
-
-        cout << "Invalid Entry. Please try again: ";
-        cin >> var;
-    }
-}
-
-/*********************************/
-//function clear input field
-/*********************************/
-void User::clearField()
-{
-    cin.clear();
-    cin.ignore(1000, '\n');
 }
 
 #endif
