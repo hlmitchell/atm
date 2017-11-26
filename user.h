@@ -1,6 +1,3 @@
-//error list
-    //can't open acounts properly
-
 #ifndef USER_H
 #define USER_H
 
