@@ -1,6 +1,7 @@
 //error list
     //starting pin with 0
     //pin being all 0
+    //segmentation fault during user info function
 
 #ifndef USER_H
 #define USER_H
@@ -41,7 +42,6 @@ class User
         User(string);
         ~User();
         void mainMenu();
-        void advancedOptionsMenu();
         void editUserInfo();
         void chooseAccountType();
         
@@ -74,7 +74,6 @@ User::User()
 
     cout << endl << "Now we'll need to know some information about you!" << endl;
     cout << "What is your last name? ";
-    cin.ignore();
     getline(cin, myInfo.last);
     cout << "What is your first name? ";
     getline(cin, myInfo.first);
@@ -141,27 +140,30 @@ void User::mainMenu()
                 if (userSelection == 1)
                 {
                     if (!myChecking.getHead()) //if no account exists then break
-                        {
-                            cout << endl << "You have not created a checking account yet!" << endl;
-                            break;
-                        }
+                    {
+                        cout << endl << "You have not created a checking account yet!" << endl;
+                        break;
+                    }
                     else
+                    {
                         myChecking.displayAccounts();   //else display all checking accounts
+                        myChecking.selectAccount();
+                    }
                 }
                 //check for existing savings accounts
-                else
+                else if (userSelection == 2)
                 {
                     if (!mySavings.getHead())   //if no account exists then break
-                        {
-                            cout << endl << "You have not created a checking account yet!" << endl;
-                            break;
-                        }
+                    {
+                        cout << endl << "You have not created a savings account yet!" << endl;
+                        break;
+                    }
                     else
+                    {
                         mySavings.displayAccounts();    //else display all savings accounts
+                        mySavings.selectAccount();                    }
                 }
-            
-                //after an account is selected
-                advancedOptionsMenu();
+                
                 break;
 
             case 2:
@@ -173,7 +175,7 @@ void User::mainMenu()
                 if (userSelection == 1)
                     {myChecking.createAccount();}
                 //create node for savings in class savings
-                else
+                else if (userSelection == 2)
                     {mySavings.createAccount();}
                 break;
             case 3:
@@ -184,45 +186,6 @@ void User::mainMenu()
         }
 
     } while (userSelection != 4);
-}
-
-void User::advancedOptionsMenu()
-{
-    do {
-        //advanced options
-        cout << endl << "*** Advanced Options ***" << endl;
-        cout << "1. Withdraw" << endl;
-        cout << "2. Deposit" << endl;
-        cout << "3. Merge Accounts" << endl;
-        cout << "4. Transfer Money" << endl;
-        cout << "5. Delete Account" << endl;
-        cout << "6. Back" << endl;
-
-        //validate input
-        cin >> userSelection;
-        boundsCheck(userSelection, 1, 6);
-        clearField();
-
-        switch(userSelection)
-        {
-            case 1:
-                break;
-            case 2:
-                break;
-            case 3:
-                break;
-            case 4:
-                break;
-            case 5:
-                break;
-            default:
-                break;
-        }
-
-    } while (userSelection != 6);
-    
-    //return to main menu
-    mainMenu();
 }
 
 void User::editUserInfo()
@@ -253,9 +216,10 @@ void User::editUserInfo()
             case 2:
                 //request and store new name
                 cout << "Enter First Name: ";
-                cin >> myInfo.first;
+                cin.ignore();
+                getline(cin, myInfo.first);
                 cout << "Enter Last Name: ";
-                cin >> myInfo.last;
+                getline(cin, myInfo.last);
                 cout << endl << "New Name set to " << myInfo.first << " " 
                      << myInfo.last << "!" << endl;
                 break;
@@ -272,6 +236,8 @@ void User::editUserInfo()
         }
     
     } while (userSelection != 4);
+    
+    mainMenu();
 
 }
 

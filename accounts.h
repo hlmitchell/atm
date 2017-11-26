@@ -20,23 +20,35 @@ class Accounts
     protected:
         //node head
         accountNode *head;
+        accountNode *selectedAccount;
+
+        string activeAccount;
+        int userSelection;
 
     public:
         Accounts();
         virtual ~Accounts();
         bool getHead();
+
         void createAccount();
+        void selectAccount();
+        void deleteAccount();
+
         void createNode();
         accountNode *findNode(string);
         void deleteNode(string);
         void displayNodes();
 
         virtual void displayAccounts() = 0;
+        virtual void accountOptionsMenu() = 0;
 };
 
 Accounts::Accounts()
 {
     head = NULL;
+    selectedAccount = NULL;
+    activeAccount = "";
+    userSelection = 0;
 }
 
 //deletes linked list
@@ -60,6 +72,8 @@ Accounts::~Accounts()
         //move nodePtr to next node
         nodePtr = nextNode;
     }
+
+    selectedAccount = NULL;
 }
 
 bool Accounts::getHead()
@@ -113,6 +127,47 @@ void Accounts::createAccount()
     cout << "How much money would you like to deposit (Enter 0 if none)? ";
     cin >> newNode->total;
     //boundsCheck(myNode->total, 0, 1000000000000000);
+}
+
+//selects an account to edit 
+void Accounts::selectAccount()
+{
+    //clear input
+    cin.ignore();
+    //while inputed account name doesn't exist, continue to prompt 
+    do {
+        //get account name
+        cout << endl << "Enter the name of the account you wish to access: ";
+        getline(cin, activeAccount);
+        //find account address
+        selectedAccount = findNode(activeAccount);
+        //if address is NULL, account name was not valid
+        if (selectedAccount == NULL)
+            cout << "Not an available account name!" << endl;
+    } while (selectedAccount == NULL);
+
+    accountOptionsMenu();
+}
+
+void Accounts::deleteAccount()
+{
+    //if total funds aren't 0, do not delete account
+    if (selectedAccount->total != 0)
+    {
+        cout << endl << "You must transfer your funds to another account first!" << endl;
+        return;
+    }
+
+    //confirm deletion
+    char confirm;
+    cout << endl << "Delete account " << selectedAccount->accountName << " (Y/N)? ";
+    cin >> confirm; //error catcher
+
+    if (confirm == 'Y')
+    {
+        cout << "Account " << selectedAccount->accountName << " has been deleted!" << endl;;
+        deleteNode(selectedAccount->accountName);
+    }
 }
 
 //creates a node
