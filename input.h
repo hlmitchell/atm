@@ -93,6 +93,8 @@ void Input::checkID(string &name)
         fileName = name + ".txt";
         tempFile.open(fileName.c_str());
     }
+
+    tempFile.close();
 }
 
 template <class T>

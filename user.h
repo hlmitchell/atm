@@ -1,3 +1,5 @@
+//segmentation fault trying to read/write account files
+
 #ifndef USER_H
 #define USER_H
 
@@ -131,6 +133,9 @@ void User::mainMenu()
                 //check for existing checking accounts
                 if (userSelection == 1)
                 {
+                    //allows access to checking file
+                    myChecking.setFileName(myInfo.id);
+
                     if (!myChecking.getHead()) //if no account exists then break
                     {
                         cout << endl << "You have not created a checking account yet!" << endl;
@@ -138,13 +143,16 @@ void User::mainMenu()
                     }
                     else
                     {
-                        myChecking.displayAccounts();   //else display all checking accounts
+                        myChecking.displayAccounts();       //else display all checking accounts
                         myChecking.selectAccount();
                     }
                 }
                 //check for existing savings accounts
                 else if (userSelection == 2)
                 {
+                    //allows access to savings file
+                    mySavings.setFileName(myInfo.id);
+
                     if (!mySavings.getHead())   //if no account exists then break
                     {
                         cout << endl << "You have not created a savings account yet!" << endl;
@@ -152,8 +160,9 @@ void User::mainMenu()
                     }
                     else
                     {
-                        mySavings.displayAccounts();    //else display all savings accounts
-                        mySavings.selectAccount();                    }
+                        mySavings.displayAccounts();        //else display all savings accounts
+                        mySavings.selectAccount();                    
+                    }
                 }
                 
                 break;

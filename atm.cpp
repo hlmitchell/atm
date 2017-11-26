@@ -1,6 +1,3 @@
-//PROBLEM IN CHECK PIN. Because of binary formatting, cannot read pin without importing file
-//first
-
 #include "user.h"
 
 #include <iostream>
@@ -41,7 +38,7 @@ int main()
         {
             case 1:
             {
-
+/*
                 //request user ID
                 cout << endl << "Please Enter User ID: ";
                 getline(cin, id);
@@ -58,14 +55,14 @@ int main()
                 checkPin(pin);
                 
                 //calls object user
-                User myClient(id, pin);
-/*
+                User myClient(id, pin);*/
+
                 //temporary shortcut
                 id = "hlmitchell";
+                pin = "9192";
                 checkID(id, clientFile);
                 clientFile.close();
-                User myClient(id);*/
-                
+                User myClient(id, pin);
                 break;
             }
             case 2:

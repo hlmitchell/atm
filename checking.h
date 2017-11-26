@@ -1,3 +1,5 @@
+//not reading. potentially not writing
+
 #ifndef CHECKING_H
 #define CHECKING_H
 
@@ -13,9 +15,12 @@ using namespace std;
 class Checking : public Accounts
 {
     protected:
-
+        fstream checkingFile;
     public:
         Checking();
+        ~Checking();
+        void setFileName(string);
+
         void displayAccounts();
         void accountOptionsMenu();
         void withdraw();
@@ -26,6 +31,29 @@ class Checking : public Accounts
 Checking::Checking() : Accounts()
 {}
 
+Checking::~Checking()
+{
+    checkingFile.open(accountFileName.c_str(), ios::out|ios::binary);
+
+    checkingFile.write(reinterpret_cast<char *>(head), sizeof(head));
+    
+    checkingFile.close();
+}
+
+void Checking::setFileName(string id)
+{
+    accountFileName = id + "Checking.txt";
+    checkingFile.open(accountFileName.c_str(), ios::in|ios::binary);
+
+    if (checkingFile.fail()) return;
+    else
+    {
+        checkingFile.read(reinterpret_cast<char *>(head), sizeof(head));
+        checkingFile.close();
+    }
+
+}
+
 void Checking::displayAccounts()
 {
     cout << endl << "Checking Account(s)" << endl;
@@ -35,7 +63,7 @@ void Checking::displayAccounts()
 void Checking::accountOptionsMenu()
 {   
     do {
-        cout << "Current Account: " << selectedAccount->accountName << "\t";
+        cout << endl << "Current Account: " << selectedAccount->accountName << endl;
         cout << "Account Funds: $" << selectedAccount->total << endl;
 
         //advanced options

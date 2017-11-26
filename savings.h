@@ -13,9 +13,12 @@ using namespace std;
 class Savings : public Accounts
 {
     protected:
-
+        fstream savingsFile;
     public:
         Savings();
+        ~Savings();
+        void setFileName(string);
+
         void displayAccounts();
         void accountOptionsMenu();
         void transfer();
@@ -23,7 +26,17 @@ class Savings : public Accounts
 };
 
 Savings::Savings() : Accounts()
+{}
+
+Savings::~Savings()
+{}
+
+void Savings::setFileName(string id)
 {
+    accountFileName = id + "Savings.txt";
+    savingsFile.open(accountFileName.c_str(), ios::in);
+
+    if (savingsFile.fail()) return;
 }
 
 void Savings::displayAccounts()

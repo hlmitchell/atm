@@ -20,6 +20,8 @@ struct accountNode {
 class Accounts : public Input
 {
     protected:
+        string accountFileName;
+
         //node head
         accountNode *head;
         accountNode *selectedAccount;
@@ -45,6 +47,7 @@ class Accounts : public Input
         void deleteNode(string);
         void displayNodes();
 
+        //virtual void setFileName() = 0;
         virtual void displayAccounts() = 0;
         virtual void accountOptionsMenu() = 0;
         virtual void transfer() = 0;
