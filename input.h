@@ -84,7 +84,7 @@ void Input::checkID(string &name)
     string fileName = name + ".txt";
 
     //check to see if open, otherwise change id
-    tempFile.open(fileName.c_str());
+    tempFile.open(fileName.c_str(), ios::in);
     
     while (!tempFile.fail())
     {

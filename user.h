@@ -1,5 +1,5 @@
 //error list
-    //segmentation fault during user info function
+    //can't open acounts properly
 
 #ifndef USER_H
 #define USER_H
@@ -37,7 +37,7 @@ class User : public Input
 
     public:
         User();
-        User(string);
+        User(string, string);
         ~User();
         void mainMenu();
         void editUserInfo();
@@ -53,11 +53,18 @@ User::User() : Input()
     //check if username already exists
     checkID(myInfo.id);
 
+    //Create file
+    fileName = myInfo.id + ".txt";
+    myFile.open(fileName.c_str(), ios::out);
+    myFile.close();
+    
+    //get pin
     cout << "Choose a 4 digit pin: ";
     getline(cin, myInfo.pin);
     //check for valid input for pin
     checkPin(myInfo.pin);
 
+    //get user info
     cout << endl << "Now we'll need to know some information about you!" << endl;
     cout << "What is your last name? ";
     getline(cin, myInfo.last);
@@ -74,7 +81,7 @@ User::User() : Input()
 }
 
 //uploads user information from a previous user
-User::User(string name) : Input()
+User::User(string name, string pin) : Input()
 {
     //reopen file for editting with binary
     fileName = name;
@@ -83,16 +90,18 @@ User::User(string name) : Input()
     //read userInfo using binary
     myFile.read(reinterpret_cast<char *>(&myInfo), sizeof(myInfo));
 
-    cout << endl << "Welcome Back " << myInfo.first << "!" << endl;
-
-    mainMenu();
+    if (pin == myInfo.pin)
+    {
+        cout << endl << "Welcome Back " << myInfo.first << "!" << endl;
+        mainMenu();
+    }
+    else cout << "Incorrect Password." << endl;
 }
 
 //uploads user contents to file
 User::~User()
 {
-    //close and reopen file in binary
-    myFile.close();
+    //reopen file in binary
     myFile.open(fileName.c_str(), ios::out|ios::binary);
 
     //write to file using binary

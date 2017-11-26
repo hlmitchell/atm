@@ -1,3 +1,6 @@
+//PROBLEM IN CHECK PIN. Because of binary formatting, cannot read pin without importing file
+//first
+
 #include "user.h"
 
 #include <iostream>
@@ -11,14 +14,13 @@ using namespace std;
 void checkSelection(int&);
 bool checkID(string&, fstream&);
 void checkPin(string&);
-bool validatePin(string, fstream&);
 void clearField();
 
 int main()
 {
     //variables
     fstream clientFile;     //client file
-    int userSelection;     //selection for first menu
+    int userSelection;      //selection for first menu
     string id;              //user ID
     string pin;             //user pin
 
@@ -54,12 +56,9 @@ int main()
                 
                 //checks if pin is all integers
                 checkPin(pin);
-                //checks is pin is accurate for account
-                if(!validatePin(pin, clientFile))
-                    {break;}
-
+                
                 //calls object user
-                User myClient(id);
+                User myClient(id, pin);
 /*
                 //temporary shortcut
                 id = "hlmitchell";
@@ -144,21 +143,6 @@ void checkPin(string &p)
             }
         }
     } while(p.length() != 4 || valid == false);
-}
-
-/*********************************/
-//function checks if PIN is valid
-/*********************************/
-bool validatePin(string p, fstream &file)
-{
-    string num;
-    file >> num;
-    if (num != p)
-    {
-        cout << "Invalid Pin!" << endl;
-        return false;
-    }
-    return true;
 }
 
 /*********************************/
