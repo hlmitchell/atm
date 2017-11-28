@@ -22,7 +22,7 @@ class Checking : public Accounts
         void setFileName(string);
 
         void displayAccounts();
-        void accountOptionsMenu();
+        bool accountOptionsMenu();
         void withdraw();
         void transfer();
         
@@ -60,7 +60,7 @@ void Checking::displayAccounts()
     displayNodes();
 }
 
-void Checking::accountOptionsMenu()
+bool Checking::accountOptionsMenu()
 {   
     do {
         cout << endl << "Current Account: " << selectedAccount->accountName << endl;
@@ -92,6 +92,9 @@ void Checking::accountOptionsMenu()
                 merge();
                 break;
             case 4:
+                transfer();
+                //activate transfer function in user.h
+                if (crossTransfer == true) return true;
                 break;
             case 5:
                 deleteAccount();
@@ -106,6 +109,8 @@ void Checking::accountOptionsMenu()
 
     } while (userSelection != 6);
 
+    //prevent transfer function activation in user.h
+    return false;
 }
 
 void Checking::withdraw()
@@ -131,17 +136,13 @@ void Checking::withdraw()
 
 void Checking::transfer()
 {
-    cout << endl << "In to which account type would you like to transfer funds?";
+    cout << endl << "In to which account type would you like to transfer funds?" << endl;
     userSelection = chooseAccountType();
     if (userSelection == 1)
     {
         displayNodes();
     }
-    else if (userSelection == 2)
-    {
-        cout << "Probs";
-    }
-    
+    else if (userSelection == 2) crossTransfer = true; 
 }
 
 #endif

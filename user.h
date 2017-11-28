@@ -23,6 +23,7 @@ class User : public Input
 {
     protected:
         int userSelection;
+        bool transfer;
 
         userInfo myInfo;
 
@@ -38,12 +39,14 @@ class User : public Input
         ~User();
         void mainMenu();
         void editUserInfo();
+        void transferHandler(bool);
 };
 
 //Gathers user information for a new user
 User::User() : Input()
 {
     userSelection = 0;
+    transfer = false;
 
     //collect basic information from user
     cout << endl << "Thank you for choosing Hannah's Bank!" << endl << endl;
@@ -83,6 +86,7 @@ User::User() : Input()
 User::User(string name, string pin) : Input()
 {
     userSelection = 0;
+    transfer = false;
     
     //reopen file for editting with binary
     fileName = name;
@@ -139,15 +143,21 @@ void User::mainMenu()
                     //allows access to checking file******************************
                     myChecking.setFileName(myInfo.id);
 
-                    if (!myChecking.getHead()) //if no account exists then break
+                    //if no account exists then break
+                    if (!myChecking.getHead()) 
                     {
                         cout << endl << "You have not created a checking account yet!" << endl;
                         break;
                     }
                     else
                     {
-                        myChecking.displayAccounts();       //else display all checking accounts
+                        //else display all checking accounts
+                        myChecking.displayAccounts();       
                         myChecking.selectAccount();
+
+                        //check for transfer selection in account options menu
+                        transfer = myChecking.accountOptionsMenu();
+                        if (transfer == true) transferHandler(true);
                     }
                 }
                 //check for existing savings accounts****************************
@@ -156,18 +166,26 @@ void User::mainMenu()
                     //allows access to savings file
                     mySavings.setFileName(myInfo.id);
 
-                    if (!mySavings.getHead())   //if no account exists then break
+                    //if no account exists then break
+                    if (!mySavings.getHead())
                     {
                         cout << endl << "You have not created a savings account yet!" << endl;
                         break;
                     }
                     else
                     {
-                        mySavings.displayAccounts();        //else display all savings accounts
-                        mySavings.selectAccount();                    
+                        //else display all savings accounts
+                        mySavings.displayAccounts();
+                        mySavings.selectAccount();
+
+                        //check for transfer selection in account options menu
+                        transfer = mySavings.accountOptionsMenu();
+                        if (transfer == true) transferHandler(false);                  
                     }
                 }
-                
+
+                //reset transfer variable
+                transfer = false;
                 break;
 
             case 2:
@@ -240,6 +258,72 @@ void User::editUserInfo()
     
     mainMenu();
 
+}
+
+void User::transferHandler(bool t)
+{
+    //placeholders for checking and savings accounts
+    accountNode *savings;
+    accountNode *checking;
+    double num;
+
+    if (t == true)
+    {
+        //establish checking account
+        checking = myChecking.getSelectedAccount();
+
+        //check to see if savings accounts exist
+        if (!mySavings.getHead())
+        {
+            cout << endl << "You have not created a savings account yet!" << endl;
+            return;
+        }
+        //display and select savings accounts
+        mySavings.displayAccounts();
+        mySavings.selectAccount();
+        savings = mySavings.getSelectedAccount();
+
+        //get transfer amount
+        cout << "How much money would you like to transfer from " << checking->accountName
+             << " to " << savings->accountName << "? ";
+        cin >> num;
+        boundsCheck(num, 0.0, checking->total);
+
+        //ammend account totals
+        checking->total -= num;
+        savings->total += num;
+    }
+
+     else if (t == false)
+    {
+        //establish checking account
+        savings = mySavings.getSelectedAccount();
+
+        //check to see if savings accounts exist
+        if (!myChecking.getHead())
+        {
+            cout << endl << "You have not created a savings account yet!" << endl;
+            return;
+        }
+        //display and select savings accounts
+        myChecking.displayAccounts();
+        myChecking.selectAccount();
+        checking = myChecking.getSelectedAccount();
+
+        //get transfer amount
+        cout << "How much money would you like to transfer from " << savings->accountName
+             << " to " << checking->accountName << "? ";
+        cin >> num;
+        boundsCheck(num, 0.0, savings->total);
+
+        //ammend account totals
+        savings->total -= num;
+        checking->total += num;
+    }
+
+    cout << endl << "Successfully transfered $" << num << "!" << endl;
+    cout << "New " << checking->accountName << " total is $" << checking->total << endl;
+    cout << "New " << savings->accountName << " total is $" << savings->total << endl;
 }
 
 #endif

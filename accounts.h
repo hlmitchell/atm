@@ -29,12 +29,14 @@ class Accounts : public Input
         string activeAccount;
         int userSelection;
         double withdep;
-        char confirm;     
+        char confirm;    
+        bool crossTransfer; 
 
     public:
         Accounts();
         virtual ~Accounts();
         bool getHead();
+        accountNode *getSelectedAccount();
 
         void createAccount();
         void selectAccount();
@@ -49,7 +51,7 @@ class Accounts : public Input
 
         //virtual void setFileName() = 0;
         virtual void displayAccounts() = 0;
-        virtual void accountOptionsMenu() = 0;
+        virtual bool accountOptionsMenu() = 0;
         virtual void transfer() = 0;
 };
 
@@ -92,6 +94,11 @@ bool Accounts::getHead()
 {
     if (head) return true;
     else return false;
+}
+
+accountNode *Accounts::getSelectedAccount()
+{
+    return selectedAccount;
 }
 
 //creates a new account
@@ -161,8 +168,6 @@ void Accounts::selectAccount()
         if (selectedAccount == NULL)
             cout << "Not an available account name!" << endl;
     } while (selectedAccount == NULL);
-
-    accountOptionsMenu();
 }
 
 void Accounts::deleteAccount()
@@ -198,8 +203,6 @@ void Accounts::deposit()
     //display deposit amount and new total
     cout << "Successfully deposited $" << withdep << endl;
     cout << "New " << selectedAccount->accountName << " total is $" << selectedAccount->total << endl;
-
-    accountOptionsMenu();
 }
 
 //merge two like accounts
