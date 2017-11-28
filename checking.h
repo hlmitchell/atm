@@ -33,24 +33,24 @@ Checking::Checking() : Accounts()
 
 Checking::~Checking()
 {
-    checkingFile.open(accountFileName.c_str(), ios::out|ios::binary);
+    /*checkingFile.open(accountFileName.c_str(), ios::out|ios::binary);
 
     checkingFile.write(reinterpret_cast<char *>(head), sizeof(head));
     
-    checkingFile.close();
+    checkingFile.close();*/
 }
 
 void Checking::setFileName(string id)
 {
     accountFileName = id + "Checking.txt";
-    checkingFile.open(accountFileName.c_str(), ios::in|ios::binary);
+    /*checkingFile.open(accountFileName.c_str(), ios::in|ios::binary);
 
     if (checkingFile.fail()) return;
     else
     {
         checkingFile.read(reinterpret_cast<char *>(head), sizeof(head));
         checkingFile.close();
-    }
+    }*/
 
 }
 
@@ -67,7 +67,7 @@ void Checking::accountOptionsMenu()
         cout << "Account Funds: $" << selectedAccount->total << endl;
 
         //advanced options
-        cout << endl << "*** Advanced Options ***" << endl;
+        cout << endl << cout << endl << "*** " << selectedAccount->accountName << " Options ***" << endl << endl;
         cout << "1. Withdraw" << endl;
         cout << "2. Deposit" << endl;
         cout << "3. Merge Accounts" << endl;
