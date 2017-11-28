@@ -67,7 +67,7 @@ bool Checking::accountOptionsMenu()
         cout << "Account Funds: $" << selectedAccount->total << endl;
 
         //advanced options
-        cout << endl << "*** Advanced Options ***" << endl;
+        cout << endl << "*** " << selectedAccount->accountName << " Options ***" << endl << endl;
         cout << "1. Withdraw" << endl;
         cout << "2. Deposit" << endl;
         cout << "3. Merge Accounts" << endl;
