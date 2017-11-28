@@ -20,7 +20,7 @@ class Savings : public Accounts
         void setFileName(string);
 
         void displayAccounts();
-        void accountOptionsMenu();
+        bool accountOptionsMenu();
         void transfer();
 
 };
@@ -45,7 +45,7 @@ void Savings::displayAccounts()
     displayNodes();
 }
 
-void Savings::accountOptionsMenu()
+bool Savings::accountOptionsMenu()
 {   
     do {
 
@@ -74,6 +74,9 @@ void Savings::accountOptionsMenu()
                 merge();
                 break;
             case 3:
+                transfer();
+                //activate transfer function in user.h
+                if (crossTransfer == true) return true;
                 break;
             case 4:
                 deleteAccount();
@@ -88,9 +91,20 @@ void Savings::accountOptionsMenu()
 
     } while (userSelection != 5);
 
+    //prevent transfer function activation in user.h
+    return false;
+
 }
 
 void Savings::transfer()
-{}
+{
+    cout << endl << "In to which account type would you like to transfer funds?" << endl;
+    userSelection = chooseAccountType();
+    if (userSelection == 2)
+    {
+        displayNodes();
+    }
+    else if (userSelection == 1) crossTransfer = true; 
+}
 
 #endif
