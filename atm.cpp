@@ -55,7 +55,9 @@ int main()
                 checkPin(pin);
                 
                 //calls object user
-                User myClient(id, pin);*/
+                User myClient(id, pin);
+                break;*/
+
 
                 //temporary shortcut
                 id = "hlmitchell";
@@ -107,6 +109,7 @@ bool checkID(string &name, fstream &file)
         cout << "Not a registered user name!" << endl;
         return false;
     }
+    else file.close();
     return true;
 }
 

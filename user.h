@@ -1,5 +1,3 @@
-//segmentation fault trying to read/write account files
-
 #ifndef USER_H
 #define USER_H
 
@@ -45,6 +43,8 @@ class User : public Input
 //Gathers user information for a new user
 User::User() : Input()
 {
+    userSelection = 0;
+
     //collect basic information from user
     cout << endl << "Thank you for choosing Hannah's Bank!" << endl << endl;
     cout << "Please enter a username: ";
@@ -82,19 +82,22 @@ User::User() : Input()
 //uploads user information from a previous user
 User::User(string name, string pin) : Input()
 {
+    userSelection = 0;
+    
     //reopen file for editting with binary
     fileName = name;
-    myFile.open(name.c_str(), ios::in|ios::binary);
+    myFile.open(fileName.c_str(), ios::in|ios::binary);
 
     //read userInfo using binary
     myFile.read(reinterpret_cast<char *>(&myInfo), sizeof(myInfo));
+    myFile.close();
 
     if (pin == myInfo.pin)
     {
         cout << endl << "Welcome Back " << myInfo.first << "!" << endl;
         mainMenu();
     }
-    else cout << "Incorrect Password." << endl;
+    else cout << "Incorrect Pin." << endl;
 }
 
 //uploads user contents to file
@@ -133,7 +136,7 @@ void User::mainMenu()
                 //check for existing checking accounts
                 if (userSelection == 1)
                 {
-                    //allows access to checking file
+                    //allows access to checking file******************************
                     myChecking.setFileName(myInfo.id);
 
                     if (!myChecking.getHead()) //if no account exists then break
@@ -147,7 +150,7 @@ void User::mainMenu()
                         myChecking.selectAccount();
                     }
                 }
-                //check for existing savings accounts
+                //check for existing savings accounts****************************
                 else if (userSelection == 2)
                 {
                     //allows access to savings file
