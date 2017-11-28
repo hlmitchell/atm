@@ -23,7 +23,11 @@ int main()
 
     do {
         //display main menu
+<<<<<<< HEAD
         cout << endl << "Welcome to Hannah's Bank!" << endl << endl;
+=======
+        cout << endl << "***Welcome to Hannah's Bank!***" << endl << endl;
+>>>>>>> 225bf3a0d7174d368db3f554552f4e95a2e2f72f
         cout << "Please select an option from below:" << endl << endl;
         cout << "1. Login" << endl;
         cout << "2. Create a User Account" << endl;
@@ -55,7 +59,9 @@ int main()
                 checkPin(pin);
                 
                 //calls object user
-                User myClient(id, pin);*/
+                User myClient(id, pin);
+                break;*/
+
 
                 //temporary shortcut
                 id = "hlmitchell";
@@ -107,6 +113,7 @@ bool checkID(string &name, fstream &file)
         cout << "Not a registered user name!" << endl;
         return false;
     }
+    else file.close();
     return true;
 }
 
