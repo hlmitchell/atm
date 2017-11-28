@@ -23,8 +23,8 @@ int main()
 
     do {
         //display main menu
-        cout << endl << "Welcome to Hannah's Bank!" << endl << endl;
-        cout << "Please select an option from below:" << endl;
+        cout << endl << "***Welcome to Hannah's Bank!***" << endl << endl;
+        cout << "Please select an option from below:" << endl << endl;
         cout << "1. Login" << endl;
         cout << "2. Create a User Account" << endl;
         cout << "3. Exit" << endl;

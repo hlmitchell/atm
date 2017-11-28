@@ -120,7 +120,7 @@ void User::mainMenu()
 {
     do {
         //main menu
-        cout << endl << "*** Main Menu ***" << endl;
+        cout << endl << "*** Main Menu ***" << endl << endl;
         cout << "1. Select an Account" << endl;
         cout << "2. Create an Account" << endl;
         cout << "3. Edit User Information" << endl;

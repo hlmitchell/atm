@@ -53,7 +53,7 @@ bool Savings::accountOptionsMenu()
         cout << "Account Funds: $" << selectedAccount->total << endl;
 
         //advanced options
-        cout << endl << "**** " << selectedAccount->accountName << " Options ****" << endl;
+        cout << endl << "*** " << selectedAccount->accountName << " Options ***" << endl << endl;
         cout << "1. Deposit" << endl;
         cout << "2. Merge Accounts" << endl;
         cout << "3. Transfer Money" << endl;

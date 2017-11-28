@@ -39,6 +39,7 @@ Input::Input()
 int Input::chooseAccountType()
 {   
     //display part of menu and check bounds
+    cout << endl;
     cout << "1. Checking" << endl;
     cout << "2. Savings" << endl;
     cout << "3. Back" << endl;
