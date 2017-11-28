@@ -62,8 +62,8 @@ bool Savings::accountOptionsMenu()
 
         //validate input
         cin >> userSelection;
-        boundsCheck(userSelection, 1, 5);
-        clearField();
+        errorCatcher.boundsCheck(userSelection, 1, 5);
+        errorCatcher.clearField();
 
         switch(userSelection)
         {
@@ -99,7 +99,7 @@ bool Savings::accountOptionsMenu()
 void Savings::transfer()
 {
     cout << endl << "In to which account type would you like to transfer funds?" << endl;
-    userSelection = chooseAccountType();
+    userSelection = errorCatcher.chooseAccountType();
     if (userSelection == 2)
     {
         displayNodes();

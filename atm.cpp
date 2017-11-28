@@ -1,4 +1,5 @@
 #include "user.h"
+#include "input.h"
 
 #include <iostream>
 #include <fstream>
@@ -16,6 +17,7 @@ void clearField();
 int main()
 {
     //variables
+    Input errorCatcher;     //catches input errors
     fstream clientFile;     //client file
     int userSelection;      //selection for first menu
     string id;              //user ID
@@ -23,11 +25,7 @@ int main()
 
     do {
         //display main menu
-<<<<<<< HEAD
-        cout << endl << "Welcome to Hannah's Bank!" << endl << endl;
-=======
         cout << endl << "***Welcome to Hannah's Bank!***" << endl << endl;
->>>>>>> 225bf3a0d7174d368db3f554552f4e95a2e2f72f
         cout << "Please select an option from below:" << endl << endl;
         cout << "1. Login" << endl;
         cout << "2. Create a User Account" << endl;
@@ -35,8 +33,8 @@ int main()
 
         //checks if user input is integer between 1 and 3
         cin >> userSelection;
-        checkSelection(userSelection);
-        clearField();
+        errorCatcher.boundsCheck(userSelection, 1, 3);
+        errorCatcher.clearField();
 
         switch (userSelection)
         {
@@ -56,7 +54,7 @@ int main()
                 getline(cin, pin);
                 
                 //checks if pin is all integers
-                checkPin(pin);
+                errorCatcher.checkPin(pin);
                 
                 //calls object user
                 User myClient(id, pin);
@@ -67,7 +65,6 @@ int main()
                 id = "hlmitchell";
                 pin = "9192";
                 checkID(id, clientFile);
-                clientFile.close();
                 User myClient(id, pin);
                 break;
             }
@@ -84,23 +81,7 @@ int main()
 }
 
 
-/**************************/
-//function checks user input
-/**************************/
-void checkSelection(int &input)
-{
-    while (cin.fail() || input < 0 || input > 3)
-    {
-        clearField();
-
-        cout << "Invalid Entry. Please try again: ";
-        cin >> input;
-    }
-}
-
-/*******************************/
 //function checks user ID exists
-/*******************************/
 bool checkID(string &name, fstream &file)
 {
     //convert to file name
@@ -115,45 +96,4 @@ bool checkID(string &name, fstream &file)
     }
     else file.close();
     return true;
-}
-
-/*********************************/
-//function checks if PIN is integer
-/*********************************/
-void checkPin(string &p)
-{
-    bool valid = true;
-    
-    do
-    {
-        //make sure characters are all ints
-        for (int i = 0; i < p.length(); i++)
-        {
-            if (p[i] < '0' || p[i] > '9')
-                valid = false;
-        }
-
-        //if pin length isn't 4 then reprompt
-        if (p.length() != 4 || valid == false)
-        {
-            cout << "Invalid Entry. Please try again: ";
-            getline(cin, p);
-
-            valid = true;
-            for (int i = 0; i < p.length(); i++)
-            {
-                if (p[i] < '0' || p[i] > '9')
-                    valid = false;
-            }
-        }
-    } while(p.length() != 4 || valid == false);
-}
-
-/*********************************/
-//function clear input field
-/*********************************/
-void clearField()
-{
-    cin.clear();
-    cin.ignore(1000, '\n');
 }

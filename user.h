@@ -19,12 +19,13 @@ struct userInfo {
     int age;
 };
 
-class User : public Input
+class User
 {
     protected:
         int userSelection;
         bool transfer;
 
+        Input errorCatcher;      //catches user input errors
         userInfo myInfo;
 
         string fileName;
@@ -43,7 +44,7 @@ class User : public Input
 };
 
 //Gathers user information for a new user
-User::User() : Input()
+User::User()
 {
     userSelection = 0;
     transfer = false;
@@ -53,7 +54,7 @@ User::User() : Input()
     cout << "Please enter a username: ";
     getline(cin, myInfo.id);
     //check if username already exists
-    checkID(myInfo.id);
+    errorCatcher.checkID(myInfo.id);
 
     //Create file
     fileName = myInfo.id + ".txt";
@@ -64,7 +65,7 @@ User::User() : Input()
     cout << "Choose a 4 digit pin: ";
     getline(cin, myInfo.pin);
     //check for valid input for pin
-    checkPin(myInfo.pin);
+    errorCatcher.checkPin(myInfo.pin);
 
     //get user info
     cout << endl << "Now we'll need to know some information about you!" << endl;
@@ -76,14 +77,14 @@ User::User() : Input()
     cout << "Please enter your age: ";
     cin >> myInfo.age;
     //check for valid input for age
-    boundsCheck(myInfo.age, 16, 125);
-    clearField();
+    errorCatcher.boundsCheck(myInfo.age, 16, 125);
+    errorCatcher.clearField();
 
     mainMenu();
 }
 
 //uploads user information from a previous user
-User::User(string name, string pin) : Input()
+User::User(string name, string pin)
 {
     userSelection = 0;
     transfer = false;
@@ -128,15 +129,15 @@ void User::mainMenu()
 
         //validate input
         cin >> userSelection;
-        boundsCheck(userSelection, 1, 4);
-        clearField();
+        errorCatcher.boundsCheck(userSelection, 1, 4);
+        errorCatcher.clearField();
 
         switch(userSelection)
         {
             case 1:
                 //Menu requesting checking or savings account
                 cout << endl << "Which account type would you like to access?" << endl;
-                userSelection = chooseAccountType();
+                userSelection = errorCatcher.chooseAccountType();
                 //check for existing checking accounts
                 if (userSelection == 1)
                 {
@@ -191,7 +192,7 @@ void User::mainMenu()
             case 2:
                 //Menu requesting checking or savings account
                 cout << endl << "Which type of account would you like to create?" << endl;
-                userSelection = chooseAccountType();
+                userSelection = errorCatcher.chooseAccountType();
 
                 //create node for checking in class Checking
                 if (userSelection == 1) myChecking.createAccount();
@@ -220,8 +221,8 @@ void User::editUserInfo()
 
         //check input selection
         cin >> userSelection;
-        boundsCheck(userSelection, 1, 4);
-        clearField();
+        errorCatcher.boundsCheck(userSelection, 1, 4);
+        errorCatcher.clearField();
 
         switch(userSelection)
         {
@@ -229,7 +230,7 @@ void User::editUserInfo()
                 //request and store new pin
                 cout << "Enter New Pin: ";
                 getline(cin, myInfo.pin);
-                checkPin(myInfo.pin);
+                errorCatcher.checkPin(myInfo.pin);
                 cout << endl << "New Pin set to " << myInfo.pin << "!" << endl;
                 break;
             case 2:
@@ -246,8 +247,8 @@ void User::editUserInfo()
                 //request and store new age
                 cout << "Enter New Age: ";
                 cin >> myInfo.age;
-                boundsCheck(myInfo.age, 16, 125);
-                clearField();
+                errorCatcher.boundsCheck(myInfo.age, 16, 125);
+                errorCatcher.clearField();
                 cout << endl << "New Age set to " << myInfo.age << "!" << endl;
                 break;
             default:
@@ -287,7 +288,7 @@ void User::transferHandler(bool t)
         cout << "How much money would you like to transfer from " << checking->accountName
              << " to " << savings->accountName << "? ";
         cin >> num;
-        boundsCheck(num, 0.0, checking->total);
+        errorCatcher.boundsCheck(num, 0.0, checking->total);
 
         //ammend account totals
         checking->total -= num;
@@ -314,7 +315,7 @@ void User::transferHandler(bool t)
         cout << "How much money would you like to transfer from " << savings->accountName
              << " to " << checking->accountName << "? ";
         cin >> num;
-        boundsCheck(num, 0.0, savings->total);
+        errorCatcher.boundsCheck(num, 0.0, savings->total);
 
         //ammend account totals
         savings->total -= num;

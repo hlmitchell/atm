@@ -33,7 +33,9 @@ class Input
 };
 
 Input::Input()
-{}
+{
+    userSelection = 0;
+}
 
 //choose account type for menu options
 int Input::chooseAccountType()

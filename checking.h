@@ -67,11 +67,7 @@ bool Checking::accountOptionsMenu()
         cout << "Account Funds: $" << selectedAccount->total << endl;
 
         //advanced options
-<<<<<<< HEAD
-        cout << endl << cout << endl << "*** " << selectedAccount->accountName << " Options ***" << endl << endl;
-=======
         cout << endl << "*** " << selectedAccount->accountName << " Options ***" << endl << endl;
->>>>>>> 225bf3a0d7174d368db3f554552f4e95a2e2f72f
         cout << "1. Withdraw" << endl;
         cout << "2. Deposit" << endl;
         cout << "3. Merge Accounts" << endl;
@@ -81,8 +77,8 @@ bool Checking::accountOptionsMenu()
 
         //validate input
         cin >> userSelection;
-        boundsCheck(userSelection, 1, 6);
-        clearField();
+        errorCatcher.boundsCheck(userSelection, 1, 6);
+        errorCatcher.clearField();
 
         switch(userSelection)
         {
@@ -124,7 +120,7 @@ void Checking::withdraw()
     //ask for withdraw amount and subtract from total
     cout << endl << "Withdraw amount: ";
     cin >> withdep;
-    boundsCheck(withdep, 0.0, 1000000000.0);
+    errorCatcher.boundsCheck(withdep, 0.0, 1000000000.0);
 
     //make sure there isn't overdraft
     if (selectedAccount->total - withdep < 0)
@@ -141,7 +137,7 @@ void Checking::withdraw()
 void Checking::transfer()
 {
     cout << endl << "In to which account type would you like to transfer funds?" << endl;
-    userSelection = chooseAccountType();
+    userSelection = errorCatcher.chooseAccountType();
     if (userSelection == 1)
     {
         displayNodes();

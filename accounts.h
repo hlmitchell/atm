@@ -17,10 +17,11 @@ struct accountNode {
     struct accountNode *next;
 };
 
-class Accounts : public Input
+class Accounts
 {
     protected:
         string accountFileName;
+        Input errorCatcher;
 
         //node head
         accountNode *head;
@@ -55,7 +56,7 @@ class Accounts : public Input
         virtual void transfer() = 0;
 };
 
-Accounts::Accounts() : Input()
+Accounts::Accounts()
 {
     head = NULL;
     selectedAccount = NULL;
@@ -78,14 +79,11 @@ Accounts::~Accounts()
     {
         //save a pointer to the next node
         nextNode = nodePtr->next;
-
         //delete current node
         delete nodePtr;
-
         //move nodePtr to next node
         nodePtr = nextNode;
     }
-
     selectedAccount = NULL;
 }
 
@@ -144,7 +142,7 @@ void Accounts::createAccount()
     //deposit money into the account
     cout << "How much money would you like to deposit (Enter 0 if none)? ";
     cin >> newNode->total;
-    boundsCheck(newNode->total, 0.0, 1000000000.0); //error check
+    errorCatcher.boundsCheck(newNode->total, 0.0, 1000000000.0);
 
     //success message
     cout << endl << "Successfully created account " << newNode->accountName
@@ -182,7 +180,7 @@ void Accounts::deleteAccount()
     //confirm deletion
     cout << endl << "Delete account " << selectedAccount->accountName << " (Y/N)? ";
     cin >> confirm;
-    yesNo(confirm); //error check
+    errorCatcher.yesNo(confirm); //error check
 
     if (confirm == 'Y')
     {
@@ -194,9 +192,10 @@ void Accounts::deleteAccount()
 //deposit money
 void Accounts::deposit()
 {
+    //enter deposit amount
     cout << endl << "Deposit amount: ";
     cin >> withdep;
-    boundsCheck(withdep, 0.0, 1000000000.0); //error checking
+    errorCatcher.boundsCheck(withdep, 0.0, 1000000000.0);
 
     //add to total
     selectedAccount->total = selectedAccount->total += withdep;
@@ -244,7 +243,7 @@ void Accounts::merge()
     cout << "Are you sure you want to merge " << selectedAccount->accountName
          << " into " << merger->accountName << " (Y/N)? ";
     cin >> confirm;
-    yesNo(confirm);
+    errorCatcher.yesNo(confirm);
 
     //delete selected account and transfer funds to merger account
     if (confirm == 'Y')
@@ -318,14 +317,12 @@ void Accounts::deleteNode(string name)
     {
         //initialize nodePtr to head of list
         nodePtr = head;
-
         //run through nodes to find accountName that matches
         while (nodePtr != NULL && nodePtr->accountName != name)
         {
             previousNode = nodePtr;
             nodePtr = nodePtr->next;
         }
-
         //deletes node
         if (nodePtr)
         {
