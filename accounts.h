@@ -14,24 +14,23 @@ using namespace std;
 struct accountNode {
     string accountName;
     double total;
-    struct accountNode *next;
+    struct accountNode *next;       //pointer to next node in list
 };
 
 class Accounts
 {
     protected:
-        string accountFileName;
-        Input errorCatcher;
+        string accountFileName;     //file name
+        Input errorCatcher;         //error catcher
 
-        //node head
-        accountNode *head;
-        accountNode *selectedAccount;
+        accountNode *head;              //head of node/beginning of list
+        accountNode *selectedAccount;   //current node/account
 
-        string activeAccount;
-        int userSelection;
-        double withdep;
-        char confirm;    
-        bool crossTransfer; 
+        string activeAccount;           //name of active account
+        int userSelection;              //menu selection
+        double withdep;                 //either with withdrawal or deposit amount
+        char confirm;                   //user input for y/n prompt
+        bool crossTransfer;             //indicates a transfer between account types
 
     public:
         Accounts();
@@ -50,14 +49,17 @@ class Accounts
         void deleteNode(string);
         void displayNodes();
 
-        //virtual void setFileName() = 0;
+        //pure virtual functions
+        virtual void setFileName(string) = 0;
         virtual void displayAccounts() = 0;
         virtual bool accountOptionsMenu() = 0;
         virtual void transfer() = 0;
 };
 
+//constructor
 Accounts::Accounts()
 {
+    //set variables
     head = NULL;
     selectedAccount = NULL;
     activeAccount = "";
@@ -94,6 +96,7 @@ bool Accounts::getHead()
     else return false;
 }
 
+//returns a selected account name
 accountNode *Accounts::getSelectedAccount()
 {
     return selectedAccount;
@@ -168,6 +171,7 @@ void Accounts::selectAccount()
     } while (selectedAccount == NULL);
 }
 
+//deletes an account
 void Accounts::deleteAccount()
 {
     //if total funds aren't 0, do not delete account
@@ -333,6 +337,7 @@ void Accounts::deleteNode(string name)
     }
 }
 
+//display nodes of a type
 void Accounts::displayNodes()
 {
     accountNode *nodePtr;

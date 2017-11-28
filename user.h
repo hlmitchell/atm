@@ -22,17 +22,17 @@ struct userInfo {
 class User
 {
     protected:
-        int userSelection;
-        bool transfer;
+        int userSelection;      //user input from menus
+        bool transfer;          //returned from accounts menu, signals transferHandler()
 
-        Input errorCatcher;      //catches user input errors
-        userInfo myInfo;
+        Input errorCatcher;     //catches user input errors
+        userInfo myInfo;        //instance of userInfo structure
 
-        string fileName;
-        fstream myFile;
+        string fileName;        //user file name with '.txt'
+        fstream myFile;         //file
 
-        Checking myChecking;
-        Savings mySavings;
+        Checking myChecking;    //instance of Checking class
+        Savings mySavings;      //instance of Savings class
 
     public:
         User();
@@ -46,6 +46,7 @@ class User
 //Gathers user information for a new user
 User::User()
 {
+    //set variables
     userSelection = 0;
     transfer = false;
 
@@ -86,6 +87,7 @@ User::User()
 //uploads user information from a previous user
 User::User(string name, string pin)
 {
+    //set variables
     userSelection = 0;
     transfer = false;
     
@@ -97,11 +99,13 @@ User::User(string name, string pin)
     myFile.read(reinterpret_cast<char *>(&myInfo), sizeof(myInfo));
     myFile.close();
 
+    //if pin is correct, continue
     if (pin == myInfo.pin)
     {
         cout << endl << "Welcome Back " << myInfo.first << "!" << endl;
         mainMenu();
     }
+    //else return back to welcome screen
     else cout << "Incorrect Pin." << endl;
 }
 
@@ -110,13 +114,13 @@ User::~User()
 {
     //reopen file in binary
     myFile.open(fileName.c_str(), ios::out|ios::binary);
-
     //write to file using binary
     myFile.write(reinterpret_cast<char *>(&myInfo), sizeof(myInfo));
-    
+    //close
     myFile.close();
 }
 
+//display main menu and switch
 void User::mainMenu()
 {
     do {
@@ -209,6 +213,7 @@ void User::mainMenu()
     } while (userSelection != 4);
 }
 
+//edits user information
 void User::editUserInfo()
 {
     //menu for ammending user information
@@ -256,11 +261,12 @@ void User::editUserInfo()
         }
     
     } while (userSelection != 4);
-    
-    mainMenu();
 
+    //reset variable
+    userSelection = 0;
 }
 
+//coordinates money transfers between account types
 void User::transferHandler(bool t)
 {
     //placeholders for checking and savings accounts
@@ -322,6 +328,7 @@ void User::transferHandler(bool t)
         checking->total += num;
     }
 
+    //output success message and new totals for accounts
     cout << endl << "Successfully transfered $" << num << "!" << endl;
     cout << "New " << checking->accountName << " total is $" << checking->total << endl;
     cout << "New " << savings->accountName << " total is $" << savings->total << endl;

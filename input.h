@@ -11,12 +11,11 @@ using namespace std;
 class Input
 {
     protected:
-        int userSelection;
+        int userSelection;          //user selection from menus
     
     public:
         Input();
         int chooseAccountType();
-
         void checkPin(string&);
         void checkID(string&);
         
@@ -27,7 +26,6 @@ class Input
         void cinFail(T&);
 
         void clearField();
-
         void yesNo(char&);
 
 };
@@ -51,6 +49,7 @@ int Input::chooseAccountType()
     return userSelection;
 }
 
+//checks that pin is length of 4 and valid
 void Input::checkPin(string &p)
 {
     bool valid = true;
@@ -90,6 +89,7 @@ void Input::checkID(string &name)
     //check to see if open, otherwise change id
     tempFile.open(fileName.c_str(), ios::in);
     
+    //while file opens successfully, ask for a different username
     while (!tempFile.fail())
     {
         cout << "Username has already been taken! Please try again: ";
@@ -101,6 +101,7 @@ void Input::checkID(string &name)
     tempFile.close();
 }
 
+//bounds check for menu selection or money movement
 template <class T>
 void Input::boundsCheck(T &var, const T lower, const T upper)
 {
@@ -118,9 +119,11 @@ void Input::boundsCheck(T &var, const T lower, const T upper)
     }
 }
 
+//checks if cin failed
 template <class T>
 void Input::cinFail(T &var)
 {
+    //while string is entered in to number data type, reprompt
     while (cin.fail())
     {
         clearField();
@@ -130,12 +133,15 @@ void Input::cinFail(T &var)
     }
 }
 
+//clears field to prevent menu skipping
 void Input::clearField()
 {
+    //clears field to prevent menu skipping
     cin.clear();
     cin.ignore(1000, '\n');
 }
 
+//validates yes or no input
 void Input::yesNo(char &x)
 {
     clearField();
@@ -144,6 +150,7 @@ void Input::yesNo(char &x)
     if (x == 'y') x = 'Y';
     else if (x == 'n') x = 'N';
 
+    //if user has entered y or n then reprompt
    while ((x != 'Y') && (x != 'N'))
     {
         cout << "Invalid Entry. Please try again: ";

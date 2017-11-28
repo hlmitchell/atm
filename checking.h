@@ -15,7 +15,8 @@ using namespace std;
 class Checking : public Accounts
 {
     protected:
-        fstream checkingFile;
+        fstream checkingFile;       //checking file
+
     public:
         Checking();
         ~Checking();
@@ -28,9 +29,11 @@ class Checking : public Accounts
         
 };
 
+//empty constructor
 Checking::Checking() : Accounts()
 {}
 
+//desctructor uploads file data
 Checking::~Checking()
 {
     /*checkingFile.open(accountFileName.c_str(), ios::out|ios::binary);
@@ -40,6 +43,7 @@ Checking::~Checking()
     checkingFile.close();*/
 }
 
+//sets file name
 void Checking::setFileName(string id)
 {
     accountFileName = id + "Checking.txt";
@@ -54,12 +58,15 @@ void Checking::setFileName(string id)
 
 }
 
+//displays account header
 void Checking::displayAccounts()
 {
+    //header before account names listed
     cout << endl << "Checking Account(s)" << endl;
     displayNodes();
 }
 
+//displays account options menu and switch
 bool Checking::accountOptionsMenu()
 {   
     do {
@@ -113,6 +120,7 @@ bool Checking::accountOptionsMenu()
     return false;
 }
 
+//withdraw money
 void Checking::withdraw()
 {
     //formatting
@@ -134,6 +142,7 @@ void Checking::withdraw()
     }
 }
 
+//verify if transfer is a checking or savings
 void Checking::transfer()
 {
     cout << endl << "In to which account type would you like to transfer funds?" << endl;

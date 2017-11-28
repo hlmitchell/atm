@@ -9,10 +9,7 @@
 using namespace std;
 
 //prototypes
-void checkSelection(int&);
 bool checkID(string&, fstream&);
-void checkPin(string&);
-void clearField();
 
 int main()
 {
@@ -78,6 +75,9 @@ int main()
         }
 
     } while (userSelection != 3);
+
+    //reset variable
+    userSelection = 0;
 }
 
 

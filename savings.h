@@ -13,7 +13,7 @@ using namespace std;
 class Savings : public Accounts
 {
     protected:
-        fstream savingsFile;
+        fstream savingsFile;    //savings file
     public:
         Savings();
         ~Savings();
@@ -25,12 +25,15 @@ class Savings : public Accounts
 
 };
 
+//empty constructor
 Savings::Savings() : Accounts()
 {}
 
+//destructor uploads file data
 Savings::~Savings()
 {}
 
+//sets file name
 void Savings::setFileName(string id)
 {
     accountFileName = id + "Savings.txt";
@@ -39,12 +42,14 @@ void Savings::setFileName(string id)
     if (savingsFile.fail()) return;*/
 }
 
+//displays account header
 void Savings::displayAccounts()
 {
     cout << endl << "Savings Account(s)" << endl;
     displayNodes();
 }
 
+//displays savings menu and switch
 bool Savings::accountOptionsMenu()
 {   
     do {
@@ -96,6 +101,7 @@ bool Savings::accountOptionsMenu()
 
 }
 
+//validates if transfer is savings or savings
 void Savings::transfer()
 {
     cout << endl << "In to which account type would you like to transfer funds?" << endl;
