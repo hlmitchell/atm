@@ -37,12 +37,14 @@ class Accounts
         virtual ~Accounts();
         bool getHead();
         accountNode *getSelectedAccount();
+        void resetSelectedAccount();
 
         void createAccount();
         void selectAccount();
         void deleteAccount();
         void deposit();
         void merge();
+        void sameTypeTransfer();
 
         void createNode();
         accountNode *findNode(string);
@@ -100,6 +102,13 @@ bool Accounts::getHead()
 accountNode *Accounts::getSelectedAccount()
 {
     return selectedAccount;
+}
+
+//sets selected account to null
+void Accounts::resetSelectedAccount()
+{
+    selectedAccount = NULL;
+    activeAccount = "";
 }
 
 //creates a new account
@@ -186,10 +195,13 @@ void Accounts::deleteAccount()
     cin >> confirm;
     errorCatcher.yesNo(confirm); //error check
 
+    //if yes
     if (confirm == 'Y')
     {
         cout << "Account " << selectedAccount->accountName << " has been deleted!" << endl;;
+        //delete node and set selected account to NULL
         deleteNode(selectedAccount->accountName);
+        selectedAccount = NULL;
     }
 }
 
@@ -221,11 +233,7 @@ void Accounts::merge()
         cout << endl << "There are no other accounts of the same type!" << endl;
         return;
     }
-    else
-    {
-        cout << endl << "Other Related Accounts" << endl;
-        displayNodes();
-    }
+    else displayAccounts();
 
     //while inputed account name doesn't exist, continue to prompt 
     do {
@@ -257,6 +265,56 @@ void Accounts::merge()
         selectedAccount = NULL;
         cout << "Merge Successful!" << endl;
     }
+}
+
+//transferring money between like accounts
+void Accounts::sameTypeTransfer()
+{
+    //pointer for checking transfer
+    accountNode *ptr;
+    string transferAccountName;
+
+    //check to see if other accounts of this type exist
+    if (head->next == NULL)
+    {
+        cout << endl << "There are no other accounts of the same type!" << endl;
+        return;
+    }
+    //if they do exist
+    do 
+    {
+        //display accounts
+        displayAccounts();
+        
+        //get account name
+        cin.ignore();
+        cout << endl << "Enter the name of the account you wish to access: ";                
+        getline(cin, transferAccountName);
+
+        //find account address
+        ptr = findNode(transferAccountName);
+        //if address is NULL, account name was not valid
+        if (ptr == NULL || ptr->accountName == selectedAccount->accountName)
+        {
+            cout << "Not an available account name!" << endl;
+            ptr = NULL;
+        }
+    } while (ptr == NULL);
+
+    //ask for transfer amount
+    cout << "How much money would you like to transfer from " << selectedAccount->accountName
+         << " to " << ptr->accountName << "? ";
+    cin >> withdep;
+    errorCatcher.boundsCheck(withdep, 0.0, selectedAccount->total);
+
+    //ammend account totals
+    selectedAccount->total -= withdep;
+    ptr->total += withdep;
+
+    //output success message and new totals for accounts
+    cout << endl << "Successfully transfered $" << withdep << "!" << endl;
+    cout << "New " << selectedAccount->accountName << " total is $" << selectedAccount->total << endl;
+    cout << "New " << ptr->accountName << " total is $" << ptr->total << endl;
 }
 
 //creates a node

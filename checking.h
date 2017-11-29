@@ -100,8 +100,12 @@ bool Checking::accountOptionsMenu()
                 break;
             case 4:
                 transfer();
-                //activate transfer function in user.h
-                if (crossTransfer == true) return true;
+                //activate transfer function in user.h and reset crossTransfer
+                if (crossTransfer == true) 
+                {
+                    crossTransfer = false;
+                    return true;
+                }
                 break;
             case 5:
                 deleteAccount();
@@ -145,12 +149,12 @@ void Checking::withdraw()
 //verify if transfer is a checking or savings
 void Checking::transfer()
 {
-    cout << endl << "In to which account type would you like to transfer funds?" << endl;
+    //choose an accounts type
+    cout << endl << "In to which account type would you like to transfer funds?";
     userSelection = errorCatcher.chooseAccountType();
-    if (userSelection == 1)
-    {
-        displayNodes();
-    }
+
+    //checking vs savings
+    if (userSelection == 1) sameTypeTransfer();
     else if (userSelection == 2) crossTransfer = true; 
 }
 

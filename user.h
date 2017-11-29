@@ -140,7 +140,7 @@ void User::mainMenu()
         {
             case 1:
                 //Menu requesting checking or savings account
-                cout << endl << "Which account type would you like to access?" << endl;
+                cout << endl << "Which account type would you like to access?";
                 userSelection = errorCatcher.chooseAccountType();
                 //check for existing checking accounts
                 if (userSelection == 1)
@@ -195,7 +195,7 @@ void User::mainMenu()
 
             case 2:
                 //Menu requesting checking or savings account
-                cout << endl << "Which type of account would you like to create?" << endl;
+                cout << endl << "Which type of account would you like to create?";
                 userSelection = errorCatcher.chooseAccountType();
 
                 //create node for checking in class Checking
@@ -332,6 +332,10 @@ void User::transferHandler(bool t)
     cout << endl << "Successfully transfered $" << num << "!" << endl;
     cout << "New " << checking->accountName << " total is $" << checking->total << endl;
     cout << "New " << savings->accountName << " total is $" << savings->total << endl;
+
+    //reset selected accounts
+    myChecking.resetSelectedAccount();
+    mySavings.resetSelectedAccount();
 }
 
 #endif
