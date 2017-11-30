@@ -129,11 +129,12 @@ void User::mainMenu()
         cout << "1. Select an Account" << endl;
         cout << "2. Create an Account" << endl;
         cout << "3. Edit User Information" << endl;
-        cout << "4. Log Out" << endl;
+        cout << "4. Request Total Balance" << endl;
+        cout << "5. Log Out" << endl;
 
         //validate input
         cin >> userSelection;
-        errorCatcher.boundsCheck(userSelection, 1, 4);
+        errorCatcher.boundsCheck(userSelection, 1, 5);
         errorCatcher.clearField();
 
         switch(userSelection)
@@ -206,11 +207,17 @@ void User::mainMenu()
             case 3:
                 editUserInfo();
                 break;
+            case 4:
+                //formatting
+                cout << fixed << setprecision(2);
+                //display total balance across acounts
+                cout << endl << "Your total balance for all accounts is: $" 
+                     << myChecking.getTotals() + mySavings.getTotals() << endl;
             default:
                 break;
         }
 
-    } while (userSelection != 4);
+    } while (userSelection != 5);
 }
 
 //edits user information
@@ -241,7 +248,6 @@ void User::editUserInfo()
             case 2:
                 //request and store new name
                 cout << "Enter First Name: ";
-                cin.ignore();
                 getline(cin, myInfo.first);
                 cout << "Enter Last Name: ";
                 getline(cin, myInfo.last);

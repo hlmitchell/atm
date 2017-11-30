@@ -1,5 +1,3 @@
-//not reading. potentially not writing
-
 #ifndef CHECKING_H
 #define CHECKING_H
 

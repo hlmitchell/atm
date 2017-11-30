@@ -37,6 +37,7 @@ class Accounts
         virtual ~Accounts();
         bool getHead();
         accountNode *getSelectedAccount();
+        double getTotals();
         void resetSelectedAccount();
 
         void createAccount();
@@ -102,6 +103,26 @@ bool Accounts::getHead()
 accountNode *Accounts::getSelectedAccount()
 {
     return selectedAccount;
+}
+
+//returns totals of all checking accounts
+double Accounts::getTotals()
+{
+    double totals = 0;
+    accountNode *nodePtr;
+    //initialize nodePtr to head of list
+    nodePtr = head;
+
+    //if no accounts exist return 0
+    if (nodePtr == NULL) return 0;
+
+    //add all account totals together
+    while (nodePtr)
+    {
+        totals += nodePtr->total;
+        nodePtr = nodePtr->next;
+    }
+    return totals;
 }
 
 //sets selected account to null
@@ -407,7 +428,7 @@ void Accounts::displayNodes()
     while (nodePtr)
     {
         //for merging accounts, the selected account name is not displayed
-        if (selectedAccount != NULL)//avoids segmentation fault
+        if (selectedAccount != NULL)
             if (selectedAccount->accountName == nodePtr->accountName)
             {
                 nodePtr = nodePtr->next;
