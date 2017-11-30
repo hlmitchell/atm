@@ -9,28 +9,31 @@
 #include <fstream>
 #include <string>
 #include <iomanip>
+#include <ctime>
 
 using namespace std;
 
 struct accountHistory
 {
-    string action;
-    double amount;
-    double total;
-    struct accountHistory *next;
+    string action;                  //action that occured
+    double amount;                  //amount of money moved
+    double total;                   //new account total after move
+    string date;                    //date and time of transaction
+    struct accountHistory *next;    //pointer to next accountHistory node
 };
 
 class History
 {
     protected:
         accountHistory *top;    //top of linked list stack of account history
+        time_t rawTime;         //time stamp holder
 
     public:
         History();
         ~History();
 
         void push(string, double, double);
-        void display();        
+        void display();
 };
 
 //constructor sets top to NULL
@@ -66,11 +69,15 @@ void History::push(string type, double num, double t)
 {
     accountHistory *newNode;    //pointer to new node
 
+    //get time
+    time (&rawTime);
+
     //allocate new node and store arguments there
     newNode = new accountHistory;
     newNode->action = type;
     newNode->amount = num;
     newNode->total = t;
+    newNode->date = ctime(&rawTime);;
 
     //if stack is empty, assign new node to top
     if (top == NULL)
@@ -109,7 +116,8 @@ void History::display()
         cout << fixed << setprecision(2);
         cout << endl << tempPtr->action;
         cout << " of $" << tempPtr->amount;
-        cout << " for new total of $" << tempPtr->total << endl;
+        cout << " for new total of $" << tempPtr->total;
+        cout << " on " << tempPtr->date << endl;
         //move to next node
         tempPtr = tempPtr->next;
     }
