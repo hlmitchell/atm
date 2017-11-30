@@ -1,3 +1,7 @@
+//Hannah Mitchell
+//CS M20
+//December 5th 2017
+
 #ifndef INPUT_H
 #define INPUT_H
 
