@@ -108,16 +108,19 @@ void History::display()
 
     //header message
     cout << endl << "***Transaction History***" << endl;
+    //item line description
+    cout << endl << left << setw(21) << "Description" << setw(14) << "Amount" << setw(23) << "Available Balance";
+    cout << setw(20) << "Posting Date" << endl;
 
     //if top isn't NULL, go through list and display accounts
     while (tempPtr)
     {
         //formatting
-        cout << fixed << setprecision(2);
-        cout << endl << tempPtr->action;
-        cout << " of $" << tempPtr->amount;
-        cout << " for new total of $" << tempPtr->total;
-        cout << " on " << tempPtr->date << endl;
+        cout << fixed << setprecision(2) << left;
+        cout << endl << setw(21) << tempPtr->action;
+        cout << setw(14) << tempPtr->amount;
+        cout << setw(23)<< tempPtr->total;
+        cout << setw(20) << tempPtr->date;
         //move to next node
         tempPtr = tempPtr->next;
     }
