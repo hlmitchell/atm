@@ -33,7 +33,7 @@ class User
         userInfo myInfo;        //instance of userInfo structure
 
         string fileName;        //user file name with '.txt'
-        fstream myFile;         //file
+        fstream myFile;         //user file and account names
 
         Checking myChecking;    //instance of Checking class
         Savings mySavings;      //instance of Savings class
