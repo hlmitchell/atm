@@ -11,6 +11,7 @@
 #include <iomanip>
 
 #include "input.h"
+#include "history.h"
 
 using namespace std;
 
@@ -18,6 +19,7 @@ using namespace std;
 struct accountNode {
     string accountName;
     double total;
+    History myHistory;              //instantiate history for the account
     struct accountNode *next;       //pointer to next node in list
 };
 
@@ -39,18 +41,23 @@ class Accounts
     public:
         Accounts();
         virtual ~Accounts();
+
+        //getters
         bool getHead();
         accountNode *getSelectedAccount();
         double getTotals();
         void resetSelectedAccount();
 
+        //account actions
         void createAccount();
         void selectAccount();
         void deleteAccount();
         void deposit();
         void merge();
         void sameTypeTransfer();
+        void sendToHistory(string, double, double);
 
+        //node actions
         void createNode();
         accountNode *findNode(string);
         void deleteNode(string);
@@ -185,6 +192,9 @@ void Accounts::createAccount()
     cout << endl << "Successfully created account " << newNode->accountName
          << " with current value of $" << fixed << setprecision(2)
          << newNode->total << "!" << endl;
+
+    //send to history
+    newNode->myHistory.push("Open Deposit", newNode->total, newNode->total);
 }
 
 //selects an account to edit 
@@ -243,6 +253,9 @@ void Accounts::deposit()
     //display deposit amount and new total
     cout << "Successfully deposited $" << withdep << endl;
     cout << "New " << selectedAccount->accountName << " total is $" << selectedAccount->total << endl;
+
+    //send to history
+    selectedAccount->myHistory.push("Deposit", withdep, selectedAccount->total);
 }
 
 //merge two like accounts
@@ -285,10 +298,16 @@ void Accounts::merge()
     //delete selected account and transfer funds to merger account
     if (confirm == 'Y')
     {
+        //transfer money to merger accounts
         merger->total += selectedAccount->total;
+        cout << "Merge Successful!" << endl;
+
+        //send to history
+        merger->myHistory.push("Merger Deposit", selectedAccount->total, merger->total);
+
+        //delete account
         deleteNode(selectedAccount->accountName);
         selectedAccount = NULL;
-        cout << "Merge Successful!" << endl;
     }
 }
 
@@ -340,6 +359,18 @@ void Accounts::sameTypeTransfer()
     cout << endl << "Successfully transfered $" << withdep << "!" << endl;
     cout << "New " << selectedAccount->accountName << " total is $" << selectedAccount->total << endl;
     cout << "New " << ptr->accountName << " total is $" << ptr->total << endl;
+
+    //send to histories
+    selectedAccount->myHistory.push("Transfer Withdrawal", withdep, selectedAccount->total);
+    ptr->myHistory.push("Transfer Deposit", withdep, ptr->total);
+
+}
+
+//sends to history from transfer handler of user class
+void Accounts::sendToHistory(string type, double num, double t)
+{
+    //send to history
+    selectedAccount->myHistory.push(type, num, t);
 }
 
 //creates a node

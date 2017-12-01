@@ -26,7 +26,6 @@ class Savings : public Accounts
         void displayAccounts();
         bool accountOptionsMenu();
         void transfer();
-
 };
 
 //empty constructor
@@ -66,12 +65,13 @@ bool Savings::accountOptionsMenu()
         cout << "1. Deposit" << endl;
         cout << "2. Merge Accounts" << endl;
         cout << "3. Transfer Money" << endl;
-        cout << "4. Delete Account" << endl;
-        cout << "5. Back" << endl;
+        cout << "4. Display Account History" << endl;
+        cout << "5. Delete Account" << endl;
+        cout << "6. Back" << endl;
 
         //validate input
         cin >> userSelection;
-        errorCatcher.boundsCheck(userSelection, 1, 5);
+        errorCatcher.boundsCheck(userSelection, 1, 6);
         errorCatcher.clearField();
 
         switch(userSelection)
@@ -92,6 +92,9 @@ bool Savings::accountOptionsMenu()
                 }
                 break;
             case 4:
+                selectedAccount->myHistory.display();
+                break;
+            case 5:
                 deleteAccount();
                 break;
             default:
@@ -100,9 +103,9 @@ bool Savings::accountOptionsMenu()
         }
 
         //if account is deleted or merged, exit this menu automatically
-        if (selectedAccount == NULL) userSelection = 5;
+        if (selectedAccount == NULL) userSelection = 6;
 
-    } while (userSelection != 5);
+    } while (userSelection != 6);
 
     //prevent transfer function activation in user.h
     return false;

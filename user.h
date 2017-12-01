@@ -309,6 +309,10 @@ void User::transferHandler(bool t)
         //ammend account totals
         checking->total -= num;
         savings->total += num;
+
+        //send to history
+        myChecking.sendToHistory("Transfer Withdrawal", num, checking->total);
+        mySavings.sendToHistory("Transfer Deposit", num, savings->total);
     }
 
      else if (t == false)
@@ -336,6 +340,10 @@ void User::transferHandler(bool t)
         //ammend account totals
         savings->total -= num;
         checking->total += num;
+
+        //send to history
+        myChecking.sendToHistory("Transfer Deposit", num, checking->total);
+        mySavings.sendToHistory("Transfer Withdrawal", num, savings->total);
     }
 
     //output success message and new totals for accounts
