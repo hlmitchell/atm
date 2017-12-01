@@ -21,7 +21,7 @@ class Savings : public Accounts
     public:
         Savings();
         ~Savings();
-        void setFileName(string);
+        void setFileNameSpecific(string, string);
 
         void displayAccounts();
         bool accountOptionsMenu();
@@ -37,12 +37,10 @@ Savings::~Savings()
 {}
 
 //sets file name
-void Savings::setFileName(string id)
+void Savings::setFileNameSpecific(string id, string file)
 {
-    accountFileName = id + "Savings.txt";
-    /*savingsFile.open(accountFileName.c_str(), ios::in);
-
-    if (savingsFile.fail()) return;*/
+    //create file name
+    selectedAccount->accountFileName = "S" + id + file + ".txt";
 }
 
 //displays account header

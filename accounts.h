@@ -17,6 +17,7 @@ using namespace std;
 
 //node for linked list of accounts
 struct accountNode {
+    string accountFileName;         //file name
     string accountName;
     double total;
     History myHistory;              //instantiate history for the account
@@ -26,7 +27,6 @@ struct accountNode {
 class Accounts
 {
     protected:
-        string accountFileName;     //file name
         Input errorCatcher;         //error catcher
 
         accountNode *head;              //head of node/beginning of list
@@ -42,6 +42,9 @@ class Accounts
         Accounts();
         virtual ~Accounts();
 
+        //setters
+        void setFileNameGeneral(string);
+
         //getters
         bool getHead();
         accountNode *getSelectedAccount();
@@ -49,7 +52,7 @@ class Accounts
         void resetSelectedAccount();
 
         //account actions
-        void createAccount();
+        void createAccount(string);
         void selectAccount();
         void deleteAccount();
         void deposit();
@@ -64,7 +67,7 @@ class Accounts
         void displayNodes();
 
         //pure virtual functions
-        virtual void setFileName(string) = 0;
+        virtual void setFileNameSpecific(string, string) = 0;
         virtual void displayAccounts() = 0;
         virtual bool accountOptionsMenu() = 0;
         virtual void transfer() = 0;
@@ -101,6 +104,19 @@ Accounts::~Accounts()
         nodePtr = nextNode;
     }
     selectedAccount = NULL;
+}
+
+void Accounts::setFileNameGeneral(string id)
+{
+    //eliminate spaces from account name and store in file var
+    string file;
+    string temp = selectedAccount->accountName;
+    for (int i = 0; i < temp.length(); i++)
+    {
+        if (temp[i] == ' ') continue;
+        file += temp;
+    }
+    setFileNameSpecific(id, file);
 }
 
 //returns true or false if the list has been created
@@ -144,7 +160,7 @@ void Accounts::resetSelectedAccount()
 }
 
 //creates a new account
-void Accounts::createAccount()
+void Accounts::createAccount(string id)
 {
     accountNode *newNode;
     string tempName;
@@ -195,6 +211,14 @@ void Accounts::createAccount()
 
     //send to history
     newNode->myHistory.push("Open Deposit", newNode->total, newNode->total);
+
+    //set to selected Account
+    selectedAccount = newNode;
+    //assign file name
+    setFileNameGeneral(id);
+
+    //go to menu
+    accountOptionsMenu();
 }
 
 //selects an account to edit 
