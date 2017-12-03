@@ -32,7 +32,7 @@ class User
 
         Input errorCatcher;     //catches user input errors
         userInfo myInfo;        //instance of userInfo structure
-        vector<string> accountData;  //list of all account names
+        vector<string> accountData;  //list of all account file names
 
 
         string fileName;        //user file name with '.txt'
@@ -121,10 +121,18 @@ User::User(string name, string pin)
     string temp;
     while (myFile >> temp)
     {
-        if (temp == "") continue;
         accountData.push_back(temp);
     }
 
+    //create nodes for existing accounts
+    for (int i = 0; i < accountData.size(); i++)
+    {
+        if (accountData[i][0] == 'C')
+            myChecking.createNode(accountData[i]);
+        else mySavings.createNode(accountData[i]);
+    }
+
+    //welcome message and main menu
     myFile.close();
     cout << endl << "Welcome Back " << myInfo.first << "!" << endl;
     mainMenu();
@@ -326,8 +334,8 @@ void User::transferHandler(bool t)
         savings->total += num;
 
         //send to history
-        myChecking.sendToHistory("Transfer Withdrawal", num, checking->total);
-        mySavings.sendToHistory("Transfer Deposit", num, savings->total);
+        myChecking.sendToHistory("Transfer Withdrawal", num, checking->total, "NULL");
+        mySavings.sendToHistory("Transfer Deposit", num, savings->total, "NULL");
     }
 
      else if (t == false)
@@ -357,8 +365,8 @@ void User::transferHandler(bool t)
         checking->total += num;
 
         //send to history
-        myChecking.sendToHistory("Transfer Deposit", num, checking->total);
-        mySavings.sendToHistory("Transfer Withdrawal", num, savings->total);
+        myChecking.sendToHistory("Transfer Deposit", num, checking->total, "NULL");
+        mySavings.sendToHistory("Transfer Withdrawal", num, savings->total, "NULL");
     }
 
     //output success message and new totals for accounts

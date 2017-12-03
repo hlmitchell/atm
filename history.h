@@ -32,7 +32,7 @@ class History
         History();
         ~History();
 
-        void push(string, double, double);
+        void push(string, double, double, string);
         void display();
 };
 
@@ -65,7 +65,7 @@ History::~History()
 }
 
 //pushes new history node onto top of stack
-void History::push(string type, double num, double t)
+void History::push(string type, double num, double t, string d)
 {
     accountHistory *newNode;    //pointer to new node
 
@@ -77,7 +77,9 @@ void History::push(string type, double num, double t)
     newNode->action = type;
     newNode->amount = num;
     newNode->total = t;
-    newNode->date = ctime(&rawTime);;
+    if (d != "NULL")
+        newNode->date = ctime(&rawTime);
+    else newNode->date = d;
 
     //if stack is empty, assign new node to top
     if (top == NULL)

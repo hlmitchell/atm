@@ -28,6 +28,7 @@ class Accounts
 {
     protected:
         Input errorCatcher;         //error catcher
+        fstream myFile;             //file for specific account
 
         accountNode *head;              //head of node/beginning of list
         accountNode *selectedAccount;   //current node/account
@@ -58,10 +59,10 @@ class Accounts
         void deposit();
         void merge();
         void sameTypeTransfer();
-        void sendToHistory(string, double, double);
+        void sendToHistory(string, double, double, string);
 
         //node actions
-        void createNode();
+        void createNode(string);
         accountNode *findNode(string);
         void deleteNode(string);
         void displayNodes();
@@ -193,11 +194,15 @@ void Accounts::createAccount(string id)
     }
 
     //create a new node in the list
-    createNode();
+    createNode("NULL");
     //assign the memory address to myNode
     newNode = findNode("");
     //assign name
     newNode->accountName = tempName;
+    //set to selected Account
+    selectedAccount = newNode;
+    //assign file name
+    setFileNameGeneral(id);
 
     //deposit money into the account
     cout << "How much money would you like to deposit (Enter 0 if none)? ";
@@ -210,12 +215,7 @@ void Accounts::createAccount(string id)
          << newNode->total << "!" << endl;
 
     //send to history
-    newNode->myHistory.push("Open Deposit", newNode->total, newNode->total);
-
-    //set to selected Account
-    selectedAccount = newNode;
-    //assign file name
-    setFileNameGeneral(id);
+    newNode->myHistory.push("Open Deposit", newNode->total, newNode->total, "NULL");
 
     //go to menu
     accountOptionsMenu();
@@ -279,7 +279,7 @@ void Accounts::deposit()
     cout << "New " << selectedAccount->accountName << " total is $" << selectedAccount->total << endl;
 
     //send to history
-    selectedAccount->myHistory.push("Deposit", withdep, selectedAccount->total);
+    selectedAccount->myHistory.push("Deposit", withdep, selectedAccount->total, "NULL");
 }
 
 //merge two like accounts
@@ -327,7 +327,7 @@ void Accounts::merge()
         cout << "Merge Successful!" << endl;
 
         //send to history
-        merger->myHistory.push("Merger Deposit", selectedAccount->total, merger->total);
+        merger->myHistory.push("Merger Deposit", selectedAccount->total, merger->total, "NULL");
 
         //delete account
         deleteNode(selectedAccount->accountName);
@@ -385,20 +385,20 @@ void Accounts::sameTypeTransfer()
     cout << "New " << ptr->accountName << " total is $" << ptr->total << endl;
 
     //send to histories
-    selectedAccount->myHistory.push("Transfer Withdrawal", withdep, selectedAccount->total);
-    ptr->myHistory.push("Transfer Deposit", withdep, ptr->total);
+    selectedAccount->myHistory.push("Transfer Withdrawal", withdep, selectedAccount->total, "NULL");
+    ptr->myHistory.push("Transfer Deposit", withdep, ptr->total, "NULL");
 
 }
 
 //sends to history from transfer handler of user class
-void Accounts::sendToHistory(string type, double num, double t)
+void Accounts::sendToHistory(string type, double num, double t, string d)
 {
     //send to history
-    selectedAccount->myHistory.push(type, num, t);
+    selectedAccount->myHistory.push(type, num, t, d);
 }
 
 //creates a node
-void Accounts::createNode()
+void Accounts::createNode(string fileName)
 {
     accountNode *newNode;
     accountNode *nodePtr;
@@ -406,6 +406,7 @@ void Accounts::createNode()
     //make a new node for the linked list and assign variable values
     newNode = new accountNode;
     newNode->accountName = "";
+    newNode->accountFileName = fileName;
     newNode->total = 0;
     newNode->next = NULL;
 
@@ -420,6 +421,32 @@ void Accounts::createNode()
         while (nodePtr->next) nodePtr = nodePtr->next;
         //insert newNode as the last node
         nodePtr->next = newNode;
+    }
+
+    //if file is being uploaded, assign variable names
+    if (newNode->accountFileName != "NULL")
+    {
+        myFile.open(newNode->accountFileName.c_str(), ios::in);
+        myFile >> newNode->accountName;
+        myFile >> newNode->total;
+
+        //temp variables for history
+        string type;        //type of transaction
+        double num;         //amount related to transaction
+        double t;           //new total
+        string d;           //date of transaction
+
+        //create linked list for history
+        while (myFile)
+        {
+            myFile >> type;
+            myFile >> num;
+            myFile >> t;
+            myFile >> d;
+            newNode->myHistory.push(type, num, t, d);
+        }
+
+        myFile.close();
     }
 }
 
