@@ -290,7 +290,7 @@ void Accounts::deleteAccount()
     //if yes
     if (confirm == 'Y')
     {
-        cout << "Account " << selectedAccount->accountName << " has been deleted!" << endl;;
+        cout << "Account " << selectedAccount->accountName << " has been deleted!" << endl;
         //delete node and set selected account to NULL
         deleteNode(selectedAccount->accountName);
         selectedAccount = NULL;
@@ -503,6 +503,9 @@ accountNode *Accounts::findNode(string name)
 //deletes a node
 void Accounts::deleteNode(string name)
 {
+    //delete file
+    remove(selectedAccount->accountFileName.c_str());
+    
     accountNode *nodePtr;
     accountNode *previousNode;
 
