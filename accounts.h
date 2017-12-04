@@ -210,6 +210,8 @@ void Accounts::createAccount(string id)
     selectedAccount = newNode;
     //assign file name
     setFileNameGeneral(id);
+    //reset
+    resetSelectedAccount();
 
     //deposit money into the account
     cout << "How much money would you like to deposit (Enter 0 if none)? ";
