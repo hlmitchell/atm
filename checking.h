@@ -37,7 +37,8 @@ Checking::Checking() : Accounts()
 
 //desctructor uploads file data
 Checking::~Checking()
-{}
+{
+}
 
 //sets file name
 void Checking::setFileNameSpecific(string id, string file)
@@ -149,7 +150,7 @@ void Checking::transfer()
 
     //checking vs savings
     if (userSelection == 1) sameTypeTransfer();
-    else if (userSelection == 2) crossTransfer = true; 
+    else if (userSelection == 2) crossTransfer = true;
 }
 
 #endif

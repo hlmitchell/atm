@@ -149,6 +149,10 @@ User::~User()
     myFile << myInfo.first << endl;
     myFile << myInfo.last << endl;
     myFile << myInfo.age << endl;
+
+    //upload file names
+    accountData.clear();
+
     //close
     myFile.close();
 }

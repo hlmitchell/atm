@@ -77,7 +77,7 @@ void History::push(string type, double num, double t, string d)
     newNode->action = type;
     newNode->amount = num;
     newNode->total = t;
-    if (d != "NULL")
+    if (d == "NULL")
         newNode->date = ctime(&rawTime);
     else newNode->date = d;
 

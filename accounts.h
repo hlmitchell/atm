@@ -18,8 +18,8 @@ using namespace std;
 //node for linked list of accounts
 struct accountNode {
     string accountFileName;         //file name
-    string accountName;
-    double total;
+    string accountName;             //account name
+    double total;                   //total money in account
     History myHistory;              //instantiate history for the account
     struct accountNode *next;       //pointer to next node in list
 };
@@ -48,6 +48,7 @@ class Accounts
 
         //getters
         bool getHead();
+        string getAccountFileName();
         accountNode *getSelectedAccount();
         double getTotals();
         void resetSelectedAccount();
@@ -125,6 +126,12 @@ bool Accounts::getHead()
 {
     if (head) return true;
     else return false;
+}
+
+//return account file name
+string Accounts::getAccountFileName()
+{
+    return "Hi";
 }
 
 //returns a selected account name
@@ -216,9 +223,6 @@ void Accounts::createAccount(string id)
 
     //send to history
     newNode->myHistory.push("Open Deposit", newNode->total, newNode->total, "NULL");
-
-    //go to menu
-    accountOptionsMenu();
 }
 
 //selects an account to edit 
