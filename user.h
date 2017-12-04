@@ -121,6 +121,7 @@ User::User(string name, string pin)
     string temp;
     while (myFile >> temp)
     {
+        if (temp == "NULL") continue;
         accountData.push_back(temp);
     }
 
@@ -150,8 +151,19 @@ User::~User()
     myFile << myInfo.last << endl;
     myFile << myInfo.age << endl;
 
-    //upload file names
+    //delete file names in vector
     accountData.clear();
+
+    //reaquire checking file names and fill vector
+    vector<string> temp;
+    temp = myChecking.getAccountFileNames();
+    for (int i = 0; i < temp.size(); i++) accountData.push_back(temp[i]);
+    //reaquire savings file names and fill vector
+    temp = mySavings.getAccountFileNames();
+    for (int i = 0; i < temp.size(); i++) accountData.push_back(temp[i]);
+
+    //add file names to user info file
+    for (int i = 0; i < accountData.size(); i++) myFile << accountData[i] << endl;
 
     //close
     myFile.close();

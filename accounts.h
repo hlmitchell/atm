@@ -9,6 +9,7 @@
 #include <fstream>
 #include <string>
 #include <iomanip>
+#include <vector>
 
 #include "input.h"
 #include "history.h"
@@ -48,7 +49,7 @@ class Accounts
 
         //getters
         bool getHead();
-        string getAccountFileName();
+        vector<string> getAccountFileNames();
         accountNode *getSelectedAccount();
         double getTotals();
         void resetSelectedAccount();
@@ -89,7 +90,21 @@ Accounts::Accounts()
 //deletes linked list
 Accounts::~Accounts()
 {
+    //for uploading the files
     accountNode *nodePtr;
+    nodePtr = head;
+    
+    //create file for each account
+    while (nodePtr)
+    {
+        myFile.open(nodePtr->accountFileName.c_str(), ios::out);
+        myFile << nodePtr->accountName << endl;
+        myFile << nodePtr->total;
+        myFile.close();
+        nodePtr = nodePtr->next;
+    }
+
+    //for deleting the linked list
     accountNode *nextNode;
 
     //position nodePtr at head
@@ -116,7 +131,7 @@ void Accounts::setFileNameGeneral(string id)
     for (int i = 0; i < temp.length(); i++)
     {
         if (temp[i] == ' ') continue;
-        file += temp;
+        file += temp[i];
     }
     setFileNameSpecific(id, file);
 }
@@ -129,9 +144,21 @@ bool Accounts::getHead()
 }
 
 //return account file name
-string Accounts::getAccountFileName()
+vector<string> Accounts::getAccountFileNames()
 {
-    return "Hi";
+    vector<string> temp;      //temp vector to return file names
+    accountNode *nodePtr;     //temp pointer to cycle through nodes
+    nodePtr = head;           //assign temp pointer to head of list
+
+    //add all file names to temp vector
+    while (nodePtr)
+    {
+        temp.push_back(nodePtr->accountFileName);
+        nodePtr = nodePtr->next;
+    }
+
+    //return temp vector
+    return temp;
 }
 
 //returns a selected account name
