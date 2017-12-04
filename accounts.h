@@ -99,14 +99,15 @@ Accounts::~Accounts()
     {
         myFile.open(nodePtr->accountFileName.c_str(), ios::out);
         myFile << nodePtr->accountName << endl;
-        myFile << nodePtr->total;
+        myFile << nodePtr->total << endl;
+        //add history to file
+        nodePtr->myHistory.uploadHistory(myFile);
         myFile.close();
         nodePtr = nodePtr->next;
     }
 
     //for deleting the linked list
     accountNode *nextNode;
-
     //position nodePtr at head
     nodePtr = head;
 
@@ -456,28 +457,15 @@ void Accounts::createNode(string fileName)
         nodePtr->next = newNode;
     }
 
-    //if file is being uploaded, assign variable names
+    //if file is being dowloaded, assign variable names
     if (newNode->accountFileName != "NULL")
     {
         myFile.open(newNode->accountFileName.c_str(), ios::in);
         myFile >> newNode->accountName;
         myFile >> newNode->total;
 
-        //temp variables for history
-        string type;        //type of transaction
-        double num;         //amount related to transaction
-        double t;           //new total
-        string d;           //date of transaction
-
-        //create linked list for history
-        while (myFile)
-        {
-            myFile >> type;
-            myFile >> num;
-            myFile >> t;
-            myFile >> d;
-            newNode->myHistory.push(type, num, t, d);
-        }
+        //download history
+        newNode->myHistory.downloadHistory(myFile);
 
         myFile.close();
     }

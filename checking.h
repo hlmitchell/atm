@@ -138,7 +138,7 @@ void Checking::withdraw()
     }
 
     //send to history
-    selectedAccount->myHistory.push("Withdrawal of", withdep, selectedAccount->total, "NULL");
+    selectedAccount->myHistory.push("Withdrawal", withdep, selectedAccount->total, "NULL");
 }
 
 //verify if transfer is a checking or savings

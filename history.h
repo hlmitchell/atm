@@ -10,6 +10,7 @@
 #include <string>
 #include <iomanip>
 #include <ctime>
+#include <vector>
 
 using namespace std;
 
@@ -34,6 +35,8 @@ class History
 
         void push(string, double, double, string);
         void display();
+        void uploadHistory(fstream &);
+        void downloadHistory(fstream &);
 };
 
 //constructor sets top to NULL
@@ -78,7 +81,11 @@ void History::push(string type, double num, double t, string d)
     newNode->amount = num;
     newNode->total = t;
     if (d == "NULL")
+    {
         newNode->date = ctime(&rawTime);
+        //remove '\n' from end
+        newNode->date.pop_back();
+    }
     else newNode->date = d;
 
     //if stack is empty, assign new node to top
@@ -122,7 +129,7 @@ void History::display()
         cout << endl << setw(21) << tempPtr->action;
         cout << setw(14) << tempPtr->amount;
         cout << setw(23)<< tempPtr->total;
-        cout << setw(20) << tempPtr->date;
+        cout << setw(20) << tempPtr->date << endl;
         //move to next node
         tempPtr = tempPtr->next;
     }
@@ -130,6 +137,64 @@ void History::display()
     //footer message
     cout << endl << "***End Transaction History***" << endl;
     return;
+}
+
+void History::uploadHistory(fstream &file)
+{
+    accountHistory *nodePtr;
+    accountHistory *prevNode;
+
+    //set nodePtr to end of list
+    nodePtr = top;
+    while(nodePtr->next) nodePtr = nodePtr->next;
+
+    //upload files in reverse order
+    do
+    {
+        //upload files
+        file << nodePtr->action << endl;
+        file << nodePtr->amount << endl;
+        file << nodePtr->total << endl;
+        file << nodePtr->date << endl;
+
+        //set prevNode to node before nodePtr
+        prevNode = top;
+        while (prevNode->next != nodePtr) prevNode = prevNode->next;
+
+        //set nodePtr to previous node then start again
+        nodePtr = prevNode;
+    } while (nodePtr != top);
+
+    //upload top files
+    file << top->action << endl;
+    file << top->amount << endl;
+    file << top->total << endl;
+    file << top->date << endl;
+}
+
+void History::downloadHistory(fstream &file)
+{
+    //temp vars
+    string type, date;
+    double num, tot;
+
+    //extract data and place in list in correct order
+
+    /*fucked
+    while (file)
+    {
+        getline(file, type);
+        getline(file, type);
+        file >> num;
+        file >> tot;
+        getline(file, date);
+        getline(file, type);
+
+        push(type, num, tot, date);
+    }
+
+    //delete weird extra node
+    top = top->next;*/
 }
 
 #endif
