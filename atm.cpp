@@ -45,11 +45,9 @@ int main()
                 //request user ID
                 cout << endl << "Please Enter User ID: ";
                 getline(cin, id);
-
                 //checks to see if user file exists
                 if (!checkID(id, clientFile))
                     {break;}
-
                 //request user PIN
                 cout << "Please Enter Pin: ";
                 getline(cin, pin);
