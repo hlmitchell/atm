@@ -90,7 +90,7 @@ void Checking::accountOptionsMenu()
                 break;
             case 4:
                 transfer();
-                //activate transfer function in user.h and reset crossTransfer
+                //activate transfer function in user.h
                 if (crossTransfer == true) return;
                 break;
             case 5:
