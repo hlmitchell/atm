@@ -332,6 +332,7 @@ void User::transferHandler(bool t)
         if (!mySavings.getHead())
         {
             cout << endl << "You have not created a savings account yet!" << endl;
+            myChecking.resetSelectedAccount();
             return;
         }
         //display and select savings accounts
@@ -363,6 +364,7 @@ void User::transferHandler(bool t)
         if (!myChecking.getHead())
         {
             cout << endl << "You have not created a savings account yet!" << endl;
+            mySavings.resetSelectedAccount();
             return;
         }
         //display and select savings accounts
