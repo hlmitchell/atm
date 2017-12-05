@@ -250,7 +250,6 @@ void User::mainMenu()
                 //reset transfer variable
                 transfer = false;
                 break;
-
             case 2:
                 //Menu requesting checking or savings account
                 cout << endl << "Which type of account would you like to create?";
@@ -273,7 +272,6 @@ void User::mainMenu()
             default:
                 break;
         }
-
     } while (userSelection != 5);
 }
 

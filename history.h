@@ -142,11 +142,16 @@ void History::display()
 void History::uploadHistory(fstream &file)
 {
     accountHistory *nodePtr;
+    accountHistory *intermediate;
     accountHistory *prevNode;
 
     //set nodePtr to end of list
     nodePtr = top;
-    while(nodePtr->next) nodePtr = nodePtr->next;
+    while(nodePtr) 
+    {
+        if (nodePtr->next == NULL) break;
+        nodePtr = nodePtr->next;
+    }
 
     //upload files in reverse order
     do
@@ -159,7 +164,11 @@ void History::uploadHistory(fstream &file)
 
         //set prevNode to node before nodePtr
         prevNode = top;
-        while (prevNode->next != nodePtr) prevNode = prevNode->next;
+        while (prevNode)
+        {
+            if (prevNode->next == nodePtr || prevNode->next == NULL) break;
+            prevNode = prevNode->next;
+        }
 
         //set nodePtr to previous node then start again
         nodePtr = prevNode;
