@@ -37,7 +37,8 @@ Checking::Checking() : Accounts()
 
 //desctructor uploads file data
 Checking::~Checking()
-{}
+{
+}
 
 //sets file name
 void Checking::setFileNameSpecific(string id, string file)

@@ -141,7 +141,7 @@ User::User(string name, string pin)
 
 //uploads user contents to file
 User::~User()
-{    
+{
     //reopen file in binary
     myFile.open(fileName.c_str(), ios::out);
     //write to file
@@ -259,6 +259,7 @@ void User::mainMenu()
             default:
                 break;
         }
+
     } while (userSelection != 5);
 }
 
