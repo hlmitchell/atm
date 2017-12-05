@@ -34,8 +34,7 @@ Savings::Savings() : Accounts()
 
 //destructor uploads file data
 Savings::~Savings()
-{
-}
+{}
 
 //sets file name
 void Savings::setFileNameSpecific(string id, string file)
