@@ -21,12 +21,11 @@ class Savings : public Accounts
     public:
         Savings();
         ~Savings();
-        void setFileName(string);
+        void setFileNameSpecific(string, string);
 
         void displayAccounts();
         bool accountOptionsMenu();
         void transfer();
-
 };
 
 //empty constructor
@@ -35,15 +34,14 @@ Savings::Savings() : Accounts()
 
 //destructor uploads file data
 Savings::~Savings()
-{}
+{
+}
 
 //sets file name
-void Savings::setFileName(string id)
+void Savings::setFileNameSpecific(string id, string file)
 {
-    accountFileName = id + "Savings.txt";
-    /*savingsFile.open(accountFileName.c_str(), ios::in);
-
-    if (savingsFile.fail()) return;*/
+    //create file name
+    selectedAccount->accountFileName = "S" + id + file + ".txt";
 }
 
 //displays account header
@@ -66,12 +64,13 @@ bool Savings::accountOptionsMenu()
         cout << "1. Deposit" << endl;
         cout << "2. Merge Accounts" << endl;
         cout << "3. Transfer Money" << endl;
-        cout << "4. Delete Account" << endl;
-        cout << "5. Back" << endl;
+        cout << "4. Display Account History" << endl;
+        cout << "5. Delete Account" << endl;
+        cout << "6. Back" << endl;
 
         //validate input
         cin >> userSelection;
-        errorCatcher.boundsCheck(userSelection, 1, 5);
+        errorCatcher.boundsCheck(userSelection, 1, 6);
         errorCatcher.clearField();
 
         switch(userSelection)
@@ -92,6 +91,9 @@ bool Savings::accountOptionsMenu()
                 }
                 break;
             case 4:
+                selectedAccount->myHistory.display();
+                break;
+            case 5:
                 deleteAccount();
                 break;
             default:
@@ -100,9 +102,9 @@ bool Savings::accountOptionsMenu()
         }
 
         //if account is deleted or merged, exit this menu automatically
-        if (selectedAccount == NULL) userSelection = 5;
+        if (selectedAccount == NULL) userSelection = 6;
 
-    } while (userSelection != 5);
+    } while (userSelection != 6);
 
     //prevent transfer function activation in user.h
     return false;

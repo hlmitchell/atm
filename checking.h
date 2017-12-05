@@ -22,7 +22,7 @@ class Checking : public Accounts
     public:
         Checking();
         ~Checking();
-        void setFileName(string);
+        void setFileNameSpecific(string, string);
 
         void displayAccounts();
         bool accountOptionsMenu();
@@ -38,26 +38,13 @@ Checking::Checking() : Accounts()
 //desctructor uploads file data
 Checking::~Checking()
 {
-    /*checkingFile.open(accountFileName.c_str(), ios::out|ios::binary);
-
-    checkingFile.write(reinterpret_cast<char *>(head), sizeof(head));
-    
-    checkingFile.close();*/
 }
 
 //sets file name
-void Checking::setFileName(string id)
+void Checking::setFileNameSpecific(string id, string file)
 {
-    accountFileName = id + "Checking.txt";
-    /*checkingFile.open(accountFileName.c_str(), ios::in|ios::binary);
-
-    if (checkingFile.fail()) return;
-    else
-    {
-        checkingFile.read(reinterpret_cast<char *>(head), sizeof(head));
-        checkingFile.close();
-    }*/
-
+    //create file name
+    selectedAccount->accountFileName = "C" + id + file + ".txt";
 }
 
 //displays account header
@@ -81,12 +68,13 @@ bool Checking::accountOptionsMenu()
         cout << "2. Deposit" << endl;
         cout << "3. Merge Accounts" << endl;
         cout << "4. Transfer Money" << endl;
-        cout << "5. Delete Account" << endl;
-        cout << "6. Back" << endl;
+        cout << "5. Display Account History" << endl;
+        cout << "6. Delete Account" << endl;
+        cout << "7. Back" << endl;
 
         //validate input
         cin >> userSelection;
-        errorCatcher.boundsCheck(userSelection, 1, 6);
+        errorCatcher.boundsCheck(userSelection, 1, 7);
         errorCatcher.clearField();
 
         switch(userSelection)
@@ -110,17 +98,19 @@ bool Checking::accountOptionsMenu()
                 }
                 break;
             case 5:
-                deleteAccount();
+                selectedAccount->myHistory.display();
                 break;
+            case 6:
+                deleteAccount();
             default:
                 selectedAccount = NULL;
                 break;
         }
         
         //if account is deleted or merged, exit this menu automatically
-        if (selectedAccount == NULL) userSelection = 6;
+        if (selectedAccount == NULL) userSelection = 7;
 
-    } while (userSelection != 6);
+    } while (userSelection != 7);
 
     //prevent transfer function activation in user.h
     return false;
@@ -146,6 +136,9 @@ void Checking::withdraw()
         cout << "Successfully withdrew $" << withdep << endl;
         cout << "New " << selectedAccount->accountName << " total is $" << selectedAccount->total << endl;
     }
+
+    //send to history
+    selectedAccount->myHistory.push("Withdrawal", withdep, selectedAccount->total, "NULL");
 }
 
 //verify if transfer is a checking or savings
@@ -157,7 +150,7 @@ void Checking::transfer()
 
     //checking vs savings
     if (userSelection == 1) sameTypeTransfer();
-    else if (userSelection == 2) crossTransfer = true; 
+    else if (userSelection == 2) crossTransfer = true;
 }
 
 #endif
