@@ -207,8 +207,11 @@ void User::mainMenu()
                         myChecking.displayAccounts();       
                         myChecking.selectAccount();
 
+                        //display further menu
+                        myChecking.accountOptionsMenu();
+
                         //check for transfer selection in account options menu
-                        transfer = myChecking.accountOptionsMenu();
+                        transfer = myChecking.getCrossTransfer();
                         if (transfer == true) transferHandler(true);
                     }
                 }
@@ -227,8 +230,11 @@ void User::mainMenu()
                         mySavings.displayAccounts();
                         mySavings.selectAccount();
 
+                        //display further menu
+                        mySavings.accountOptionsMenu();
+
                         //check for transfer selection in account options menu
-                        transfer = mySavings.accountOptionsMenu();
+                        transfer = mySavings.getCrossTransfer();
                         if (transfer == true) transferHandler(false);                  
                     }
                 }
@@ -328,6 +334,9 @@ void User::transferHandler(bool t)
         //establish checking account
         checking = myChecking.getSelectedAccount();
 
+        //reset crossTransfer var
+        myChecking.resetCrossTransfer();
+
         //check to see if savings accounts exist
         if (!mySavings.getHead())
         {
@@ -359,6 +368,9 @@ void User::transferHandler(bool t)
     {
         //establish checking account
         savings = mySavings.getSelectedAccount();
+
+        //reset crossTransfer var
+        mySavings.resetCrossTransfer();
 
         //check to see if savings accounts exist
         if (!myChecking.getHead())

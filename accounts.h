@@ -47,12 +47,14 @@ class Accounts
         //setters
         void setFileNameGeneral(string);
         void resetSelectedAccount();
+        void resetCrossTransfer();
 
         //getters
         bool getHead();
         vector<string> getAccountFileNames();
         accountNode *getSelectedAccount();
         double getTotals();
+        bool getCrossTransfer();
 
         //account actions
         void createAccount(string);
@@ -72,7 +74,7 @@ class Accounts
         //pure virtual functions
         virtual void setFileNameSpecific(string, string) = 0;
         virtual void displayAccounts() = 0;
-        virtual bool accountOptionsMenu() = 0;
+        virtual void accountOptionsMenu() = 0;
         virtual void transfer() = 0;
 };
 
@@ -144,6 +146,12 @@ void Accounts::resetSelectedAccount()
     activeAccount = "";
 }
 
+//reset cross transfer bool to false
+void Accounts::resetCrossTransfer()
+{
+    crossTransfer = false;
+}
+
 //returns true or false if the list has been created
 bool Accounts::getHead()
 {
@@ -193,6 +201,13 @@ double Accounts::getTotals()
         nodePtr = nodePtr->next;
     }
     return totals;
+}
+
+
+//return cross Transfer bool
+bool Accounts::getCrossTransfer()
+{
+    return crossTransfer;
 }
 
 //creates a new account

@@ -24,7 +24,7 @@ class Savings : public Accounts
         void setFileNameSpecific(string, string);
 
         void displayAccounts();
-        bool accountOptionsMenu();
+        void accountOptionsMenu();
         void transfer();
 };
 
@@ -52,7 +52,7 @@ void Savings::displayAccounts()
 }
 
 //displays savings menu and switch
-bool Savings::accountOptionsMenu()
+void Savings::accountOptionsMenu()
 {   
     do {
 
@@ -84,11 +84,7 @@ bool Savings::accountOptionsMenu()
             case 3:
                 transfer();
                 //activate transfer function in user.h
-                if (crossTransfer == true) 
-                {
-                    crossTransfer = false;
-                    return true;
-                }
+                if (crossTransfer == true) return;
                 break;
             case 4:
                 selectedAccount->myHistory.display();
@@ -105,10 +101,6 @@ bool Savings::accountOptionsMenu()
         if (selectedAccount == NULL) userSelection = 6;
 
     } while (userSelection != 6);
-
-    //prevent transfer function activation in user.h
-    return false;
-
 }
 
 //validates if transfer is savings or savings
