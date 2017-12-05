@@ -21,6 +21,7 @@ class Checking : public Accounts
 
     public:
         Checking();
+        ~Checking();
         void setFileNameSpecific(string, string);
 
         void displayAccounts();
@@ -33,6 +34,11 @@ class Checking : public Accounts
 //empty constructor
 Checking::Checking() : Accounts()
 {}
+
+//desctructor uploads file data
+Checking::~Checking()
+{
+}
 
 //sets file name
 void Checking::setFileNameSpecific(string id, string file)
