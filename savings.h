@@ -20,7 +20,6 @@ class Savings : public Accounts
         fstream savingsFile;    //savings file
     public:
         Savings();
-        ~Savings();
         void setFileNameSpecific(string, string);
 
         void displayAccounts();
@@ -31,11 +30,6 @@ class Savings : public Accounts
 //empty constructor
 Savings::Savings() : Accounts()
 {}
-
-//destructor uploads file data
-Savings::~Savings()
-{
-}
 
 //sets file name
 void Savings::setFileNameSpecific(string id, string file)
