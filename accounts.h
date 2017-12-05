@@ -46,13 +46,13 @@ class Accounts
 
         //setters
         void setFileNameGeneral(string);
+        void resetSelectedAccount();
 
         //getters
         bool getHead();
         vector<string> getAccountFileNames();
         accountNode *getSelectedAccount();
         double getTotals();
-        void resetSelectedAccount();
 
         //account actions
         void createAccount(string);
@@ -137,6 +137,13 @@ void Accounts::setFileNameGeneral(string id)
     setFileNameSpecific(id, file);
 }
 
+//sets selected account to null
+void Accounts::resetSelectedAccount()
+{
+    selectedAccount = NULL;
+    activeAccount = "";
+}
+
 //returns true or false if the list has been created
 bool Accounts::getHead()
 {
@@ -186,13 +193,6 @@ double Accounts::getTotals()
         nodePtr = nodePtr->next;
     }
     return totals;
-}
-
-//sets selected account to null
-void Accounts::resetSelectedAccount()
-{
-    selectedAccount = NULL;
-    activeAccount = "";
 }
 
 //creates a new account
