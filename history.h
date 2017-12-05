@@ -175,26 +175,33 @@ void History::uploadHistory(fstream &file)
 void History::downloadHistory(fstream &file)
 {
     //temp vars
-    string type, date;
+    string type, date, dummy;
     double num, tot;
 
-    //extract data and place in list in correct order
+    //extract first history which has an extra dummy variable
+    getline(file, dummy);
+    getline(file, type);
+    file >> num;
+    file >> tot;
+    getline(file, dummy);
+    getline(file, date);
 
-    /*fucked
+    push(type, num, tot, date);
+
+    //extract rest of data and place in list in correct order
     while (file)
     {
         getline(file, type);
-        getline(file, type);
         file >> num;
         file >> tot;
+        getline(file, dummy);
         getline(file, date);
-        getline(file, type);
 
         push(type, num, tot, date);
     }
 
     //delete weird extra node
-    top = top->next;*/
+    top = top->next;
 }
 
 #endif
