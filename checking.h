@@ -25,7 +25,7 @@ class Checking : public Accounts
         void setFileNameSpecific(string, string);
 
         void displayAccounts();
-        bool accountOptionsMenu();
+        void accountOptionsMenu();
         void withdraw();
         void transfer();
         
@@ -56,7 +56,7 @@ void Checking::displayAccounts()
 }
 
 //displays account options menu and switch
-bool Checking::accountOptionsMenu()
+void Checking::accountOptionsMenu()
 {   
     do {
         cout << endl << "Current Account: " << selectedAccount->accountName << endl;
@@ -90,12 +90,8 @@ bool Checking::accountOptionsMenu()
                 break;
             case 4:
                 transfer();
-                //activate transfer function in user.h and reset crossTransfer
-                if (crossTransfer == true) 
-                {
-                    crossTransfer = false;
-                    return true;
-                }
+                //activate transfer function in user.h
+                if (crossTransfer == true) return;
                 break;
             case 5:
                 selectedAccount->myHistory.display();
@@ -111,9 +107,6 @@ bool Checking::accountOptionsMenu()
         if (selectedAccount == NULL) userSelection = 7;
 
     } while (userSelection != 7);
-
-    //prevent transfer function activation in user.h
-    return false;
 }
 
 //withdraw money

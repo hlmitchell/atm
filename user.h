@@ -207,9 +207,16 @@ void User::mainMenu()
                         myChecking.displayAccounts();       
                         myChecking.selectAccount();
 
+                        do {    //loop allows return to account options menu if cross type transfer occurs
+
+                        //display further menu
+                        myChecking.accountOptionsMenu();
+                            
                         //check for transfer selection in account options menu
-                        transfer = myChecking.accountOptionsMenu();
+                        transfer = myChecking.getCrossTransfer();
                         if (transfer == true) transferHandler(true);
+
+                        } while (transfer == true);
                     }
                 }
                 //check for existing savings accounts
@@ -227,9 +234,16 @@ void User::mainMenu()
                         mySavings.displayAccounts();
                         mySavings.selectAccount();
 
+                        do {    //loop allows return to account options menu if cross type transfer occurs
+
+                        //display further menu
+                        mySavings.accountOptionsMenu();
+
                         //check for transfer selection in account options menu
-                        transfer = mySavings.accountOptionsMenu();
-                        if (transfer == true) transferHandler(false);                  
+                        transfer = mySavings.getCrossTransfer();
+                        if (transfer == true) transferHandler(false); 
+
+                        } while (transfer == true);                 
                     }
                 }
 
@@ -328,11 +342,13 @@ void User::transferHandler(bool t)
         //establish checking account
         checking = myChecking.getSelectedAccount();
 
+        //reset crossTransfer var
+        myChecking.resetCrossTransfer();
+
         //check to see if savings accounts exist
         if (!mySavings.getHead())
         {
             cout << endl << "You have not created a savings account yet!" << endl;
-            myChecking.resetSelectedAccount();
             return;
         }
         //display and select savings accounts
@@ -353,6 +369,9 @@ void User::transferHandler(bool t)
         //send to history
         myChecking.sendToHistory("Transfer Withdrawal", num, checking->total, "NULL");
         mySavings.sendToHistory("Transfer Deposit", num, savings->total, "NULL");
+
+        //reset selected accounts
+        mySavings.resetSelectedAccount();
     }
 
      else if (t == false)
@@ -360,11 +379,13 @@ void User::transferHandler(bool t)
         //establish checking account
         savings = mySavings.getSelectedAccount();
 
+        //reset crossTransfer var
+        mySavings.resetCrossTransfer();
+
         //check to see if savings accounts exist
         if (!myChecking.getHead())
         {
             cout << endl << "You have not created a savings account yet!" << endl;
-            mySavings.resetSelectedAccount();
             return;
         }
         //display and select savings accounts
@@ -385,16 +406,15 @@ void User::transferHandler(bool t)
         //send to history
         myChecking.sendToHistory("Transfer Deposit", num, checking->total, "NULL");
         mySavings.sendToHistory("Transfer Withdrawal", num, savings->total, "NULL");
+
+        //reset selected accounts
+        myChecking.resetSelectedAccount();
     }
 
     //output success message and new totals for accounts
     cout << endl << "Successfully transfered $" << num << "!" << endl;
     cout << "New " << checking->accountName << " total is $" << checking->total << endl;
     cout << "New " << savings->accountName << " total is $" << savings->total << endl;
-
-    //reset selected accounts
-    myChecking.resetSelectedAccount();
-    mySavings.resetSelectedAccount();
 }
 
 #endif
