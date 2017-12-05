@@ -9,6 +9,7 @@
 #include <fstream>
 #include <string>
 #include <iomanip>
+#include <vector>
 
 #include "input.h"
 #include "history.h"
@@ -17,8 +18,9 @@ using namespace std;
 
 //node for linked list of accounts
 struct accountNode {
-    string accountName;
-    double total;
+    string accountFileName;         //file name
+    string accountName;             //account name
+    double total;                   //total money in account
     History myHistory;              //instantiate history for the account
     struct accountNode *next;       //pointer to next node in list
 };
@@ -26,8 +28,8 @@ struct accountNode {
 class Accounts
 {
     protected:
-        string accountFileName;     //file name
         Input errorCatcher;         //error catcher
+        fstream myFile;             //file for specific account
 
         accountNode *head;              //head of node/beginning of list
         accountNode *selectedAccount;   //current node/account
@@ -42,29 +44,33 @@ class Accounts
         Accounts();
         virtual ~Accounts();
 
+        //setters
+        void setFileNameGeneral(string);
+
         //getters
         bool getHead();
+        vector<string> getAccountFileNames();
         accountNode *getSelectedAccount();
         double getTotals();
         void resetSelectedAccount();
 
         //account actions
-        void createAccount();
+        void createAccount(string);
         void selectAccount();
         void deleteAccount();
         void deposit();
         void merge();
         void sameTypeTransfer();
-        void sendToHistory(string, double, double);
+        void sendToHistory(string, double, double, string);
 
         //node actions
-        void createNode();
+        void createNode(string);
         accountNode *findNode(string);
         void deleteNode(string);
         void displayNodes();
 
         //pure virtual functions
-        virtual void setFileName(string) = 0;
+        virtual void setFileNameSpecific(string, string) = 0;
         virtual void displayAccounts() = 0;
         virtual bool accountOptionsMenu() = 0;
         virtual void transfer() = 0;
@@ -84,9 +90,24 @@ Accounts::Accounts()
 //deletes linked list
 Accounts::~Accounts()
 {
+    //for uploading the files
     accountNode *nodePtr;
-    accountNode *nextNode;
+    nodePtr = head;
+    
+    //create file for each account
+    while (nodePtr)
+    {
+        myFile.open(nodePtr->accountFileName.c_str(), ios::out);
+        myFile << nodePtr->accountName << endl;
+        myFile << nodePtr->total << endl;
+        //add history to file
+        nodePtr->myHistory.uploadHistory(myFile);
+        myFile.close();
+        nodePtr = nodePtr->next;
+    }
 
+    //for deleting the linked list
+    accountNode *nextNode;
     //position nodePtr at head
     nodePtr = head;
 
@@ -103,11 +124,42 @@ Accounts::~Accounts()
     selectedAccount = NULL;
 }
 
+void Accounts::setFileNameGeneral(string id)
+{
+    //eliminate spaces from account name and store in file var
+    string file;
+    string temp = selectedAccount->accountName;
+    for (int i = 0; i < temp.length(); i++)
+    {
+        if (temp[i] == ' ') continue;
+        file += temp[i];
+    }
+    setFileNameSpecific(id, file);
+}
+
 //returns true or false if the list has been created
 bool Accounts::getHead()
 {
     if (head) return true;
     else return false;
+}
+
+//return account file name
+vector<string> Accounts::getAccountFileNames()
+{
+    vector<string> temp;      //temp vector to return file names
+    accountNode *nodePtr;     //temp pointer to cycle through nodes
+    nodePtr = head;           //assign temp pointer to head of list
+
+    //add all file names to temp vector
+    while (nodePtr)
+    {
+        temp.push_back(nodePtr->accountFileName);
+        nodePtr = nodePtr->next;
+    }
+
+    //return temp vector
+    return temp;
 }
 
 //returns a selected account name
@@ -144,7 +196,7 @@ void Accounts::resetSelectedAccount()
 }
 
 //creates a new account
-void Accounts::createAccount()
+void Accounts::createAccount(string id)
 {
     accountNode *newNode;
     string tempName;
@@ -177,11 +229,17 @@ void Accounts::createAccount()
     }
 
     //create a new node in the list
-    createNode();
+    createNode("NULL");
     //assign the memory address to myNode
     newNode = findNode("");
     //assign name
     newNode->accountName = tempName;
+    //set to selected Account
+    selectedAccount = newNode;
+    //assign file name
+    setFileNameGeneral(id);
+    //reset
+    resetSelectedAccount();
 
     //deposit money into the account
     cout << "How much money would you like to deposit (Enter 0 if none)? ";
@@ -194,7 +252,7 @@ void Accounts::createAccount()
          << newNode->total << "!" << endl;
 
     //send to history
-    newNode->myHistory.push("Open Deposit", newNode->total, newNode->total);
+    newNode->myHistory.push("Open Deposit", newNode->total, newNode->total, "NULL");
 }
 
 //selects an account to edit 
@@ -233,7 +291,7 @@ void Accounts::deleteAccount()
     //if yes
     if (confirm == 'Y')
     {
-        cout << "Account " << selectedAccount->accountName << " has been deleted!" << endl;;
+        cout << "Account " << selectedAccount->accountName << " has been deleted!" << endl;
         //delete node and set selected account to NULL
         deleteNode(selectedAccount->accountName);
         selectedAccount = NULL;
@@ -255,7 +313,7 @@ void Accounts::deposit()
     cout << "New " << selectedAccount->accountName << " total is $" << selectedAccount->total << endl;
 
     //send to history
-    selectedAccount->myHistory.push("Deposit", withdep, selectedAccount->total);
+    selectedAccount->myHistory.push("Deposit", withdep, selectedAccount->total, "NULL");
 }
 
 //merge two like accounts
@@ -303,7 +361,7 @@ void Accounts::merge()
         cout << "Merge Successful!" << endl;
 
         //send to history
-        merger->myHistory.push("Merger Deposit", selectedAccount->total, merger->total);
+        merger->myHistory.push("Merger Deposit", selectedAccount->total, merger->total, "NULL");
 
         //delete account
         deleteNode(selectedAccount->accountName);
@@ -361,20 +419,20 @@ void Accounts::sameTypeTransfer()
     cout << "New " << ptr->accountName << " total is $" << ptr->total << endl;
 
     //send to histories
-    selectedAccount->myHistory.push("Transfer Withdrawal", withdep, selectedAccount->total);
-    ptr->myHistory.push("Transfer Deposit", withdep, ptr->total);
+    selectedAccount->myHistory.push("Transfer Withdrawal", withdep, selectedAccount->total, "NULL");
+    ptr->myHistory.push("Transfer Deposit", withdep, ptr->total, "NULL");
 
 }
 
 //sends to history from transfer handler of user class
-void Accounts::sendToHistory(string type, double num, double t)
+void Accounts::sendToHistory(string type, double num, double t, string d)
 {
     //send to history
-    selectedAccount->myHistory.push(type, num, t);
+    selectedAccount->myHistory.push(type, num, t, d);
 }
 
 //creates a node
-void Accounts::createNode()
+void Accounts::createNode(string fileName)
 {
     accountNode *newNode;
     accountNode *nodePtr;
@@ -382,6 +440,7 @@ void Accounts::createNode()
     //make a new node for the linked list and assign variable values
     newNode = new accountNode;
     newNode->accountName = "";
+    newNode->accountFileName = fileName;
     newNode->total = 0;
     newNode->next = NULL;
 
@@ -396,6 +455,19 @@ void Accounts::createNode()
         while (nodePtr->next) nodePtr = nodePtr->next;
         //insert newNode as the last node
         nodePtr->next = newNode;
+    }
+
+    //if file is being dowloaded, assign variable names
+    if (newNode->accountFileName != "NULL")
+    {
+        myFile.open(newNode->accountFileName.c_str(), ios::in);
+        myFile >> newNode->accountName;
+        myFile >> newNode->total;
+
+        //download history
+        newNode->myHistory.downloadHistory(myFile);
+
+        myFile.close();
     }
 }
 
@@ -419,6 +491,9 @@ accountNode *Accounts::findNode(string name)
 //deletes a node
 void Accounts::deleteNode(string name)
 {
+    //delete file
+    remove(selectedAccount->accountFileName.c_str());
+    
     accountNode *nodePtr;
     accountNode *previousNode;
 

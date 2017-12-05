@@ -22,7 +22,7 @@ class Checking : public Accounts
     public:
         Checking();
         ~Checking();
-        void setFileName(string);
+        void setFileNameSpecific(string, string);
 
         void displayAccounts();
         bool accountOptionsMenu();
@@ -38,26 +38,13 @@ Checking::Checking() : Accounts()
 //desctructor uploads file data
 Checking::~Checking()
 {
-    /*checkingFile.open(accountFileName.c_str(), ios::out|ios::binary);
-
-    checkingFile.write(reinterpret_cast<char *>(head), sizeof(head));
-    
-    checkingFile.close();*/
 }
 
 //sets file name
-void Checking::setFileName(string id)
+void Checking::setFileNameSpecific(string id, string file)
 {
-    accountFileName = id + "Checking.txt";
-    /*checkingFile.open(accountFileName.c_str(), ios::in|ios::binary);
-
-    if (checkingFile.fail()) return;
-    else
-    {
-        checkingFile.read(reinterpret_cast<char *>(head), sizeof(head));
-        checkingFile.close();
-    }*/
-
+    //create file name
+    selectedAccount->accountFileName = "C" + id + file + ".txt";
 }
 
 //displays account header
@@ -151,7 +138,7 @@ void Checking::withdraw()
     }
 
     //send to history
-    selectedAccount->myHistory.push("Withdrawal of", withdep, selectedAccount->total);
+    selectedAccount->myHistory.push("Withdrawal", withdep, selectedAccount->total, "NULL");
 }
 
 //verify if transfer is a checking or savings
@@ -163,7 +150,7 @@ void Checking::transfer()
 
     //checking vs savings
     if (userSelection == 1) sameTypeTransfer();
-    else if (userSelection == 2) crossTransfer = true; 
+    else if (userSelection == 2) crossTransfer = true;
 }
 
 #endif

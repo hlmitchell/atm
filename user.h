@@ -9,6 +9,7 @@
 #include <fstream>
 #include <string>
 #include <iomanip>
+#include <vector>
 
 #include "checking.h"
 #include "savings.h"
@@ -31,6 +32,8 @@ class User
 
         Input errorCatcher;     //catches user input errors
         userInfo myInfo;        //instance of userInfo structure
+        vector<string> accountData;  //list of all account file names
+
 
         string fileName;        //user file name with '.txt'
         fstream myFile;         //user file and account names
@@ -74,10 +77,10 @@ User::User()
 
     //get user info
     cout << endl << "Now we'll need to know some information about you!" << endl;
-    cout << "What is your last name? ";
-    getline(cin, myInfo.last);
     cout << "What is your first name? ";
     getline(cin, myInfo.first);
+    cout << "What is your last name? ";
+    getline(cin, myInfo.last);
 
     cout << "Please enter your age: ";
     cin >> myInfo.age;
@@ -95,31 +98,73 @@ User::User(string name, string pin)
     userSelection = 0;
     transfer = false;
     
-    //reopen file for editting with binary
+    //open file to extract user info
     fileName = name;
-    myFile.open(fileName.c_str(), ios::in|ios::binary);
+    myFile.open(fileName.c_str(), ios::in);
 
-    //read userInfo using binary
-    myFile.read(reinterpret_cast<char *>(&myInfo), sizeof(myInfo));
-    myFile.close();
+    //read user info from file
+    myFile >> myInfo.pin;
+    myFile >> myInfo.id;
+    myFile >> myInfo.first;
+    myFile >> myInfo.last;
+    myFile >> myInfo.age;
 
-    //if pin is correct, continue
-    if (pin == myInfo.pin)
+    //if pin is incorrect, return to login screen
+    if (pin != myInfo.pin)
     {
-        cout << endl << "Welcome Back " << myInfo.first << "!" << endl;
-        mainMenu();
+        cout << "Incorrect Pin." << endl;
+        myFile.close();
+        return;
     }
-    //else return back to welcome screen
-    else cout << "Incorrect Pin." << endl;
+
+    //read out file names and store them in vector
+    string temp;
+    while (myFile >> temp)
+    {
+        if (temp == "NULL") continue;
+        accountData.push_back(temp);
+    }
+
+    //create nodes for existing accounts
+    for (int i = 0; i < accountData.size(); i++)
+    {
+        if (accountData[i][0] == 'C')
+            myChecking.createNode(accountData[i]);
+        else mySavings.createNode(accountData[i]);
+    }
+
+    //welcome message and main menu
+    myFile.close();
+    cout << endl << "Welcome Back " << myInfo.first << "!" << endl;
+    mainMenu();
 }
 
 //uploads user contents to file
 User::~User()
 {
     //reopen file in binary
-    myFile.open(fileName.c_str(), ios::out|ios::binary);
-    //write to file using binary
-    myFile.write(reinterpret_cast<char *>(&myInfo), sizeof(myInfo));
+    myFile.open(fileName.c_str(), ios::out);
+    //write to file
+    myFile << myInfo.pin << endl;
+    myFile << myInfo.id << endl;
+    myFile << myInfo.first << endl;
+    myFile << myInfo.last << endl;
+    myFile << myInfo.age << endl;
+
+    //delete file names in vector
+    accountData.clear();
+
+    //reaquire checking file names and fill vector
+    vector<string> temp;
+    temp = myChecking.getAccountFileNames();
+    for (int i = 0; i < temp.size(); i++) accountData.push_back(temp[i]);
+    //reaquire savings file names and fill vector
+    temp = mySavings.getAccountFileNames();
+    for (int i = 0; i < temp.size(); i++) accountData.push_back(temp[i]);
+
+    //add file names to user info file
+    for (int i = 0; i < accountData.size(); i++) myFile << accountData[i] << endl;
+
     //close
     myFile.close();
 }
@@ -150,9 +195,6 @@ void User::mainMenu()
                 //check for existing checking accounts
                 if (userSelection == 1)
                 {
-                    //allows access to checking file******************************
-                    myChecking.setFileName(myInfo.id);
-
                     //if no account exists then break
                     if (!myChecking.getHead()) 
                     {
@@ -170,12 +212,9 @@ void User::mainMenu()
                         if (transfer == true) transferHandler(true);
                     }
                 }
-                //check for existing savings accounts****************************
+                //check for existing savings accounts
                 else if (userSelection == 2)
                 {
-                    //allows access to savings file
-                    mySavings.setFileName(myInfo.id);
-
                     //if no account exists then break
                     if (!mySavings.getHead())
                     {
@@ -204,9 +243,9 @@ void User::mainMenu()
                 userSelection = errorCatcher.chooseAccountType();
 
                 //create node for checking in class Checking
-                if (userSelection == 1) myChecking.createAccount();
+                if (userSelection == 1) myChecking.createAccount(myInfo.id);
                 //create node for savings in class savings
-                else if (userSelection == 2) mySavings.createAccount();
+                else if (userSelection == 2) mySavings.createAccount(myInfo.id);
                 break;
             case 3:
                 editUserInfo();
@@ -311,8 +350,8 @@ void User::transferHandler(bool t)
         savings->total += num;
 
         //send to history
-        myChecking.sendToHistory("Transfer Withdrawal", num, checking->total);
-        mySavings.sendToHistory("Transfer Deposit", num, savings->total);
+        myChecking.sendToHistory("Transfer Withdrawal", num, checking->total, "NULL");
+        mySavings.sendToHistory("Transfer Deposit", num, savings->total, "NULL");
     }
 
      else if (t == false)
@@ -342,8 +381,8 @@ void User::transferHandler(bool t)
         checking->total += num;
 
         //send to history
-        myChecking.sendToHistory("Transfer Deposit", num, checking->total);
-        mySavings.sendToHistory("Transfer Withdrawal", num, savings->total);
+        myChecking.sendToHistory("Transfer Deposit", num, checking->total, "NULL");
+        mySavings.sendToHistory("Transfer Withdrawal", num, savings->total, "NULL");
     }
 
     //output success message and new totals for accounts
