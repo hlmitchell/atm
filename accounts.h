@@ -478,7 +478,19 @@ void Accounts::createNode(string fileName)
     //if file is being dowloaded, assign variable names
     if (newNode->accountFileName != "NULL")
     {
+        //open file
         myFile.open(newNode->accountFileName.c_str(), ios::in);
+
+        //if file doesn't exist, delete file info and return
+        if (!myFile)
+        {
+            cout << endl << "Some of your account files could not be found!" << endl;
+            cout << "Deleting file accessor....." << endl;
+            selectedAccount = newNode;
+            deleteNode(newNode->accountName);
+            return;
+        }
+        //otherwise upload file info
         myFile >> newNode->accountName;
         myFile >> newNode->total;
 
