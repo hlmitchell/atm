@@ -24,6 +24,9 @@ struct userInfo {
     int age;                //user age
 };
 
+//prototype for overloaded stream operator
+ostream &operator << (ostream &, const userInfo &);
+
 class User
 {
     protected:
@@ -51,6 +54,9 @@ class User
         void mainMenu();
         void editUserInfo();
         void transferHandler(bool); 
+
+        //friend
+        friend ostream & operator << (ostream &, const userInfo &);
 };
 
 //Gathers user information for a new user
@@ -276,11 +282,17 @@ void User::mainMenu()
                 break;
         }
     } while (userSelection != 5);
+
+    //reset variable
+    userSelection = 0;
 }
 
 //edits user information
 void User::editUserInfo()
 {
+    //output original file info
+    cout << myInfo;
+
     //menu for ammending user information
     do {
         cout << endl << "Which of the following would you like to edit: " << endl;
@@ -416,6 +428,13 @@ void User::transferHandler(bool t)
     cout << endl << "Successfully transfered $" << num << "!" << endl;
     cout << "New " << checking->accountName << " total is $" << checking->total << endl;
     cout << "New " << savings->accountName << " total is $" << savings->total << endl;
+}
+
+ostream &operator << (ostream &os, const userInfo &user)
+{
+    os << endl << user.id << endl << user.pin << endl
+       << user.first << " " << user.last << endl << user.age << endl;
+    return os;
 }
 
 #endif

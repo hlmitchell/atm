@@ -106,6 +106,9 @@ void Checking::accountOptionsMenu()
         if (selectedAccount == NULL) userSelection = 7;
 
     } while (userSelection != 7);
+
+    //reset variable
+    userSelection = 0;
 }
 
 //withdraw money

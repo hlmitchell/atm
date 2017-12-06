@@ -99,6 +99,9 @@ void Savings::accountOptionsMenu()
         if (selectedAccount == NULL) userSelection = 6;
 
     } while (userSelection != 6);
+
+    //reset variable
+    userSelection = 0;
 }
 
 //validates if transfer is savings or savings
