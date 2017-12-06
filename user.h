@@ -42,9 +42,12 @@ class User
         Savings mySavings;      //instance of Savings class
 
     public:
+        //constructor and destructor
         User();
         User(string, string);
         ~User();
+
+        //user manipulators
         void mainMenu();
         void editUserInfo();
         void transferHandler(bool); 
