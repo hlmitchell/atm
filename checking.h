@@ -20,10 +20,13 @@ class Checking : public Accounts
         fstream checkingFile;       //checking file
 
     public:
+        //constructor
         Checking();
-        ~Checking();
+
+        //setters
         void setFileNameSpecific(string, string);
 
+        //account options
         void displayAccounts();
         void accountOptionsMenu();
         void withdraw();
@@ -34,11 +37,6 @@ class Checking : public Accounts
 //empty constructor
 Checking::Checking() : Accounts()
 {}
-
-//desctructor uploads file data
-Checking::~Checking()
-{
-}
 
 //sets file name
 void Checking::setFileNameSpecific(string id, string file)
@@ -59,6 +57,7 @@ void Checking::displayAccounts()
 void Checking::accountOptionsMenu()
 {   
     do {
+        //display current account details
         cout << endl << "Current Account: " << selectedAccount->accountName << endl;
         cout << "Account Funds: $" << selectedAccount->total << endl;
 

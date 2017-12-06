@@ -41,7 +41,6 @@ int main()
         {
             case 1:
             {
-/*
                 //request user ID
                 cout << endl << "Please Enter User ID: ";
                 getline(cin, id);
@@ -57,18 +56,11 @@ int main()
                 
                 //calls object user
                 User myClient(id, pin);
-                break;*/
-
-
-                //temporary shortcut
-                id = "hlmitchell";
-                pin = "9090";
-                checkID(id, clientFile);
-                User myClient(id, pin);
                 break;
             }
             case 2:
             {
+                //instantiate without details
                 User myClient;
                 break;
             }

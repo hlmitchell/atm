@@ -18,20 +18,21 @@ class Input
         int userSelection;          //user selection from menus
     
     public:
+        //constructor
         Input();
+
+        //input handlers
         int chooseAccountType();
         void checkPin(string&);
         void checkID(string&);
-        
-        template <class T>
-        void boundsCheck(T&, const T, const T);
-
-        template <class T>
-        void cinFail(T&);
-
         void clearField();
         void yesNo(char&);
-
+        
+        //template functions
+        template <class T>
+        void boundsCheck(T&, const T, const T);
+        template <class T>
+        void cinFail(T&);
 };
 
 Input::Input()

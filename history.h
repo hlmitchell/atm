@@ -30,9 +30,11 @@ class History
         time_t rawTime;         //time stamp holder
 
     public:
+        //constructors and destructor
         History();
         ~History();
 
+        //history manipulators
         void push(string, double, double, string);
         void display();
         void uploadHistory(fstream &);
@@ -139,10 +141,11 @@ void History::display()
     return;
 }
 
+//upload history into file
 void History::uploadHistory(fstream &file)
 {
+    //temp nodes for moving through files
     accountHistory *nodePtr;
-    accountHistory *intermediate;
     accountHistory *prevNode;
 
     //set nodePtr to end of list
@@ -181,6 +184,7 @@ void History::uploadHistory(fstream &file)
     file << top->date << endl;
 }
 
+//download history from file
 void History::downloadHistory(fstream &file)
 {
     //temp vars

@@ -41,6 +41,7 @@ class Accounts
         bool crossTransfer;             //indicates a transfer between account types
 
     public:
+        //constructors and destructor
         Accounts();
         virtual ~Accounts();
 
@@ -126,6 +127,7 @@ Accounts::~Accounts()
     selectedAccount = NULL;
 }
 
+//converts account name into file name
 void Accounts::setFileNameGeneral(string id)
 {
     //eliminate spaces from account name and store in file var
@@ -136,6 +138,7 @@ void Accounts::setFileNameGeneral(string id)
         if (temp[i] == ' ') continue;
         file += temp[i];
     }
+    //label as checking or savings
     setFileNameSpecific(id, file);
 }
 
@@ -183,11 +186,12 @@ accountNode *Accounts::getSelectedAccount()
     return selectedAccount;
 }
 
-//returns totals of all checking accounts
+//returns money total of all checking accounts
 double Accounts::getTotals()
 {
-    double totals = 0;
-    accountNode *nodePtr;
+    double totals = 0;      //holds total money
+    accountNode *nodePtr;   //temp node pointer
+
     //initialize nodePtr to head of list
     nodePtr = head;
 
@@ -203,7 +207,6 @@ double Accounts::getTotals()
     return totals;
 }
 
-
 //return cross Transfer bool
 bool Accounts::getCrossTransfer()
 {
@@ -213,9 +216,9 @@ bool Accounts::getCrossTransfer()
 //creates a new account
 void Accounts::createAccount(string id)
 {
-    accountNode *newNode;
-    string tempName;
-    accountNode *tempNode;
+    accountNode *newNode;       //temp holder for new node
+    string tempName;            //temp holder for account name
+    accountNode *tempNode;      //temp holder to allow movement through list
     
     //name the account
     cout << endl << "What would you like to name this account? ";
@@ -294,7 +297,7 @@ void Accounts::deleteAccount()
     //if total funds aren't 0, do not delete account
     if (selectedAccount->total != 0)
     {
-        cout << endl << "You must transfer your funds to another account first!" << endl;
+        cout << endl << "You must empty the account funds first!" << endl;
         return;
     }
 
@@ -335,8 +338,8 @@ void Accounts::deposit()
 void Accounts::merge()
 {
     //merger account
-    accountNode *merger;
-    string mergerAccountName;
+    accountNode *merger;        //node to hold account to be merged into
+    string mergerAccountName;   //name of merger account
 
     //check if other accounts exist for merger
     if (head->next == NULL)
@@ -403,7 +406,7 @@ void Accounts::sameTypeTransfer()
         //display accounts
         displayAccounts();
         
-        //get account name
+        //get account name for merger
         cin.ignore();
         cout << endl << "Enter the name of the account you wish to access: ";                
         getline(cin, transferAccountName);
@@ -449,8 +452,8 @@ void Accounts::sendToHistory(string type, double num, double t, string d)
 //creates a node
 void Accounts::createNode(string fileName)
 {
-    accountNode *newNode;
-    accountNode *nodePtr;
+    accountNode *newNode;   //holder for new node
+    accountNode *nodePtr;   //temp node to move through list
 
     //make a new node for the linked list and assign variable values
     newNode = new accountNode;
@@ -489,7 +492,7 @@ void Accounts::createNode(string fileName)
 //finds node in list
 accountNode *Accounts::findNode(string name)
 {
-    accountNode *nodePtr;
+    accountNode *nodePtr;   //temp holder
 
     //initialize nodePtr to head of list
     nodePtr = head;

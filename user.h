@@ -17,11 +17,11 @@
 using namespace std;
 
 struct userInfo {
-    string pin;
-    string id;
-    string first;
-    string last;
-    int age;
+    string pin;             //user pin number
+    string id;              //user id
+    string first;           //user first name
+    string last;            //user last name
+    int age;                //user age
 };
 
 class User
@@ -47,7 +47,7 @@ class User
         ~User();
         void mainMenu();
         void editUserInfo();
-        void transferHandler(bool);
+        void transferHandler(bool); 
 };
 
 //Gathers user information for a new user

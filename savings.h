@@ -19,10 +19,13 @@ class Savings : public Accounts
     protected:
         fstream savingsFile;    //savings file
     public:
+        //constructor
         Savings();
-        ~Savings();
+
+        //setters
         void setFileNameSpecific(string, string);
 
+        //account options
         void displayAccounts();
         void accountOptionsMenu();
         void transfer();
@@ -31,11 +34,6 @@ class Savings : public Accounts
 //empty constructor
 Savings::Savings() : Accounts()
 {}
-
-//destructor uploads file data
-Savings::~Savings()
-{
-}
 
 //sets file name
 void Savings::setFileNameSpecific(string id, string file)
