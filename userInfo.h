@@ -1,5 +1,5 @@
 //Hannah Mitchell
-//CS M210B
+//CS M10B
 //December 5th 2017
 
 #ifndef USERINFO_H
