@@ -25,6 +25,9 @@ class Accounts
 
         accountList myList;             //list for accounts
         string activeAccount;           //name of active account
+        vector<string> accountNames;    //checking account file name list
+
+        accountNode *nodePtr;           //pointer to selected account
 
         int userSelection;              //menu selection
         double withdep;                 //either with withdrawal or deposit amount
@@ -34,10 +37,12 @@ class Accounts
     public:
         //constructor
         Accounts();
+        ~Accounts();
 
         //setters
         void setFileNameGeneral(string);
         void resetCrossTransfer();
+        void setAccountFileNames(string);
 
         //getters
         bool getHead();
@@ -72,12 +77,16 @@ Accounts::Accounts()
     withdep = 0;
 }
 
+Accounts::~Accounts()
+{
+    nodePtr = NULL;
+}
+
 //converts account name into file name
 void Accounts::setFileNameGeneral(string id)
 {
     //temp vars
     string file;
-    accountNode *nodePtr;
 
     //set node pointer to selected account
     nodePtr = myList.getSelectedAccount();
@@ -99,6 +108,12 @@ void Accounts::resetCrossTransfer()
     crossTransfer = false;
 }
 
+//creates node with set file names
+void Accounts::setAccountFileNames(string name)
+{
+    myList.createNode(name);
+}
+
 //returns true or false if the list has been created
 bool Accounts::getHead()
 {   
@@ -110,7 +125,6 @@ bool Accounts::getHead()
 vector<string> Accounts::getAccountFileNames()
 {
     vector<string> temp;            //temp vector to return file names
-    accountNode *nodePtr;           //temp pointer to cycle through nodes
     nodePtr = myList.getHead();     //assign temp pointer to head of list
 
     //add all file names to temp vector
@@ -127,8 +141,8 @@ vector<string> Accounts::getAccountFileNames()
 //returns money total of all checking accounts
 double Accounts::getTotals()
 {
-    double totals = 0;      //holds total money
-    accountNode *nodePtr;   //temp node pointer
+    //holds total money
+    double totals = 0;      
 
     //initialize nodePtr to head of list
     nodePtr = myList.getHead();
@@ -214,9 +228,6 @@ void Accounts::createAccount(string id)
 //selects an account to edit 
 void Accounts::selectAccount()
 {
-    //temp node
-    accountNode *nodePtr;
-    
     //clear input
     cin.ignore();
 
@@ -239,8 +250,6 @@ void Accounts::selectAccount()
 //deletes an account
 void Accounts::deleteAccount()
 {
-    //temp node pointer
-    accountNode *nodePtr;
     nodePtr = myList.getSelectedAccount();
 
     //if total funds aren't 0, do not delete account
@@ -268,8 +277,6 @@ void Accounts::deleteAccount()
 //deposit money
 void Accounts::deposit()
 {
-    //temp node
-    accountNode *nodePtr;
     nodePtr = myList.getSelectedAccount();
     
     //enter deposit amount
@@ -295,7 +302,6 @@ void Accounts::merge()
     headPtr = myList.getHead();
 
     //get selected account
-    accountNode *nodePtr;
     nodePtr = myList.getSelectedAccount();
 
     //temp vars for merger node
@@ -356,7 +362,6 @@ void Accounts::sameTypeTransfer()
     headPtr = myList.getHead();
 
     //pointer to selected account
-    accountNode *nodePtr;
     nodePtr = myList.getSelectedAccount();
     
     //pointer for transfer
@@ -414,8 +419,7 @@ void Accounts::sameTypeTransfer()
 //sends to history from transfer handler of user class
 void Accounts::sendToHistory(string type, double num, double t, string d)
 {
-    //temp var for selected account
-    accountNode *nodePtr;
+    //selected account
     nodePtr = myList.getSelectedAccount();
     
     //send to history
@@ -431,7 +435,7 @@ accountNode *Accounts::getSelectedAccount()
 //for transfer handler use
 void Accounts::resetSelectedAccount()
 {
-    myList.resetSelectedAccount;
+    myList.resetSelectedAccount();
 }
 
 #endif

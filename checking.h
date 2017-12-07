@@ -118,8 +118,6 @@ void Checking::accountOptionsMenu()
 //withdraw money
 void Checking::withdraw()
 {
-    //temp node pointer
-    accountNode *nodePtr;
     nodePtr = myList.getSelectedAccount();
     
     //formatting
@@ -130,7 +128,17 @@ void Checking::withdraw()
     errorCatcher.boundsCheck(withdep, 0.0, 1000000000.0);
 
     //make sure there isn't overdraft
-    if (nodePtr->total, "NULL");
+    if (nodePtr->total - withdep < 0) cout << endl << "You do not have sufficient funds!" << endl;
+    else 
+    {
+        nodePtr->total = nodePtr->total -= withdep;
+        //display withdraw amount and new total
+        cout << "Successfully withdrew $" << withdep << endl;
+        cout << "New " << nodePtr->accountName << " total is $" << nodePtr->total << endl;
+    }
+
+    //send to history
+    nodePtr->myHistory.push("Withdrawal", withdep, nodePtr->total, "NULL");
 }
 
 //verify if transfer is a checking or savings

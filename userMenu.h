@@ -144,8 +144,8 @@ UserMenu::UserMenu(string name, string pin)
     for (int i = 0; i < accountData.size(); i++)
     {
         if (accountData[i][0] == 'C')
-            myChecking.createNode(accountData[i]);
-        else mySavings.createNode(accountData[i]);
+            myChecking.setAccountFileNames(accountData[i]);
+        else mySavings.setAccountFileNames(accountData[i]);
     }
 
     //welcome message and main menu

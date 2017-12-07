@@ -26,6 +26,8 @@ struct accountNode {
 
 class accountList {
     private:
+        fstream myFile;                 //files for accounts
+
         accountNode *head;              //head of node/beginning of list
         accountNode *selectedAccount;   //current node/account
 
@@ -41,7 +43,6 @@ class accountList {
         accountNode *getHead();
         accountNode *getSelectedAccount();
 
-
         //node actions
         void createNode(string);
         accountNode *findNode(string);
@@ -49,6 +50,9 @@ class accountList {
         void displayNodes();
 
 };
+
+accountList::accountList()
+{}
 
 accountList::~accountList()
 {
@@ -68,22 +72,22 @@ accountList::~accountList()
         nodePtr = nodePtr->next;
     }
 
-    //for deleting the linked list
-    accountNode *nextNode;
     //position nodePtr at head
+    accountNode *nextPtr;
     nodePtr = head;
 
     //while nodePtr is not at the end of the list
     while (nodePtr != NULL)
     {
         //save a pointer to the next node
-        nextNode = nodePtr->next;
+        nextPtr = nodePtr->next;
         //delete current node
         delete nodePtr;
         //move nodePtr to next node
-        nodePtr = nextNode;
+        nodePtr = nextPtr;
     }
-    selectedAccount = NULL;
+    
+    resetSelectedAccount();
 }
 
 //set selected account
@@ -96,7 +100,6 @@ void accountList::setSelectedAccount(accountNode *node)
 void accountList::resetSelectedAccount()
 {
     selectedAccount = NULL;
-    activeAccount = "";
 }
 
 //returns head address
