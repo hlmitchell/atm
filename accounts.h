@@ -1,5 +1,5 @@
 //Hannah Mitchell
-//CS M20
+//CS M10B
 //December 5th 2017
 
 #ifndef ACCOUNTS_H
@@ -13,47 +13,35 @@
 
 #include "inputError.h"
 #include "history.h"
+#include "accountList.h"
 
 using namespace std;
-
-//node for linked list of accounts
-struct accountNode {
-    string accountFileName;         //file name
-    string accountName;             //account name
-    double total;                   //total money in account
-    History myHistory;              //instantiate history for the account
-    struct accountNode *next;       //pointer to next node in list
-};
 
 class Accounts
 {
     protected:
-        InputError errorCatcher;         //error catcher
-        fstream myFile;             //file for specific account
+        InputError errorCatcher;        //error catcher
+        fstream myFile;                 //file for specific account
 
-        accountNode *head;              //head of node/beginning of list
-        accountNode *selectedAccount;   //current node/account
-
+        accountList myList;             //list for accounts
         string activeAccount;           //name of active account
+
         int userSelection;              //menu selection
         double withdep;                 //either with withdrawal or deposit amount
         char confirm;                   //user input for y/n prompt
         bool crossTransfer;             //indicates a transfer between account types
 
     public:
-        //constructors and destructor
+        //constructor
         Accounts();
-        virtual ~Accounts();
 
         //setters
         void setFileNameGeneral(string);
-        void resetSelectedAccount();
         void resetCrossTransfer();
 
         //getters
         bool getHead();
         vector<string> getAccountFileNames();
-        accountNode *getSelectedAccount();
         double getTotals();
         bool getCrossTransfer();
 
@@ -66,87 +54,43 @@ class Accounts
         void sameTypeTransfer();
         void sendToHistory(string, double, double, string);
 
-        //node actions
-        void createNode(string);
-        accountNode *findNode(string);
-        void deleteNode(string);
-        void displayNodes();
-
         //pure virtual functions
-        virtual void setFileNameSpecific(string, string) = 0;
+        virtual void setFileNameSpecific(string, string, accountNode*) = 0;
         virtual void displayAccounts() = 0;
         virtual void accountOptionsMenu() = 0;
         virtual void transfer() = 0;
+
+        //for transfer handler use in userMenu
+        accountNode *getSelectedAccount();
+        void resetSelectedAccount();
 };
 
 //constructor
 Accounts::Accounts()
 {
-    //set variables
-    head = NULL;
-    selectedAccount = NULL;
-    activeAccount = "";
     userSelection = 0;
     withdep = 0;
-}
-
-//deletes linked list
-Accounts::~Accounts()
-{
-    //for uploading the files
-    accountNode *nodePtr;
-    nodePtr = head;
-    
-    //create file for each account
-    while (nodePtr)
-    {
-        myFile.open(nodePtr->accountFileName.c_str(), ios::out);
-        myFile << nodePtr->accountName << endl;
-        myFile << nodePtr->total << endl;
-        //add history to file
-        nodePtr->myHistory.uploadHistory(myFile);
-        myFile.close();
-        nodePtr = nodePtr->next;
-    }
-
-    //for deleting the linked list
-    accountNode *nextNode;
-    //position nodePtr at head
-    nodePtr = head;
-
-    //while nodePtr is not at the end of the list
-    while (nodePtr != NULL)
-    {
-        //save a pointer to the next node
-        nextNode = nodePtr->next;
-        //delete current node
-        delete nodePtr;
-        //move nodePtr to next node
-        nodePtr = nextNode;
-    }
-    selectedAccount = NULL;
 }
 
 //converts account name into file name
 void Accounts::setFileNameGeneral(string id)
 {
-    //eliminate spaces from account name and store in file var
+    //temp vars
     string file;
-    string temp = selectedAccount->accountName;
+    accountNode *nodePtr;
+
+    //set node pointer to selected account
+    nodePtr = myList.getSelectedAccount();
+    
+    //eliminate spaces from account name and store in file var
+    string temp = nodePtr->accountName;
     for (int i = 0; i < temp.length(); i++)
     {
         if (temp[i] == ' ') continue;
         file += temp[i];
     }
     //label as checking or savings
-    setFileNameSpecific(id, file);
-}
-
-//sets selected account to null
-void Accounts::resetSelectedAccount()
-{
-    selectedAccount = NULL;
-    activeAccount = "";
+    setFileNameSpecific(id, file, nodePtr);
 }
 
 //reset cross transfer bool to false
@@ -157,17 +101,17 @@ void Accounts::resetCrossTransfer()
 
 //returns true or false if the list has been created
 bool Accounts::getHead()
-{
-    if (head) return true;
+{   
+    if (myList.getHead() != NULL) return true;
     else return false;
 }
 
 //return account file name
 vector<string> Accounts::getAccountFileNames()
 {
-    vector<string> temp;      //temp vector to return file names
-    accountNode *nodePtr;     //temp pointer to cycle through nodes
-    nodePtr = head;           //assign temp pointer to head of list
+    vector<string> temp;            //temp vector to return file names
+    accountNode *nodePtr;           //temp pointer to cycle through nodes
+    nodePtr = myList.getHead();     //assign temp pointer to head of list
 
     //add all file names to temp vector
     while (nodePtr)
@@ -180,12 +124,6 @@ vector<string> Accounts::getAccountFileNames()
     return temp;
 }
 
-//returns a selected account name
-accountNode *Accounts::getSelectedAccount()
-{
-    return selectedAccount;
-}
-
 //returns money total of all checking accounts
 double Accounts::getTotals()
 {
@@ -193,7 +131,7 @@ double Accounts::getTotals()
     accountNode *nodePtr;   //temp node pointer
 
     //initialize nodePtr to head of list
-    nodePtr = head;
+    nodePtr = myList.getHead();
 
     //if no accounts exist return 0
     if (nodePtr == NULL) return 0;
@@ -226,7 +164,7 @@ void Accounts::createAccount(string id)
 
     //assign name to temp variable
     getline(cin, tempName);
-    tempNode = findNode(tempName);
+    tempNode = myList.findNode(tempName);
     //make sure name isn't repeat or blank
     while (tempNode != NULL || tempName == "")
     {
@@ -235,29 +173,29 @@ void Accounts::createAccount(string id)
         {
             cout << "Name already taken! Please try again: ";
             getline(cin, tempName);
-            tempNode = findNode(tempName);
+            tempNode = myList.findNode(tempName);
         }
         //if name is blank prompt again
         else
         {
             cout << "Account must have a name! Please try again: ";
             getline(cin, tempName);
-            tempNode = findNode(tempName);
+            tempNode = myList.findNode(tempName);
         }
     }
 
     //create a new node in the list
-    createNode("NULL");
+    myList.createNode("NULL");
     //assign the memory address to myNode
-    newNode = findNode("");
+    newNode = myList.findNode("");
     //assign name
     newNode->accountName = tempName;
     //set to selected Account
-    selectedAccount = newNode;
+    myList.setSelectedAccount(newNode);
     //assign file name
     setFileNameGeneral(id);
     //reset
-    resetSelectedAccount();
+    myList.resetSelectedAccount();
 
     //deposit money into the account
     cout << "How much money would you like to deposit (Enter 0 if none)? ";
@@ -276,73 +214,96 @@ void Accounts::createAccount(string id)
 //selects an account to edit 
 void Accounts::selectAccount()
 {
+    //temp node
+    accountNode *nodePtr;
+    
     //clear input
     cin.ignore();
+
     //while inputed account name doesn't exist, continue to prompt 
     do {
         //get account name
         cout << endl << "Enter the name of the account you wish to access: ";
         getline(cin, activeAccount);
         //find account address
-        selectedAccount = findNode(activeAccount);
+        nodePtr = myList.findNode(activeAccount);
         //if address is NULL, account name was not valid
-        if (selectedAccount == NULL)
+        if (nodePtr == NULL)
             cout << "Not an available account name!" << endl;
-    } while (selectedAccount == NULL);
+    } while (nodePtr == NULL);
+
+    //set selected account to node pointer
+    myList.setSelectedAccount(nodePtr);
 }
 
 //deletes an account
 void Accounts::deleteAccount()
 {
+    //temp node pointer
+    accountNode *nodePtr;
+    nodePtr = myList.getSelectedAccount();
+
     //if total funds aren't 0, do not delete account
-    if (selectedAccount->total != 0)
+    if (nodePtr->total != 0)
     {
         cout << endl << "You must empty the account funds first!" << endl;
         return;
     }
 
     //confirm deletion
-    cout << endl << "Delete account " << selectedAccount->accountName << " (Y/N)? ";
+    cout << endl << "Delete account " << nodePtr->accountName << " (Y/N)? ";
     cin >> confirm;
     errorCatcher.yesNo(confirm); //error check
 
     //if yes
     if (confirm == 'Y')
     {
-        cout << "Account " << selectedAccount->accountName << " has been deleted!" << endl;
+        cout << "Account " << nodePtr->accountName << " has been deleted!" << endl;
         //delete node and set selected account to NULL
-        deleteNode(selectedAccount->accountName);
-        selectedAccount = NULL;
+        myList.deleteNode(nodePtr->accountName);
+        myList.resetSelectedAccount();
     }
 }
 
 //deposit money
 void Accounts::deposit()
 {
+    //temp node
+    accountNode *nodePtr;
+    nodePtr = myList.getSelectedAccount();
+    
     //enter deposit amount
     cout << endl << "Deposit amount: ";
     cin >> withdep;
     errorCatcher.boundsCheck(withdep, 0.0, 1000000000.0);
 
     //add to total
-    selectedAccount->total = selectedAccount->total += withdep;
+    nodePtr->total += withdep;
     //display deposit amount and new total
     cout << "Successfully deposited $" << withdep << endl;
-    cout << "New " << selectedAccount->accountName << " total is $" << selectedAccount->total << endl;
+    cout << "New " << nodePtr->accountName << " total is $" << nodePtr->total << endl;
 
     //send to history
-    selectedAccount->myHistory.push("Deposit", withdep, selectedAccount->total, "NULL");
+    nodePtr->myHistory.push("Deposit", withdep, nodePtr->total, "NULL");
 }
 
 //merge two like accounts
 void Accounts::merge()
 {
-    //merger account
-    accountNode *merger;        //node to hold account to be merged into
-    string mergerAccountName;   //name of merger account
+    //get head
+    accountNode *headPtr;
+    headPtr = myList.getHead();
+
+    //get selected account
+    accountNode *nodePtr;
+    nodePtr = myList.getSelectedAccount();
+
+    //temp vars for merger node
+    accountNode *mergerPtr;
+    string mergerAccountName;
 
     //check if other accounts exist for merger
-    if (head->next == NULL)
+    if (headPtr->next == NULL)
     {
         cout << endl << "There are no other accounts of the same type!" << endl;
         return;
@@ -353,21 +314,21 @@ void Accounts::merge()
     do {
         //get account name
         cout << endl << "With which account would you like to merge " 
-        << selectedAccount->accountName << "? ";
+        << nodePtr->accountName << "? ";
         getline(cin, mergerAccountName);
         //find account address
-        merger = findNode(mergerAccountName);
+        mergerPtr = myList.findNode(mergerAccountName);
         //if address is NULL, account name was not valid
-        if (merger == NULL || merger->accountName == selectedAccount->accountName)
+        if (mergerPtr == NULL || mergerPtr->accountName == nodePtr->accountName)
         {
             cout << "Not an available account name!" << endl;
-            merger = NULL;
+            mergerPtr = NULL;
         }
-    } while (merger == NULL);
+    } while (mergerPtr == NULL);
 
     //verify with user
-    cout << "Are you sure you want to merge " << selectedAccount->accountName
-         << " into " << merger->accountName << " (Y/N)? ";
+    cout << "Are you sure you want to merge " << nodePtr->accountName
+         << " into " << mergerPtr->accountName << " (Y/N)? ";
     cin >> confirm;
     errorCatcher.yesNo(confirm);
 
@@ -375,27 +336,35 @@ void Accounts::merge()
     if (confirm == 'Y')
     {
         //transfer money to merger accounts
-        merger->total += selectedAccount->total;
+        mergerPtr->total += nodePtr->total;
         cout << "Merge Successful!" << endl;
 
         //send to history
-        merger->myHistory.push("Merger Deposit", selectedAccount->total, merger->total, "NULL");
+        mergerPtr->myHistory.push("Merger Deposit", nodePtr->total, mergerPtr->total, "NULL");
 
         //delete account
-        deleteNode(selectedAccount->accountName);
-        selectedAccount = NULL;
+        myList.deleteNode(nodePtr->accountName);
+        myList.resetSelectedAccount();
     }
 }
 
 //transferring money between like accounts
 void Accounts::sameTypeTransfer()
 {
-    //pointer for checking transfer
-    accountNode *ptr;
+    //pointer to head
+    accountNode *headPtr;
+    headPtr = myList.getHead();
+
+    //pointer to selected account
+    accountNode *nodePtr;
+    nodePtr = myList.getSelectedAccount();
+    
+    //pointer for transfer
+    accountNode *transferPtr;
     string transferAccountName;
 
     //check to see if other accounts of this type exist
-    if (head->next == NULL)
+    if (headPtr->next == NULL)
     {
         cout << endl << "There are no other accounts of the same type!" << endl;
         return;
@@ -406,184 +375,63 @@ void Accounts::sameTypeTransfer()
         //display accounts
         displayAccounts();
         
-        //get account name for merger
+        //get account name for trasnfer
         cin.ignore();
         cout << endl << "Enter the name of the account you wish to access: ";                
         getline(cin, transferAccountName);
 
         //find account address
-        ptr = findNode(transferAccountName);
+        transferPtr = myList.findNode(transferAccountName);
         //if address is NULL, account name was not valid
-        if (ptr == NULL || ptr->accountName == selectedAccount->accountName)
+        if (transferPtr == NULL || transferPtr->accountName == nodePtr->accountName)
         {
             cout << "Not an available account name!" << endl;
-            ptr = NULL;
+            transferPtr = NULL;
         }
-    } while (ptr == NULL);
+    } while (transferPtr == NULL);
 
     //ask for transfer amount
-    cout << "How much money would you like to transfer from " << selectedAccount->accountName
-         << " to " << ptr->accountName << "? ";
+    cout << "How much money would you like to transfer from " << nodePtr->accountName
+         << " to " << transferPtr->accountName << "? ";
     cin >> withdep;
-    errorCatcher.boundsCheck(withdep, 0.0, selectedAccount->total);
+    errorCatcher.boundsCheck(withdep, 0.0, nodePtr->total);
 
     //ammend account totals
-    selectedAccount->total -= withdep;
-    ptr->total += withdep;
+    nodePtr->total -= withdep;
+    transferPtr->total += withdep;
 
     //output success message and new totals for accounts
     cout << endl << "Successfully transfered $" << withdep << "!" << endl;
-    cout << "New " << selectedAccount->accountName << " total is $" << selectedAccount->total << endl;
-    cout << "New " << ptr->accountName << " total is $" << ptr->total << endl;
+    cout << "New " << nodePtr->accountName << " total is $" << nodePtr->total << endl;
+    cout << "New " << transferPtr->accountName << " total is $" << transferPtr->total << endl;
 
     //send to histories
-    selectedAccount->myHistory.push("Transfer Withdrawal", withdep, selectedAccount->total, "NULL");
-    ptr->myHistory.push("Transfer Deposit", withdep, ptr->total, "NULL");
+    nodePtr->myHistory.push("Transfer Withdrawal", withdep, nodePtr->total, "NULL");
+    transferPtr->myHistory.push("Transfer Deposit", withdep, transferPtr->total, "NULL");
 
 }
 
 //sends to history from transfer handler of user class
 void Accounts::sendToHistory(string type, double num, double t, string d)
 {
-    //send to history
-    selectedAccount->myHistory.push(type, num, t, d);
-}
-
-//creates a node
-void Accounts::createNode(string fileName)
-{
-    accountNode *newNode;   //holder for new node
-    accountNode *nodePtr;   //temp node to move through list
-
-    //make a new node for the linked list and assign variable values
-    newNode = new accountNode;
-    newNode->accountName = "";
-    newNode->accountFileName = fileName;
-    newNode->total = 0;
-    newNode->next = NULL;
-
-    //if there are no nodes yet, make the first one
-    if (!head) head = newNode;
-    //else add new node to end of list
-    else
-    {
-        //initialize nodePtr to head of list
-        nodePtr = head;
-        //find the last node in the list
-        while (nodePtr->next) nodePtr = nodePtr->next;
-        //insert newNode as the last node
-        nodePtr->next = newNode;
-    }
-
-    //if file is being dowloaded, assign variable names
-    if (newNode->accountFileName != "NULL")
-    {
-        //open file
-        myFile.open(newNode->accountFileName.c_str(), ios::in);
-
-        //if file doesn't exist, delete file info and return
-        if (!myFile)
-        {
-            cout << endl << "Some of your account files could not be found!" << endl;
-            cout << "Deleting file accessor....." << endl;
-            selectedAccount = newNode;
-            deleteNode(newNode->accountName);
-            return;
-        }
-        //otherwise upload file info
-        myFile >> newNode->accountName;
-        myFile >> newNode->total;
-
-        //download history
-        newNode->myHistory.downloadHistory(myFile);
-
-        myFile.close();
-    }
-}
-
-//finds node in list
-accountNode *Accounts::findNode(string name)
-{
-    accountNode *nodePtr;   //temp holder
-
-    //initialize nodePtr to head of list
-    nodePtr = head;
-
-    //while nodePtr isn't NULL, move through list
-    while (nodePtr)
-    {
-        if (nodePtr->accountName == name) return nodePtr;
-        else nodePtr = nodePtr->next;
-    }
-    return NULL;
-}
-
-//deletes a node
-void Accounts::deleteNode(string name)
-{
-    //delete file
-    remove(selectedAccount->accountFileName.c_str());
+    //temp var for selected account
+    accountNode *nodePtr;
+    nodePtr = myList.getSelectedAccount();
     
-    accountNode *nodePtr;
-    accountNode *previousNode;
-
-    //check head of chain first
-    if (head->accountName == name)
-    {
-        nodePtr = head->next;
-        delete head;
-        head = nodePtr;
-    }
-
-    //else delete node from chain
-    else
-    {
-        //initialize nodePtr to head of list
-        nodePtr = head;
-        //run through nodes to find accountName that matches
-        while (nodePtr != NULL && nodePtr->accountName != name)
-        {
-            previousNode = nodePtr;
-            nodePtr = nodePtr->next;
-        }
-        //deletes node
-        if (nodePtr)
-        {
-            previousNode->next = nodePtr->next;
-            delete nodePtr;
-        }
-
-    }
+    //send to history
+    nodePtr->myHistory.push(type, num, t, d);
 }
 
-//display nodes of a type
-void Accounts::displayNodes()
+//for transfer handler use, return selected account
+accountNode *Accounts::getSelectedAccount()
 {
-    accountNode *nodePtr;
-
-    //initialize nodePtr to head of list
-    nodePtr = head;
-
-    //while nodePtr isn't NULL, move through list
-    while (nodePtr)
-    {
-        //for merging accounts, the selected account name is not displayed
-        if (selectedAccount != NULL)
-            if (selectedAccount->accountName == nodePtr->accountName)
-            {
-                nodePtr = nodePtr->next;
-                continue;
-            }
-
-        //display the account values
-        cout << nodePtr->accountName << ": ";
-        //formatting
-        cout << fixed << setprecision(2);
-        cout << "$" << nodePtr->total << endl;
-
-        //move to next node
-        nodePtr = nodePtr->next;    
-    }
+    return myList.getSelectedAccount();
+}
+        
+//for transfer handler use
+void Accounts::resetSelectedAccount()
+{
+    myList.resetSelectedAccount;
 }
 
 #endif
