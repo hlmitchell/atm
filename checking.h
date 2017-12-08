@@ -24,7 +24,7 @@ class Checking : public Accounts
         Checking();
 
         //setters
-        void setFileNameSpecific(string, string, accountNode*);
+        void setFileNameSpecific(string, string);
 
         //account options
         void displayAccounts();
@@ -39,10 +39,10 @@ Checking::Checking() : Accounts()
 {}
 
 //sets file name
-void Checking::setFileNameSpecific(string id, string file, accountNode *node)
+void Checking::setFileNameSpecific(string id, string file)
 {
     //create file name
-    node->accountFileName = "C" + id + file + ".txt";
+    selectedAccount->accountFileName = "C" + id + file + ".txt";
 }
 
 //displays account header
@@ -50,23 +50,19 @@ void Checking::displayAccounts()
 {
     //header before account names listed
     cout << endl << "Checking Account(s)" << endl;
-    myList.displayNodes();
+    displayNodes();
 }
 
 //displays account options menu and switch
 void Checking::accountOptionsMenu()
 {   
-    //temp node ptr
-    accountNode *nodePtr;
-    nodePtr = myList.getSelectedAccount();
-    
     do {
         //display current account details
-        cout << endl << "Current Account: " << nodePtr->accountName << endl;
-        cout << "Account Funds: $" << nodePtr->total << endl;
+        cout << endl << "Current Account: " << selectedAccount->accountName << endl;
+        cout << "Account Funds: $" << selectedAccount->total << endl;
 
         //advanced options
-        cout << endl << "*** " << nodePtr->accountName << " Options ***" << endl << endl;
+        cout << endl << "*** " << selectedAccount->accountName << " Options ***" << endl << endl;
         cout << "1. Withdraw" << endl;
         cout << "2. Deposit" << endl;
         cout << "3. Merge Accounts" << endl;
@@ -97,17 +93,17 @@ void Checking::accountOptionsMenu()
                 if (crossTransfer == true) return;
                 break;
             case 5:
-                nodePtr->myHistory.display();
+                selectedAccount->myHistory.display();
                 break;
             case 6:
                 deleteAccount();
             default:
-                myList.resetSelectedAccount();
+                selectedAccount = NULL;
                 break;
         }
         
         //if account is deleted or merged, exit this menu automatically
-        if (myList.getSelectedAccount() == NULL) userSelection = 7;
+        if (selectedAccount == NULL) userSelection = 7;
 
     } while (userSelection != 7);
 
@@ -118,8 +114,6 @@ void Checking::accountOptionsMenu()
 //withdraw money
 void Checking::withdraw()
 {
-    nodePtr = myList.getSelectedAccount();
-    
     //formatting
     cout << fixed << setprecision(2);
     //ask for withdraw amount and subtract from total
@@ -128,17 +122,18 @@ void Checking::withdraw()
     errorCatcher.boundsCheck(withdep, 0.0, 1000000000.0);
 
     //make sure there isn't overdraft
-    if (nodePtr->total - withdep < 0) cout << endl << "You do not have sufficient funds!" << endl;
+    if (selectedAccount->total - withdep < 0)
+        cout << endl << "You do not have sufficient funds!" << endl;
     else 
     {
-        nodePtr->total = nodePtr->total -= withdep;
+        selectedAccount->total = selectedAccount->total -= withdep;
         //display withdraw amount and new total
         cout << "Successfully withdrew $" << withdep << endl;
-        cout << "New " << nodePtr->accountName << " total is $" << nodePtr->total << endl;
+        cout << "New " << selectedAccount->accountName << " total is $" << selectedAccount->total << endl;
     }
 
     //send to history
-    nodePtr->myHistory.push("Withdrawal", withdep, nodePtr->total, "NULL");
+    selectedAccount->myHistory.push("Withdrawal", withdep, selectedAccount->total, "NULL");
 }
 
 //verify if transfer is a checking or savings

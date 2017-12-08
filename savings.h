@@ -23,7 +23,7 @@ class Savings : public Accounts
         Savings();
 
         //setters
-        void setFileNameSpecific(string, string, accountNode*);
+        void setFileNameSpecific(string, string);
 
         //account options
         void displayAccounts();
@@ -36,33 +36,29 @@ Savings::Savings() : Accounts()
 {}
 
 //sets file name
-void Savings::setFileNameSpecific(string id, string file, accountNode *node)
+void Savings::setFileNameSpecific(string id, string file)
 {
     //create file name
-    node->accountFileName = "S" + id + file + ".txt";
+    selectedAccount->accountFileName = "S" + id + file + ".txt";
 }
 
 //displays account header
 void Savings::displayAccounts()
 {
     cout << endl << "Savings Account(s)" << endl;
-    myList.displayNodes();
+    displayNodes();
 }
 
 //displays savings menu and switch
 void Savings::accountOptionsMenu()
 {   
-    //temp node pointer
-    accountNode *nodePtr;
-    nodePtr = myList.getSelectedAccount();
-    
     do {
 
-        cout << endl << "Current Account: " << nodePtr->accountName << endl;
-        cout << "Account Funds: $" << nodePtr->total << endl;
+        cout << endl << "Current Account: " << selectedAccount->accountName << endl;
+        cout << "Account Funds: $" << selectedAccount->total << endl;
 
         //advanced options
-        cout << endl << "*** " << nodePtr->accountName << " Options ***" << endl << endl;
+        cout << endl << "*** " << selectedAccount->accountName << " Options ***" << endl << endl;
         cout << "1. Deposit" << endl;
         cout << "2. Merge Accounts" << endl;
         cout << "3. Transfer Money" << endl;
@@ -89,18 +85,18 @@ void Savings::accountOptionsMenu()
                 if (crossTransfer == true) return;
                 break;
             case 4:
-                nodePtr->myHistory.display();
+                selectedAccount->myHistory.display();
                 break;
             case 5:
                 deleteAccount();
                 break;
             default:
-                myList.resetSelectedAccount();
+                selectedAccount = NULL;
                 break;
         }
 
         //if account is deleted or merged, exit this menu automatically
-        if (myList.getSelectedAccount() == NULL) userSelection = 6;
+        if (selectedAccount == NULL) userSelection = 6;
 
     } while (userSelection != 6);
 
@@ -110,7 +106,7 @@ void Savings::accountOptionsMenu()
 
 //validates if transfer is savings or savings
 void Savings::transfer()
-{   
+{
     //choose an accounts type
     cout << endl << "In to which account type would you like to transfer funds?";
     userSelection = errorCatcher.chooseAccountType();
