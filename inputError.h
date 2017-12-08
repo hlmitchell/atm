@@ -1,9 +1,9 @@
 //Hannah Mitchell
-//CS M20
+//CS M10B
 //December 5th 2017
 
-#ifndef INPUT_H
-#define INPUT_H
+#ifndef INPUTERROR_H
+#define INPUTERROR_H
 
 #include <iostream>
 #include <string>
@@ -12,14 +12,14 @@
 
 using namespace std;
 
-class Input
+class InputError
 {
     protected:
         int userSelection;          //user selection from menus
     
     public:
         //constructor
-        Input();
+        InputError();
 
         //input handlers
         int chooseAccountType();
@@ -35,13 +35,13 @@ class Input
         void cinFail(T&);
 };
 
-Input::Input()
+InputError::InputError()
 {
     userSelection = 0;
 }
 
 //choose account type for menu options
-int Input::chooseAccountType()
+int InputError::chooseAccountType()
 {   
     cout << endl;
     //display part of menu and check bounds
@@ -55,7 +55,7 @@ int Input::chooseAccountType()
 }
 
 //checks that pin is length of 4 and valid
-void Input::checkPin(string &p)
+void InputError::checkPin(string &p)
 {
     bool valid = true;
 
@@ -85,7 +85,7 @@ void Input::checkPin(string &p)
 }
 
 //checks for new user ID
-void Input::checkID(string &name)
+void InputError::checkID(string &name)
 {
     ofstream tempFile;
     //converts to file name
@@ -97,6 +97,7 @@ void Input::checkID(string &name)
     //while file opens successfully, ask for a different username
     while (!tempFile.fail())
     {
+        tempFile.close();
         cout << "Username has already been taken! Please try again: ";
         getline(cin, name);
         fileName = name + ".txt";
@@ -108,7 +109,7 @@ void Input::checkID(string &name)
 
 //bounds check for menu selection or money movement
 template <class T>
-void Input::boundsCheck(T &var, const T lower, const T upper)
+void InputError::boundsCheck(T &var, const T lower, const T upper)
 {
     while (cin.fail() || var < lower || var > upper)
     {
@@ -126,7 +127,7 @@ void Input::boundsCheck(T &var, const T lower, const T upper)
 
 //checks if cin failed
 template <class T>
-void Input::cinFail(T &var)
+void InputError::cinFail(T &var)
 {
     //while string is entered in to number data type, reprompt
     while (cin.fail())
@@ -139,7 +140,7 @@ void Input::cinFail(T &var)
 }
 
 //clears field to prevent menu skipping
-void Input::clearField()
+void InputError::clearField()
 {
     //clears field to prevent menu skipping
     cin.clear();
@@ -147,7 +148,7 @@ void Input::clearField()
 }
 
 //validates yes or no input
-void Input::yesNo(char &x)
+void InputError::yesNo(char &x)
 {
     clearField();
     

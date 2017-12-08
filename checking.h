@@ -1,5 +1,5 @@
 //Hannah Mitchell
-//CS M20
+//CS M10B
 //December 5th 2017
 
 #ifndef CHECKING_H

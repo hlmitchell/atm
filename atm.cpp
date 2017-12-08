@@ -1,9 +1,9 @@
 //Hannah Mitchell
-//CS M20
+//CS M10B
 //December 5th 2017
 
-#include "user.h"
-#include "input.h"
+#include "userMenu.h"
+#include "inputError.h"
 
 #include <iostream>
 #include <fstream>
@@ -18,7 +18,7 @@ bool checkID(string&, fstream&);
 int main()
 {
     //variables
-    Input errorCatcher;     //catches input errors
+    InputError errorCatcher;     //catches input errors
     fstream clientFile;     //client file
     int userSelection;      //selection for first menu
     string id;              //user ID
@@ -41,6 +41,7 @@ int main()
         {
             case 1:
             {
+/*
                 //request user ID
                 cout << endl << "Please Enter User ID: ";
                 getline(cin, id);
@@ -56,12 +57,19 @@ int main()
                 
                 //calls object user
                 User myClient(id, pin);
+                break;*/
+
+
+                //temporary shortcut
+                id = "hlmitchell";
+                pin = "9090";
+                checkID(id, clientFile);
+                UserMenu myClient(id, pin);
                 break;
             }
             case 2:
             {
-                //instantiate without details
-                User myClient;
+                UserMenu myClient;
                 break;
             }
             default:

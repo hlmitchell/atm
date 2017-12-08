@@ -11,7 +11,7 @@
 #include <iomanip>
 #include <vector>
 
-#include "input.h"
+#include "inputError.h"
 #include "history.h"
 
 using namespace std;
@@ -28,7 +28,7 @@ struct accountNode {
 class Accounts
 {
     protected:
-        Input errorCatcher;         //error catcher
+        InputError errorCatcher;         //error catcher
         fstream myFile;             //file for specific account
 
         accountNode *head;              //head of node/beginning of list

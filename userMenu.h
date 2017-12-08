@@ -1,9 +1,9 @@
 //Hannah Mitchell
-//CS M20
+//CS M10B
 //December 5th 2017
 
-#ifndef USER_H
-#define USER_H
+#ifndef USERMENU_H
+#define USERMENU_H
 
 #include <iostream>
 #include <fstream>
@@ -11,32 +11,24 @@
 #include <iomanip>
 #include <vector>
 
+#include "userInfo.h"
 #include "checking.h"
 #include "savings.h"
 
 using namespace std;
 
-struct userInfo {
-    string pin;             //user pin number
-    string id;              //user id
-    string first;           //user first name
-    string last;            //user last name
-    int age;                //user age
-};
-
 //prototype for overloaded stream operator
-ostream &operator << (ostream &, const userInfo &);
+ostream &operator << (ostream &, UserInfo &);
 
-class User
+class UserMenu
 {
-    protected:
+    private:
         int userSelection;      //user input from menus
         bool transfer;          //returned from accounts menu, signals transferHandler()
 
-        Input errorCatcher;     //catches user input errors
-        userInfo myInfo;        //instance of userInfo structure
+        UserInfo myInfo;             //instance of userInfo class holding user data
+        InputError errorCatcher;          //catches user input errors
         vector<string> accountData;  //list of all account file names
-
 
         string fileName;        //user file name with '.txt'
         fstream myFile;         //user file and account names
@@ -46,9 +38,9 @@ class User
 
     public:
         //constructor and destructor
-        User();
-        User(string, string);
-        ~User();
+        UserMenu();
+        UserMenu(string, string);
+        ~UserMenu();
 
         //user manipulators
         void mainMenu();
@@ -56,70 +48,88 @@ class User
         void transferHandler(bool); 
 
         //friend
-        friend ostream & operator << (ostream &, const userInfo &);
+        friend ostream & operator << (ostream &, UserInfo &);  
 };
 
 //Gathers user information for a new user
-User::User()
+UserMenu::UserMenu()
 {
     //set variables
     userSelection = 0;
     transfer = false;
+    
+    //temp vars for passing input to class userInfo
+    string tempStr;
+    int tempInt;
 
     //collect basic information from user
     cout << endl << "Thank you for choosing Hannah's Bank!" << endl << endl;
     cout << "Please enter a username: ";
-    getline(cin, myInfo.id);
+    getline(cin, tempStr);
     //check if username already exists
-    errorCatcher.checkID(myInfo.id);
+    errorCatcher.checkID(tempStr);
+    myInfo.setId(tempStr);
 
     //Create file
-    fileName = myInfo.id + ".txt";
+    fileName = myInfo.getId() + ".txt";
     myFile.open(fileName.c_str(), ios::out);
     myFile.close();
     
     //get pin
     cout << "Choose a 4 digit pin: ";
-    getline(cin, myInfo.pin);
+    getline(cin, tempStr);
     //check for valid input for pin
-    errorCatcher.checkPin(myInfo.pin);
+    errorCatcher.checkPin(tempStr);
+    myInfo.setPin(tempStr);
 
     //get user info
     cout << endl << "Now we'll need to know some information about you!" << endl;
     cout << "What is your first name? ";
-    getline(cin, myInfo.first);
+    getline(cin, tempStr);
+    myInfo.setFirst(tempStr);
     cout << "What is your last name? ";
-    getline(cin, myInfo.last);
+    getline(cin, tempStr);
+    myInfo.setLast(tempStr);
 
     cout << "Please enter your age: ";
-    cin >> myInfo.age;
+    cin >> tempInt;
     //check for valid input for age
-    errorCatcher.boundsCheck(myInfo.age, 16, 125);
+    errorCatcher.boundsCheck(tempInt, 16, 125);
+    myInfo.setAge(tempInt);
     errorCatcher.clearField();
 
     mainMenu();
 }
 
 //uploads user information from a previous user
-User::User(string name, string pin)
+UserMenu::UserMenu(string name, string pin)
 {
     //set variables
     userSelection = 0;
     transfer = false;
+
+    //temp vars for reading data
+    string tempStr;
+    int tempInt;
     
     //open file to extract user info
     fileName = name;
     myFile.open(fileName.c_str(), ios::in);
 
-    //read user info from file
-    myFile >> myInfo.pin;
-    myFile >> myInfo.id;
-    myFile >> myInfo.first;
-    myFile >> myInfo.last;
-    myFile >> myInfo.age;
+    //read user pin from file
+    myFile >> tempStr;
+    myInfo.setPin(tempStr);
+    myFile >> tempStr;
+    myInfo.setId(tempStr);
+    myFile >> tempStr;
+    myInfo.setFirst(tempStr);
+    myFile >> tempStr;
+    myInfo.setLast(tempStr);
+    myFile >> tempInt;
+    myInfo.setAge(tempInt);
 
     //if pin is incorrect, return to login screen
-    if (pin != myInfo.pin)
+    if (pin != myInfo.getPin())
     {
         cout << "Incorrect Pin." << endl;
         myFile.close();
@@ -127,12 +137,8 @@ User::User(string name, string pin)
     }
 
     //read out file names and store them in vector
-    string temp;
-    while (myFile >> temp)
-    {
-        if (temp == "NULL") continue;
-        accountData.push_back(temp);
-    }
+    string vecTemp;
+    while (myFile >> vecTemp) accountData.push_back(vecTemp);
 
     //create nodes for existing accounts
     for (int i = 0; i < accountData.size(); i++)
@@ -144,21 +150,21 @@ User::User(string name, string pin)
 
     //welcome message and main menu
     myFile.close();
-    cout << endl << "Welcome Back " << myInfo.first << "!" << endl;
+    cout << endl << "Welcome Back " << myInfo.getFirst() << "!" << endl;
     mainMenu();
 }
 
 //uploads user contents to file
-User::~User()
+UserMenu::~UserMenu()
 {
-    //reopen file in binary
+    //open file
     myFile.open(fileName.c_str(), ios::out);
     //write to file
-    myFile << myInfo.pin << endl;
-    myFile << myInfo.id << endl;
-    myFile << myInfo.first << endl;
-    myFile << myInfo.last << endl;
-    myFile << myInfo.age << endl;
+    myFile << myInfo.getPin() << endl;
+    myFile << myInfo.getId() << endl;
+    myFile << myInfo.getFirst() << endl;
+    myFile << myInfo.getLast() << endl;
+    myFile << myInfo.getAge() << endl;
 
     //delete file names in vector
     accountData.clear();
@@ -179,7 +185,7 @@ User::~User()
 }
 
 //display main menu and switch
-void User::mainMenu()
+void UserMenu::mainMenu()
 {
     do {
         //main menu
@@ -264,10 +270,10 @@ void User::mainMenu()
                 cout << endl << "Which type of account would you like to create?";
                 userSelection = errorCatcher.chooseAccountType();
 
-                //create node for checking in class Checking
-                if (userSelection == 1) myChecking.createAccount(myInfo.id);
-                //create node for savings in class savings
-                else if (userSelection == 2) mySavings.createAccount(myInfo.id);
+                //create node for checking
+                if (userSelection == 1) myChecking.createAccount(myInfo.getId());
+                //create node for savings
+                else if (userSelection == 2) mySavings.createAccount(myInfo.getId());
                 break;
             case 3:
                 editUserInfo();
@@ -288,13 +294,18 @@ void User::mainMenu()
 }
 
 //edits user information
-void User::editUserInfo()
+void UserMenu::editUserInfo()
 {
     //output original file info
     cout << myInfo;
 
+    //temp vars for input
+    string tempStr;
+    int tempInt;
+
     //menu for ammending user information
     do {
+        //menu
         cout << endl << "Which of the following would you like to edit: " << endl;
         cout << "1. Pin" << endl;
         cout << "2. Name" << endl;
@@ -311,26 +322,30 @@ void User::editUserInfo()
             case 1:
                 //request and store new pin
                 cout << "Enter New Pin: ";
-                getline(cin, myInfo.pin);
-                errorCatcher.checkPin(myInfo.pin);
-                cout << endl << "New Pin set to " << myInfo.pin << "!" << endl;
+                getline(cin, tempStr);
+                errorCatcher.checkPin(tempStr);
+                myInfo.setPin(tempStr);
+                cout << endl << "New Pin set to " << myInfo.getId() << "!" << endl;
                 break;
             case 2:
                 //request and store new name
                 cout << "Enter First Name: ";
-                getline(cin, myInfo.first);
+                getline(cin, tempStr);
+                myInfo.setFirst(tempStr);
                 cout << "Enter Last Name: ";
-                getline(cin, myInfo.last);
-                cout << endl << "New Name set to " << myInfo.first << " " 
-                     << myInfo.last << "!" << endl;
+                getline(cin, tempStr);
+                myInfo.setLast(tempStr);
+                cout << endl << "New Name set to " << myInfo.getFirst() << " " 
+                     << myInfo.getLast() << "!" << endl;
                 break;
             case 3:
                 //request and store new age
                 cout << "Enter New Age: ";
-                cin >> myInfo.age;
-                errorCatcher.boundsCheck(myInfo.age, 16, 125);
+                cin >> tempInt;
+                errorCatcher.boundsCheck(tempInt, 16, 125);
+                myInfo.setAge(tempInt);
                 errorCatcher.clearField();
-                cout << endl << "New Age set to " << myInfo.age << "!" << endl;
+                cout << endl << "New Age set to " << myInfo.getAge() << "!" << endl;
                 break;
             default:
                 break;
@@ -343,7 +358,7 @@ void User::editUserInfo()
 }
 
 //coordinates money transfers between account types
-void User::transferHandler(bool t)
+void UserMenu::transferHandler(bool t)
 {
     //placeholders for checking and savings accounts
     accountNode *savings;
@@ -430,10 +445,11 @@ void User::transferHandler(bool t)
     cout << "New " << savings->accountName << " total is $" << savings->total << endl;
 }
 
-ostream &operator << (ostream &os, const userInfo &user)
+//overloaded operator
+ostream &operator << (ostream &os, UserInfo &user)
 {
-    os << endl << user.id << endl << user.pin << endl
-       << user.first << " " << user.last << endl << user.age << endl;
+    os << endl << user.getId() << endl << user.getPin() << endl
+       << user.getFirst() << " " << user.getLast() << endl << user.getAge() << endl;
     return os;
 }
 
