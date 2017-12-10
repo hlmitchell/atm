@@ -13,23 +13,17 @@
 
 #include "inputError.h"
 #include "history.h"
+#include "accountList.h"
 
 using namespace std;
-
-//node for linked list of accounts
-struct accountNode {
-    string accountFileName;         //file name
-    string accountName;             //account name
-    double total;                   //total money in account
-    History myHistory;              //instantiate history for the account
-    struct accountNode *next;       //pointer to next node in list
-};
 
 class Accounts
 {
     protected:
-        InputError errorCatcher;         //error catcher
-        fstream myFile;             //file for specific account
+        InputError errorCatcher;        //error catcher
+        fstream myFile;                 //file for specific account
+
+        accountList myList;             //list of accounts
 
         accountNode *head;              //head of node/beginning of list
         accountNode *selectedAccount;   //current node/account
@@ -452,6 +446,9 @@ void Accounts::sendToHistory(string type, double num, double t, string d)
 //creates a node
 void Accounts::createNode(string fileName)
 {
+    //Taco
+    myList.createNode(fileName);
+    
     accountNode *newNode;   //holder for new node
     accountNode *nodePtr;   //temp node to move through list
 
