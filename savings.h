@@ -38,27 +38,32 @@ Savings::Savings() : Accounts()
 //sets file name
 void Savings::setFileNameSpecific(string id, string file)
 {
+    //pointer to selected account
+    nodePtr = myList.getSelectedAccount();
+    
     //create file name
-    selectedAccount->accountFileName = "S" + id + file + ".txt";
+    nodePtr->accountFileName = "S" + id + file + ".txt";
 }
 
 //displays account header
 void Savings::displayAccounts()
 {
     cout << endl << "Savings Account(s)" << endl;
-    displayNodes();
+    myList.displayNodes();
 }
 
 //displays savings menu and switch
 void Savings::accountOptionsMenu()
 {   
+    //set to selected account
+    nodePtr = myList.getSelectedAccount();
+    
     do {
-
-        cout << endl << "Current Account: " << selectedAccount->accountName << endl;
-        cout << "Account Funds: $" << selectedAccount->total << endl;
+        cout << endl << "Current Account: " << nodePtr->accountName << endl;
+        cout << "Account Funds: $" << nodePtr->total << endl;
 
         //advanced options
-        cout << endl << "*** " << selectedAccount->accountName << " Options ***" << endl << endl;
+        cout << endl << "*** " << nodePtr->accountName << " Options ***" << endl << endl;
         cout << "1. Deposit" << endl;
         cout << "2. Merge Accounts" << endl;
         cout << "3. Transfer Money" << endl;
@@ -85,18 +90,18 @@ void Savings::accountOptionsMenu()
                 if (crossTransfer == true) return;
                 break;
             case 4:
-                selectedAccount->myHistory.display();
+                nodePtr->myHistory.display();
                 break;
             case 5:
                 deleteAccount();
                 break;
             default:
-                selectedAccount = NULL;
+                resetSelectedAccount();
                 break;
         }
 
         //if account is deleted or merged, exit this menu automatically
-        if (selectedAccount == NULL) userSelection = 6;
+        if (nodePtr == NULL) userSelection = 6;
 
     } while (userSelection != 6);
 
