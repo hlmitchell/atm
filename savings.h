@@ -54,7 +54,7 @@ void Savings::displayAccounts()
 
 //displays savings menu and switch
 void Savings::accountOptionsMenu()
-{   
+{
     //set to selected account
     nodePtr = myList.getSelectedAccount();
     

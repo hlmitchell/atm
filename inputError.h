@@ -152,6 +152,34 @@ void InputError::checkString(string &words)
     words = tempStrForward;
 }
 
+//clears field to prevent menu skipping
+void InputError::clearField()
+{
+    //clears field to prevent menu skipping
+    cin.clear();
+    cin.ignore(1000, '\n');
+}
+
+//validates yes or no input
+void InputError::yesNo(char &x)
+{
+    clearField();
+    
+    //change lower case to upper
+    if (x == 'y') x = 'Y';
+    else if (x == 'n') x = 'N';
+
+    //if user has entered y or n then reprompt
+   while ((x != 'Y') && (x != 'N'))
+    {
+        cout << "Invalid Entry. Please try again: ";
+        cin >> x;
+        if (x == 'y') x = 'Y';
+        else if (x == 'n') x = 'N';
+        clearField();
+    }
+}
+
 //bounds check for menu selection or money movement
 template <class T>
 void InputError::boundsCheck(T &var, const T lower, const T upper)
@@ -182,34 +210,6 @@ void InputError::cinFail(T &var)
 
         cout << "Invalid Entry. Please try again: ";
         cin >> var;
-    }
-}
-
-//clears field to prevent menu skipping
-void InputError::clearField()
-{
-    //clears field to prevent menu skipping
-    cin.clear();
-    cin.ignore(1000, '\n');
-}
-
-//validates yes or no input
-void InputError::yesNo(char &x)
-{
-    clearField();
-    
-    //change lower case to upper
-    if (x == 'y') x = 'Y';
-    else if (x == 'n') x = 'N';
-
-    //if user has entered y or n then reprompt
-   while ((x != 'Y') && (x != 'N'))
-    {
-        cout << "Invalid Entry. Please try again: ";
-        cin >> x;
-        if (x == 'y') x = 'Y';
-        else if (x == 'n') x = 'N';
-        clearField();
     }
 }
 

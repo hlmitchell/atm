@@ -50,6 +50,9 @@ class Accounts
         double getTotals();
         bool getCrossTransfer();
 
+        //menu actions
+        bool selectAnAccount(string);
+
         //account actions
         void createAccount(string);
         void selectAccount();
@@ -177,6 +180,40 @@ double Accounts::getTotals()
 bool Accounts::getCrossTransfer()
 {
     return crossTransfer;
+}
+
+//select an account run through
+bool Accounts::selectAnAccount(string accountType)
+{
+    //if no account exists then break
+    if (!getHead()) 
+    {
+        cout << endl << "You have not created a " << accountType <<  " account yet!" << endl;
+        return false;
+    }
+    //if returning from cross transfer go straight to menu
+    else if (myList.getSelectedAccount())
+    {
+        accountOptionsMenu();
+        return false;
+    }
+    else
+    {   
+        //else display all checking accounts
+        displayAccounts();       
+        selectAccount();
+
+        //indicates transfer across account types
+        bool transfer;
+
+        //display further menu
+        accountOptionsMenu();
+                
+        //check for transfer selection in account options menu
+        transfer = getCrossTransfer();
+        if (transfer == true) return true;
+        else return false;
+    }
 }
 
 //creates a new account

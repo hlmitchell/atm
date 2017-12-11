@@ -82,7 +82,7 @@ UserMenu::UserMenu()
     errorCatcher.checkPin(tempStr);
     myInfo.setPin(tempStr);
 
-    //get user info
+    //get name and check for errors
     cout << endl << "Now we'll need to know some information about you!" << endl;
     cout << "What is your first name? ";
     getline(cin, tempStr);
@@ -93,6 +93,7 @@ UserMenu::UserMenu()
     errorCatcher.checkString(tempStr);
     myInfo.setLast(tempStr);
 
+    //get age
     cout << "Please enter your age: ";
     cin >> tempInt;
     //check for valid input for age
@@ -118,7 +119,7 @@ UserMenu::UserMenu(string name, string pin)
     fileName = name;
     myFile.open(fileName.c_str(), ios::in);
 
-    //read user pin from file
+    //read user pin from file and send to user info
     myFile >> tempStr;
     myInfo.setPin(tempStr);
     myFile >> tempStr;
@@ -142,7 +143,7 @@ UserMenu::UserMenu(string name, string pin)
     string vecTemp;
     while (myFile >> vecTemp) accountData.push_back(vecTemp);
 
-    //create nodes for existing accounts
+    //send account names to correct account class type
     for (int i = 0; i < accountData.size(); i++)
     {
         if (accountData[i][0] == 'C')
@@ -171,8 +172,10 @@ UserMenu::~UserMenu()
     //delete file names in vector
     accountData.clear();
 
-    //reaquire checking file names and fill vector
+    //temp vector for holding file names
     vector<string> temp;
+
+    //reaquire checking file names and fill vector
     temp = myChecking.getAccountFileNames();
     for (int i = 0; i < temp.size(); i++) accountData.push_back(temp[i]);
     //reaquire savings file names and fill vector
@@ -212,60 +215,27 @@ void UserMenu::mainMenu()
                 //check for existing checking accounts
                 if (userSelection == 1)
                 {
-                    //if no account exists then break
-                    if (!myChecking.getHead()) 
-                    {
-                        cout << endl << "You have not created a checking account yet!" << endl;
-                        break;
-                    }
-                    else
-                    {
-                        //else display all checking accounts
-                        myChecking.displayAccounts();       
-                        myChecking.selectAccount();
+                    do {
+                        transfer = myChecking.selectAnAccount("checking");
 
-                        do {    //loop allows return to account options menu if cross type transfer occurs
-
-                        //display further menu
-                        myChecking.accountOptionsMenu();
-                            
-                        //check for transfer selection in account options menu
-                        transfer = myChecking.getCrossTransfer();
+                        //calls transfer between account types function
                         if (transfer == true) transferHandler(true);
-
-                        } while (transfer == true);
-                    }
+                    } while (transfer == true);
                 }
+
                 //check for existing savings accounts
                 else if (userSelection == 2)
                 {
-                    //if no account exists then break
-                    if (!mySavings.getHead())
-                    {
-                        cout << endl << "You have not created a savings account yet!" << endl;
-                        break;
-                    }
-                    else
-                    {
-                        //else display all savings accounts
-                        mySavings.displayAccounts();
-                        mySavings.selectAccount();
+                    do {
+                        transfer = mySavings.selectAnAccount("savings");
 
-                        do {    //loop allows return to account options menu if cross type transfer occurs
-
-                        //display further menu
-                        mySavings.accountOptionsMenu();
-
-                        //check for transfer selection in account options menu
-                        transfer = mySavings.getCrossTransfer();
+                        //calls transfer between account types function
                         if (transfer == true) transferHandler(false); 
-
-                        } while (transfer == true);                 
-                    }
+                    } while (transfer == true);                 
                 }
-
                 //reset transfer variable
                 transfer = false;
+
                 break;
             case 2:
                 //Menu requesting checking or savings account
@@ -276,6 +246,7 @@ void UserMenu::mainMenu()
                 if (userSelection == 1) myChecking.createAccount(myInfo.getId());
                 //create node for savings
                 else if (userSelection == 2) mySavings.createAccount(myInfo.getId());
+
                 break;
             case 3:
                 editUserInfo();
