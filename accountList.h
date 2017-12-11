@@ -150,8 +150,8 @@ void accountList::createNode(string fileName)
         //if file doesn't exist, delete file info and return
         if (!myFile)
         {
-            cout << endl << "Some of your account files could not be found!" << endl;
-            cout << "Deleting file accessor....." << endl;
+            cout << endl << newNode->accountFileName << " could not be found!" << endl;
+            cout << "Removing memory file....." << endl;
             selectedAccount = newNode;
             deleteNode(newNode->accountName);
             return;

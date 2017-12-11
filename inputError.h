@@ -27,6 +27,7 @@ class InputError
         void checkID(string&);
         void clearField();
         void yesNo(char&);
+        void checkString(string&);
         
         //template functions
         template <class T>
@@ -88,6 +89,8 @@ void InputError::checkPin(string &p)
 void InputError::checkID(string &name)
 {
     ofstream tempFile;
+    checkString(name);
+
     //converts to file name
     string fileName = name + ".txt";
 
@@ -100,11 +103,53 @@ void InputError::checkID(string &name)
         tempFile.close();
         cout << "Username has already been taken! Please try again: ";
         getline(cin, name);
+        checkString(name);
         fileName = name + ".txt";
         tempFile.open(fileName.c_str());
     }
 
     tempFile.close();
+}
+
+//checks string for input and white space
+void InputError::checkString(string &words)
+{
+    while (words == "")
+    {
+        cout << "Nothing submitted! Please try again: ";
+        getline(cin, words);
+    }
+
+    //temp words2
+    string tempStrBackward, tempStrForward;
+
+    //delete right white space
+    for (int i = words.length() - 1; i >= 0; i--)
+    {
+        if (words[i] != ' ')
+        {
+            for (int j = i; j >= 0; j--)
+            {
+                tempStrBackward += words[j];
+            }
+            break;   
+        }
+    }
+
+    //delete left white space
+    for (int i = tempStrBackward.length() - 1; i >= 0; i--)
+    {
+        if (tempStrBackward[i] != ' ')
+        {
+            for (int j = i; j >= 0; j--)
+            {
+                tempStrForward += tempStrBackward[j];
+            }
+            break;   
+        }
+    }
+    
+    words = tempStrForward;
 }
 
 //bounds check for menu selection or money movement
@@ -119,6 +164,7 @@ void InputError::boundsCheck(T &var, const T lower, const T upper)
         //check for in bounds
         while (var < lower || var > upper)
         {
+            clearField();
             cout << "Invalid Entry. Please try again: ";
             cin >> var;
         }

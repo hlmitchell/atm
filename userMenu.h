@@ -86,9 +86,11 @@ UserMenu::UserMenu()
     cout << endl << "Now we'll need to know some information about you!" << endl;
     cout << "What is your first name? ";
     getline(cin, tempStr);
+    errorCatcher.checkString(tempStr);
     myInfo.setFirst(tempStr);
     cout << "What is your last name? ";
     getline(cin, tempStr);
+    errorCatcher.checkString(tempStr);
     myInfo.setLast(tempStr);
 
     cout << "Please enter your age: ";
@@ -331,9 +333,11 @@ void UserMenu::editUserInfo()
                 //request and store new name
                 cout << "Enter First Name: ";
                 getline(cin, tempStr);
+                errorCatcher.checkString(tempStr);
                 myInfo.setFirst(tempStr);
                 cout << "Enter Last Name: ";
                 getline(cin, tempStr);
+                errorCatcher.checkString(tempStr);
                 myInfo.setLast(tempStr);
                 cout << endl << "New Name set to " << myInfo.getFirst() << " " 
                      << myInfo.getLast() << "!" << endl;
@@ -448,8 +452,11 @@ void UserMenu::transferHandler(bool t)
 //overloaded operator
 ostream &operator << (ostream &os, UserInfo &user)
 {
-    os << endl << user.getId() << endl << user.getPin() << endl
-       << user.getFirst() << " " << user.getLast() << endl << user.getAge() << endl;
+    os << endl 
+       << "User ID: " << user.getId() << endl 
+       << "User Pin: " << user.getPin() << endl
+       << "Name: " << user.getFirst() << " " << user.getLast() << endl 
+       << "Age: " << user.getAge() << endl;
     return os;
 }
 

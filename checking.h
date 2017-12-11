@@ -135,13 +135,17 @@ void Checking::withdraw()
         cout << endl << "You do not have sufficient funds!" << endl;
     else 
     {
-        nodePtr->total = nodePtr->total -= withdep;
-        //display withdraw amount and new total
-        cout << "Successfully withdrew $" << withdep << endl;
-        cout << "New " << nodePtr->accountName << " total is $" << nodePtr->total << endl;
-        
-        //send to history
-        nodePtr->myHistory.push("Withdrawal", withdep, nodePtr->total, "NULL");
+        //if deposit is more than 0
+        if (withdep > 0)
+        {
+            nodePtr->total = nodePtr->total -= withdep;
+            //display withdraw amount and new total
+            cout << "Successfully withdrew $" << withdep << endl;
+            cout << "New " << nodePtr->accountName << " total is $" << nodePtr->total << endl;
+            
+            //send to history
+            nodePtr->myHistory.push("Withdrawal", withdep, nodePtr->total, "NULL");
+        }
     }
 }
 

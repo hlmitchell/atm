@@ -192,24 +192,15 @@ void Accounts::createAccount(string id)
 
     //assign name to temp variable
     getline(cin, tempName);
+    errorCatcher.checkString(tempName);
     tempNode = myList.findNode(tempName);
-    //make sure name isn't repeat or blank
-    while (tempNode != NULL || tempName == "")
+    //make sure name isn't repeat
+    while (tempNode != NULL)
     {
-        //if name is a repeat prompt again
-        if (tempNode != NULL)
-        {
-            cout << "Name already taken! Please try again: ";
-            getline(cin, tempName);
-            tempNode = myList.findNode(tempName);
-        }
-        //if name is blank prompt again
-        else
-        {
-            cout << "Account must have a name! Please try again: ";
-            getline(cin, tempName);
-            tempNode = myList.findNode(tempName);
-        }
+        cout << "Name already taken! Please try again: ";
+        getline(cin, tempName);
+        tempNode = myList.findNode(tempName);
+        
     }
 
     //create a new node in the list
@@ -299,14 +290,18 @@ void Accounts::deposit()
     cin >> withdep;
     errorCatcher.boundsCheck(withdep, 0.0, 1000000000.0);
 
-    //add to total
-    nodePtr->total += withdep;
-    //display deposit amount and new total
-    cout << "Successfully deposited $" << withdep << endl;
-    cout << "New " << nodePtr->accountName << " total is $" << nodePtr->total << endl;
+    //if deposit is more than 0
+    if (withdep > 0)
+    {
+        //add to total
+        nodePtr->total += withdep;
+        //display deposit amount and new total
+        cout << "Successfully deposited $" << withdep << endl;
+        cout << "New " << nodePtr->accountName << " total is $" << nodePtr->total << endl;
 
-    //send to history
-    nodePtr->myHistory.push("Deposit", withdep, nodePtr->total, "NULL");
+        //send to history
+        nodePtr->myHistory.push("Deposit", withdep, nodePtr->total, "NULL");
+    }
 }
 
 //merge two like accounts
@@ -415,18 +410,22 @@ void Accounts::sameTypeTransfer()
     cin >> withdep;
     errorCatcher.boundsCheck(withdep, 0.0, nodePtr->total);
 
-    //ammend account totals
-    nodePtr->total -= withdep;
-    transferPtr->total += withdep;
+    //if transfer is not 0
+    if (withdep > 0)
+    {  
+        //ammend account totals
+        nodePtr->total -= withdep;
+        transferPtr->total += withdep;
+ 
+        //output success message and new totals for accounts
+        cout << endl << "Successfully transfered $" << withdep << "!" << endl;
+        cout << "New " << nodePtr->accountName << " total is $" << nodePtr->total << endl;
+        cout << "New " << transferPtr->accountName << " total is $" << transferPtr->total << endl;
 
-    //output success message and new totals for accounts
-    cout << endl << "Successfully transfered $" << withdep << "!" << endl;
-    cout << "New " << nodePtr->accountName << " total is $" << nodePtr->total << endl;
-    cout << "New " << transferPtr->accountName << " total is $" << transferPtr->total << endl;
-
-    //send to histories
-    nodePtr->myHistory.push("Transfer Withdrawal", withdep, nodePtr->total, "NULL");
-    transferPtr->myHistory.push("Transfer Deposit", withdep, transferPtr->total, "NULL");
+        //send to histories
+        nodePtr->myHistory.push("Transfer Withdrawal", withdep, nodePtr->total, "NULL");
+        transferPtr->myHistory.push("Transfer Deposit", withdep, transferPtr->total, "NULL");
+    }
 
 }
 
