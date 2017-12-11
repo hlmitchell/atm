@@ -41,9 +41,8 @@ int main()
         {
             case 1:
             {
-
                 //request user ID
-                /*cout << endl << "Please Enter User ID: ";
+                cout << endl << "Please Enter User ID: ";
                 getline(cin, id);
                 //checks to see if user file exists
                 if (!checkID(id, clientFile))
@@ -57,15 +56,14 @@ int main()
                 
                 //calls object user
                 UserMenu myClient(id, pin);
-                break;*/
-
+                break;
 
                 //temporary shortcut
-                id = "hlmitchell";
+                /*id = "hlmitchell";
                 pin = "9090";
                 checkID(id, clientFile);
                 UserMenu myClient(id, pin);
-                break;
+                break;*/
             }
             case 2:
             {
