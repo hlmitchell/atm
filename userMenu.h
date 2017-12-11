@@ -86,9 +86,11 @@ UserMenu::UserMenu()
     cout << endl << "Now we'll need to know some information about you!" << endl;
     cout << "What is your first name? ";
     getline(cin, tempStr);
+    errorCatcher.checkString(tempStr);
     myInfo.setFirst(tempStr);
     cout << "What is your last name? ";
     getline(cin, tempStr);
+    errorCatcher.checkString(tempStr);
     myInfo.setLast(tempStr);
 
     cout << "Please enter your age: ";
@@ -144,8 +146,8 @@ UserMenu::UserMenu(string name, string pin)
     for (int i = 0; i < accountData.size(); i++)
     {
         if (accountData[i][0] == 'C')
-            myChecking.createNode(accountData[i]);
-        else mySavings.createNode(accountData[i]);
+            myChecking.setAccountFileNames(accountData[i]);
+        else mySavings.setAccountFileNames(accountData[i]);
     }
 
     //welcome message and main menu
@@ -331,9 +333,11 @@ void UserMenu::editUserInfo()
                 //request and store new name
                 cout << "Enter First Name: ";
                 getline(cin, tempStr);
+                errorCatcher.checkString(tempStr);
                 myInfo.setFirst(tempStr);
                 cout << "Enter Last Name: ";
                 getline(cin, tempStr);
+                errorCatcher.checkString(tempStr);
                 myInfo.setLast(tempStr);
                 cout << endl << "New Name set to " << myInfo.getFirst() << " " 
                      << myInfo.getLast() << "!" << endl;
@@ -361,14 +365,14 @@ void UserMenu::editUserInfo()
 void UserMenu::transferHandler(bool t)
 {
     //placeholders for checking and savings accounts
-    accountNode *savings;
-    accountNode *checking;
+    accountNode *savingsPtr;
+    accountNode *checkingPtr;
     double num;
 
     if (t == true)
     {
         //establish checking account
-        checking = myChecking.getSelectedAccount();
+        checkingPtr = myChecking.getSelectedAccount();
 
         //reset crossTransfer var
         myChecking.resetCrossTransfer();
@@ -382,21 +386,21 @@ void UserMenu::transferHandler(bool t)
         //display and select savings accounts
         mySavings.displayAccounts();
         mySavings.selectAccount();
-        savings = mySavings.getSelectedAccount();
+        savingsPtr = mySavings.getSelectedAccount();
 
         //get transfer amount
-        cout << "How much money would you like to transfer from " << checking->accountName
-             << " to " << savings->accountName << "? ";
+        cout << "How much money would you like to transfer from " << checkingPtr->accountName
+             << " to " << savingsPtr->accountName << "? ";
         cin >> num;
-        errorCatcher.boundsCheck(num, 0.0, checking->total);
+        errorCatcher.boundsCheck(num, 0.0, checkingPtr->total);
 
         //ammend account totals
-        checking->total -= num;
-        savings->total += num;
+        checkingPtr->total -= num;
+        savingsPtr->total += num;
 
         //send to history
-        myChecking.sendToHistory("Transfer Withdrawal", num, checking->total, "NULL");
-        mySavings.sendToHistory("Transfer Deposit", num, savings->total, "NULL");
+        myChecking.sendToHistory("Transfer Withdrawal", num, checkingPtr->total, "NULL");
+        mySavings.sendToHistory("Transfer Deposit", num, savingsPtr->total, "NULL");
 
         //reset selected accounts
         mySavings.resetSelectedAccount();
@@ -405,7 +409,7 @@ void UserMenu::transferHandler(bool t)
      else if (t == false)
     {
         //establish checking account
-        savings = mySavings.getSelectedAccount();
+        savingsPtr = mySavings.getSelectedAccount();
 
         //reset crossTransfer var
         mySavings.resetCrossTransfer();
@@ -419,21 +423,21 @@ void UserMenu::transferHandler(bool t)
         //display and select savings accounts
         myChecking.displayAccounts();
         myChecking.selectAccount();
-        checking = myChecking.getSelectedAccount();
+        checkingPtr = myChecking.getSelectedAccount();
 
         //get transfer amount
-        cout << "How much money would you like to transfer from " << savings->accountName
-             << " to " << checking->accountName << "? ";
+        cout << "How much money would you like to transfer from " << savingsPtr->accountName
+             << " to " << checkingPtr->accountName << "? ";
         cin >> num;
-        errorCatcher.boundsCheck(num, 0.0, savings->total);
+        errorCatcher.boundsCheck(num, 0.0, savingsPtr->total);
 
         //ammend account totals
-        savings->total -= num;
-        checking->total += num;
+        savingsPtr->total -= num;
+        checkingPtr->total += num;
 
         //send to history
-        myChecking.sendToHistory("Transfer Deposit", num, checking->total, "NULL");
-        mySavings.sendToHistory("Transfer Withdrawal", num, savings->total, "NULL");
+        myChecking.sendToHistory("Transfer Deposit", num, checkingPtr->total, "NULL");
+        mySavings.sendToHistory("Transfer Withdrawal", num, savingsPtr->total, "NULL");
 
         //reset selected accounts
         myChecking.resetSelectedAccount();
@@ -441,15 +445,18 @@ void UserMenu::transferHandler(bool t)
 
     //output success message and new totals for accounts
     cout << endl << "Successfully transfered $" << num << "!" << endl;
-    cout << "New " << checking->accountName << " total is $" << checking->total << endl;
-    cout << "New " << savings->accountName << " total is $" << savings->total << endl;
+    cout << "New " << checkingPtr->accountName << " total is $" << checkingPtr->total << endl;
+    cout << "New " << savingsPtr->accountName << " total is $" << savingsPtr->total << endl;
 }
 
 //overloaded operator
 ostream &operator << (ostream &os, UserInfo &user)
 {
-    os << endl << user.getId() << endl << user.getPin() << endl
-       << user.getFirst() << " " << user.getLast() << endl << user.getAge() << endl;
+    os << endl 
+       << "User ID: " << user.getId() << endl 
+       << "User Pin: " << user.getPin() << endl
+       << "Name: " << user.getFirst() << " " << user.getLast() << endl 
+       << "Age: " << user.getAge() << endl;
     return os;
 }
 

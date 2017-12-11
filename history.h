@@ -143,7 +143,7 @@ void History::display()
 
 //upload history into file
 void History::uploadHistory(fstream &file)
-{
+{    
     //temp nodes for moving through files
     accountHistory *nodePtr;
     accountHistory *prevNode;
@@ -157,7 +157,7 @@ void History::uploadHistory(fstream &file)
     }
 
     //upload files in reverse order
-    do
+    while (nodePtr != top)
     {
         //upload files
         file << nodePtr->action << endl;
@@ -175,13 +175,16 @@ void History::uploadHistory(fstream &file)
 
         //set nodePtr to previous node then start again
         nodePtr = prevNode;
-    } while (nodePtr != top);
+    } 
 
     //upload top files
-    file << top->action << endl;
-    file << top->amount << endl;
-    file << top->total << endl;
-    file << top->date << endl;
+    if (nodePtr == top)
+    {
+        file << top->action << endl;
+        file << top->amount << endl;
+        file << top->total << endl;
+        file << top->date << endl;
+    }
 }
 
 //download history from file

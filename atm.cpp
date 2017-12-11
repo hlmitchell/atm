@@ -41,9 +41,9 @@ int main()
         {
             case 1:
             {
-/*
+
                 //request user ID
-                cout << endl << "Please Enter User ID: ";
+                /*cout << endl << "Please Enter User ID: ";
                 getline(cin, id);
                 //checks to see if user file exists
                 if (!checkID(id, clientFile))
@@ -56,7 +56,7 @@ int main()
                 errorCatcher.checkPin(pin);
                 
                 //calls object user
-                User myClient(id, pin);
+                UserMenu myClient(id, pin);
                 break;*/
 
 
