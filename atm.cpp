@@ -57,13 +57,6 @@ int main()
                 //calls object user
                 UserMenu myClient(id, pin);
                 break;
-
-                //temporary shortcut
-                /*id = "hlmitchell";
-                pin = "9090";
-                checkID(id, clientFile);
-                UserMenu myClient(id, pin);
-                break;*/
             }
             case 2:
             {

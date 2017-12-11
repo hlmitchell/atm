@@ -1,3 +1,7 @@
+//Hannah Mitchell
+//CS M10B
+//December 5th 2017
+
 #include "history.h"
 
 //constructor sets top to NULL
