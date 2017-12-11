@@ -19,10 +19,10 @@ int main()
 {
     //variables
     InputError errorCatcher;     //catches input errors
-    fstream clientFile;     //client file
-    int userSelection;      //selection for first menu
-    string id;              //user ID
-    string pin;             //user pin
+    fstream clientFile;          //client file
+    int userSelection;           //selection for first menu
+    string id;                   //user ID
+    string pin;                  //user pin
 
     do {
         //display main menu
@@ -79,7 +79,6 @@ int main()
     //reset variable
     userSelection = 0;
 }
-
 
 //function checks user ID exists
 bool checkID(string &name, fstream &file)
