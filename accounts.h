@@ -1,6 +1,7 @@
+//ATM MACHINE
 //Hannah Mitchell
-//CS M20
-//December 5th 2017
+//CS M10B
+//December 11th 2017
 
 #ifndef ACCOUNTS_H
 #define ACCOUNTS_H

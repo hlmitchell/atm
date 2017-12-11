@@ -1,3 +1,8 @@
+//ATM MACHINE
+//Hannah Mitchell
+//CS M10B
+//December 11th 2017
+
 #include "userMenu.h"
 
 //Gathers user information for a new user

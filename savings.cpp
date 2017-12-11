@@ -1,6 +1,7 @@
+//ATM MACHINE
 //Hannah Mitchell
 //CS M10B
-//December 5th 2017
+//December 11th 2017
 
 #include "savings.h"
 
