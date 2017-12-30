@@ -6,62 +6,71 @@
 #include "inputError.h"
 
 InputError::InputError()
-{
-    userSelection = 0;
-}
+{}
 
 //choose account type for menu options
 int InputError::chooseAccountType()
 {   
-    cout << endl;
-    //display part of menu and check bounds
-    cout << endl;
+    //variable
+    int menuUserSelection;
+    
+    //display part of menu
+    cout << endl << endl;
     cout << "1. Checking" << endl;
     cout << "2. Savings" << endl;
     cout << "3. Back" << endl;
-    cin >> userSelection;
-    boundsCheck(userSelection, 1, 3);
-    return userSelection;
+
+    //check bounds
+    cin >> menuUserSelection;
+    boundsCheck(menuUserSelection, 1, 3);
+    return menuUserSelection;
 }
 
 //checks that pin is length of 4 and valid
-void InputError::checkPin(string &p)
+void InputError::checkForValidPinEntry(string &pinEntry)
 {
-    bool valid = true;
+    //constants
+    const int PIN_LENGTH = 4; 
+    const char ZERO = '0';
+    const char NINE = '9';
+
+    //variables
+    bool pinIsAllInts = true;
 
     do
     {
         //make sure characters are all ints
-        for (int i = 0; i < p.length(); i++)
+        for (int i = 0; i < pinEntry.length(); i++)
         {
-            if (p[i] < '0' || p[i] > '9')
-                valid = false;
+            if (pinEntry[i] < ZERO || pinEntry[i] > NINE)
+                pinIsAllInts = false;
         }
 
         //if pin length isn't 4 then reprompt
-        if (p.length() != 4 || valid == false)
+        if (pinEntry.length() != PIN_LENGTH || pinIsAllInts == false)
         {
             cout << "Invalid Entry. Please try again: ";
-            getline(cin, p);
+            getline(cin, pinEntry);
 
-            valid = true;
-            for (int i = 0; i < p.length(); i++)
+            pinIsAllInts = true;
+            for (int i = 0; i < pinEntry.length(); i++)
             {
-                if (p[i] < '0' || p[i] > '9')
-                    valid = false;
+                if (pinEntry[i] < ZERO || pinEntry[i] > NINE)
+                    pinIsAllInts = false;
             }
         }
-    } while(p.length() != 4 || valid == false);
+    } while(pinEntry.length() != PIN_LENGTH || pinIsAllInts == false);
 }
 
 //checks for new user ID
-void InputError::checkID(string &name)
+void InputError::checkForValidIDEntry(string &idEntry)
 {
     ofstream tempFile;
-    checkString(name);
+
+    removeExtraWhiteSpaceFromString(idEntry);
 
     //converts to file name
-    string fileName = name + ".txt";
+    string fileName = idEntry + ".txt";
 
     //check to see if open, otherwise change id
     tempFile.open(fileName.c_str(), ios::in);
@@ -71,9 +80,9 @@ void InputError::checkID(string &name)
     {
         tempFile.close();
         cout << "Username has already been taken! Please try again: ";
-        getline(cin, name);
-        checkString(name);
-        fileName = name + ".txt";
+        getline(cin, idEntry);
+        removeExtraWhiteSpaceFromString(idEntry);
+        fileName = idEntry + ".txt";
         tempFile.open(fileName.c_str());
     }
 
@@ -81,25 +90,25 @@ void InputError::checkID(string &name)
 }
 
 //checks string for input and white space
-void InputError::checkString(string &words)
+void InputError::removeExtraWhiteSpaceFromString(string &userEntry)
 {
-    while (words == "")
+    while (userEntry == "")
     {
         cout << "Nothing submitted! Please try again: ";
-        getline(cin, words);
+        getline(cin, userEntry);
     }
 
-    //temp words2
+    //temporary holders for string as it will be reversed and then reversed again to remove white space
     string tempStrBackward, tempStrForward;
 
     //delete right white space
-    for (int i = words.length() - 1; i >= 0; i--)
+    for (int i = userEntry.length() - 1; i >= 0; i--)
     {
-        if (words[i] != ' ')
+        if (userEntry[i] != ' ')
         {
             for (int j = i; j >= 0; j--)
             {
-                tempStrBackward += words[j];
+                tempStrBackward += userEntry[j];
             }
             break;   
         }
@@ -118,11 +127,11 @@ void InputError::checkString(string &words)
         }
     }
     
-    words = tempStrForward;
+    userEntry = tempStrForward;
 }
 
 //clears field to prevent menu skipping
-void InputError::clearField()
+void InputError::clearKeyboardBuffer()
 {
     //clears field to prevent menu skipping
     cin.clear();
@@ -130,22 +139,22 @@ void InputError::clearField()
 }
 
 //validates yes or no input
-void InputError::yesNo(char &x)
+void InputError::yesOrNoValidator(char &yORn)
 {
-    clearField();
+    clearKeyboardBuffer();
     
     //change lower case to upper
-    if (x == 'y') x = 'Y';
-    else if (x == 'n') x = 'N';
+    if (yORn == 'y') yORn = 'Y';
+    else if (yORn == 'n') yORn = 'N';
 
     //if user has entered y or n then reprompt
-   while ((x != 'Y') && (x != 'N'))
+   while ((yORn != 'Y') && (yORn != 'N'))
     {
         cout << "Invalid Entry. Please try again: ";
-        cin >> x;
-        if (x == 'y') x = 'Y';
-        else if (x == 'n') x = 'N';
-        clearField();
+        cin >> yORn;
+        if (yORn == 'y') yORn = 'Y';
+        else if (yORn == 'n') yORn = 'N';
+        clearKeyboardBuffer();
     }
 }
 

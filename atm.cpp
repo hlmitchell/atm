@@ -14,16 +14,18 @@
 using namespace std;
 
 //prototypes
-bool checkID(string&, fstream&);
+void attemptLogin(InputError&);
+bool checkIfFileExists(string&);
 
 int main()
 {
+    //constants
+    const int MINIMUM_MENU_INPUT = 1;
+    const int MAXIMUM_MENU_INPUT = 3;
+    
     //variables
     InputError errorCatcher;     //catches input errors
-    fstream clientFile;          //client file
-    int userSelection;           //selection for first menu
-    string id;                   //user ID
-    string pin;                  //user pin
+    int menuUserSelection;       //selection for first menu
 
     do {
         //display main menu
@@ -34,29 +36,15 @@ int main()
         cout << "3. Exit" << endl;
 
         //checks if user input is integer between 1 and 3
-        cin >> userSelection;
-        errorCatcher.boundsCheck(userSelection, 1, 3);
-        errorCatcher.clearField();
+        cin >> menuUserSelection;
+        errorCatcher.boundsCheck(menuUserSelection, MINIMUM_MENU_INPUT, MAXIMUM_MENU_INPUT);
+        errorCatcher.clearKeyboardBuffer();
 
-        switch (userSelection)
+        switch (menuUserSelection)
         {
             case 1:
             {
-                //request user ID
-                cout << endl << "Please Enter User ID: ";
-                getline(cin, id);
-                //checks to see if user file exists
-                if (!checkID(id, clientFile))
-                    {break;}
-                //request user PIN
-                cout << "Please Enter Pin: ";
-                getline(cin, pin);
-                
-                //checks if pin is all integers
-                errorCatcher.checkPin(pin);
-                
-                //calls object user
-                UserMenu myClient(id, pin);
+                attemptLogin(errorCatcher);
                 break;
             }
             case 2:
@@ -68,25 +56,54 @@ int main()
                 break;
         }
 
-    } while (userSelection != 3);
+    } while (menuUserSelection != MAXIMUM_MENU_INPUT);
 
     //reset variable
-    userSelection = 0;
+    menuUserSelection = 0;
 }
 
-//function checks user ID exists
-bool checkID(string &name, fstream &file)
+
+//attempt to login to account using id and pin
+void attemptLogin(InputError &errorCatcher)
 {
-    //convert to file name
-    name = name + ".txt";
+    //variables
+    string id;                   //user ID
+    string pin;                  //user pin
+
+    //request user ID
+    cout << endl << "Please Enter User ID: ";
+    getline(cin, id);
+
+    //checks to see if user file exists
+    if (!checkIfFileExists(id)) return;
+    
+    //request user PIN
+    cout << "Please Enter Pin: ";
+    getline(cin, pin);
+    
+    //checks if pin is all integers
+    errorCatcher.checkForValidPinEntry(pin);
+    
+    //calls object user
+    UserMenu myClient(id, pin);
+}
+
+//function checks if user ID exists by searching for file of same name
+bool checkIfFileExists(string &idInquiry)
+{
+    //create file
+    fstream clientFile;
+
+    //convert id input to file name
+    idInquiry = idInquiry + ".txt";
 
     //check to see if open, otherwise return false
-    file.open(name.c_str());
-    if (file.fail())
+    clientFile.open(idInquiry.c_str());
+    if (clientFile.fail())
     {
         cout << "Not a registered user name!" << endl;
         return false;
     }
-    else file.close();
+    else clientFile.close();
     return true;
 }

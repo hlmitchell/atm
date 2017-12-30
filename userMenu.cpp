@@ -21,7 +21,7 @@ UserMenu::UserMenu()
     cout << "Please enter a username: ";
     getline(cin, tempStr);
     //check if username already exists
-    errorCatcher.checkID(tempStr);
+    errorCatcher.checkForValidIDEntry(tempStr);
     myInfo.setId(tempStr);
 
     //Create file
@@ -33,18 +33,18 @@ UserMenu::UserMenu()
     cout << "Choose a 4 digit pin: ";
     getline(cin, tempStr);
     //check for valid input for pin
-    errorCatcher.checkPin(tempStr);
+    errorCatcher.checkForValidPinEntry(tempStr);
     myInfo.setPin(tempStr);
 
     //get name and check for errors
     cout << endl << "Now we'll need to know some information about you!" << endl;
     cout << "What is your first name? ";
     getline(cin, tempStr);
-    errorCatcher.checkString(tempStr);
+    errorCatcher.removeExtraWhiteSpaceFromString(tempStr);
     myInfo.setFirst(tempStr);
     cout << "What is your last name? ";
     getline(cin, tempStr);
-    errorCatcher.checkString(tempStr);
+    errorCatcher.removeExtraWhiteSpaceFromString(tempStr);
     myInfo.setLast(tempStr);
 
     //get age
@@ -53,7 +53,7 @@ UserMenu::UserMenu()
     //check for valid input for age
     errorCatcher.boundsCheck(tempInt, 16, 125);
     myInfo.setAge(tempInt);
-    errorCatcher.clearField();
+    errorCatcher.clearKeyboardBuffer();
 
     mainMenu();
 }
@@ -158,7 +158,7 @@ void UserMenu::mainMenu()
         //validate input
         cin >> userSelection;
         errorCatcher.boundsCheck(userSelection, 1, 5);
-        errorCatcher.clearField();
+        errorCatcher.clearKeyboardBuffer();
 
         switch(userSelection)
         {
@@ -242,7 +242,7 @@ void UserMenu::editUserInfo()
         //check input selection
         cin >> userSelection;
         errorCatcher.boundsCheck(userSelection, 1, 4);
-        errorCatcher.clearField();
+        errorCatcher.clearKeyboardBuffer();
 
         switch(userSelection)
         {
@@ -250,7 +250,7 @@ void UserMenu::editUserInfo()
                 //request and store new pin
                 cout << "Enter New Pin: ";
                 getline(cin, tempStr);
-                errorCatcher.checkPin(tempStr);
+                errorCatcher.checkForValidPinEntry(tempStr);
                 myInfo.setPin(tempStr);
                 cout << endl << "New Pin set to " << myInfo.getId() << "!" << endl;
                 break;
@@ -258,11 +258,11 @@ void UserMenu::editUserInfo()
                 //request and store new name
                 cout << "Enter First Name: ";
                 getline(cin, tempStr);
-                errorCatcher.checkString(tempStr);
+                errorCatcher.removeExtraWhiteSpaceFromString(tempStr);
                 myInfo.setFirst(tempStr);
                 cout << "Enter Last Name: ";
                 getline(cin, tempStr);
-                errorCatcher.checkString(tempStr);
+                errorCatcher.removeExtraWhiteSpaceFromString(tempStr);
                 myInfo.setLast(tempStr);
                 cout << endl << "New Name set to " << myInfo.getFirst() << " " 
                      << myInfo.getLast() << "!" << endl;
@@ -273,7 +273,7 @@ void UserMenu::editUserInfo()
                 cin >> tempInt;
                 errorCatcher.boundsCheck(tempInt, 16, 125);
                 myInfo.setAge(tempInt);
-                errorCatcher.clearField();
+                errorCatcher.clearKeyboardBuffer();
                 cout << endl << "New Age set to " << myInfo.getAge() << "!" << endl;
                 break;
             default:
@@ -342,7 +342,7 @@ void UserMenu::transferHandler(bool t)
         //check to see if savings accounts exist
         if (!myChecking.getHead())
         {
-            cout << endl << "You have not created a savings account yet!" << endl;
+            cout << endl << "You have not created a checking account yet!" << endl;
             return;
         }
         //display and select savings accounts

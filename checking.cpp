@@ -51,7 +51,7 @@ void Checking::accountOptionsMenu()
         //validate input
         cin >> userSelection;
         errorCatcher.boundsCheck(userSelection, 1, 7);
-        errorCatcher.clearField();
+        errorCatcher.clearKeyboardBuffer();
 
         switch(userSelection)
         {

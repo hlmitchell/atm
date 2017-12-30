@@ -15,58 +15,55 @@ using namespace std;
 
 class InputError
 {
-    protected:
-        int userSelection;          //user selection from menus
-    
     public:
         //constructor
         InputError();
 
         //input handlers
         int chooseAccountType();
-        void checkPin(string&);
-        void checkID(string&);
-        void clearField();
-        void yesNo(char&);
-        void checkString(string&);
+        void checkForValidPinEntry(string&);
+        void checkForValidIDEntry(string&);
+        void clearKeyboardBuffer();
+        void yesOrNoValidator(char&);
+        void removeExtraWhiteSpaceFromString(string&);
         
         //template functions
         template <class T>
         void boundsCheck(T&, const T, const T);
         template <class T>
-        void cinFail(T&);
+        void checkIfCinFail(T&);
 };
 
 //bounds check for menu selection or money movement
 template <class T>
-void InputError::boundsCheck(T &var, const T lower, const T upper)
+void InputError::boundsCheck(T &userSelection, const T lowerBound, const T upperBound)
 {
-    while (cin.fail() || var < lower || var > upper)
+    while (cin.fail() || userSelection < lowerBound || userSelection > upperBound)
     {
         //cin.fail input error check
-        cinFail(var);
+        checkIfCinFail(userSelection);
 
         //check for in bounds
-        while (var < lower || var > upper)
+        while (userSelection < lowerBound || userSelection > upperBound)
         {
-            clearField();
+            clearKeyboardBuffer();
             cout << "Invalid Entry. Please try again: ";
-            cin >> var;
+            cin >> userSelection;
         }
     }
 }
 
 //checks if cin failed
 template <class T>
-void InputError::cinFail(T &var)
+void InputError::checkIfCinFail(T &userSelection)
 {
     //while string is entered in to number data type, reprompt
     while (cin.fail())
     {
-        clearField();
+        clearKeyboardBuffer();
 
         cout << "Invalid Entry. Please try again: ";
-        cin >> var;
+        cin >> userSelection;
     }
 }
 

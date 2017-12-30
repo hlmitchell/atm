@@ -165,7 +165,7 @@ void Accounts::createAccount(string id)
 
     //assign name to temp variable
     getline(cin, tempName);
-    errorCatcher.checkString(tempName);
+    errorCatcher.removeExtraWhiteSpaceFromString(tempName);
     tempNode = myList.findNode(tempName);
     //make sure name isn't repeat
     while (tempNode != NULL)
@@ -240,7 +240,7 @@ void Accounts::deleteAccount()
     //confirm deletion
     cout << endl << "Delete account " << nodePtr->accountName << " (Y/N)? ";
     cin >> confirm;
-    errorCatcher.yesNo(confirm); //error check
+    errorCatcher.yesOrNoValidator(confirm); //error check
 
     //if yes
     if (confirm == 'Y')
@@ -318,7 +318,7 @@ void Accounts::merge()
     cout << "Are you sure you want to merge " << nodePtr->accountName
          << " into " << mergPtr->accountName << " (Y/N)? ";
     cin >> confirm;
-    errorCatcher.yesNo(confirm);
+    errorCatcher.yesOrNoValidator(confirm);
 
     //delete selected account and transfer funds to merger account
     if (confirm == 'Y')

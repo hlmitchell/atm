@@ -48,7 +48,7 @@ void Savings::accountOptionsMenu()
         //validate input
         cin >> userSelection;
         errorCatcher.boundsCheck(userSelection, 1, 6);
-        errorCatcher.clearField();
+        errorCatcher.clearKeyboardBuffer();
 
         switch(userSelection)
         {
