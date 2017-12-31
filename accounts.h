@@ -20,7 +20,7 @@ using namespace std;
 class Accounts
 {
     protected:
-        InputError errorCatcher;        //error catcher
+        InputError inputErrorCatcher;   //error catcher
         fstream myFile;                 //file for specific account
 
         accountList myList;             //list of accounts

@@ -22,15 +22,15 @@ ostream &operator << (ostream &, UserInfo &);
 class UserMenu
 {
     private:
-        int userSelection;      //user input from menus
-        bool transfer;          //returned from accounts menu, signals transferHandler()
+        int menuUserSelection;            //user input from menus
+        bool crossAccountTypeTransfer;    //returned from accounts menu, signals transferHandler()
 
-        UserInfo myInfo;             //instance of userInfo class holding user data
-        InputError errorCatcher;          //catches user input errors
-        vector<string> accountData;  //list of all account file names
+        UserInfo myInfo;                  //instance of userInfo class holding user data
+        InputError inputErrorCatcher;          //catches user input errors
+        vector<string> accountFileNames;       //list of all account file names
 
-        string fileName;        //user file name with '.txt'
-        fstream myFile;         //user file and account names
+        string txtFileName;             //user file name with '.txt'
+        fstream userInfoFile;           //user file and account names
 
         Checking myChecking;    //instance of Checking class
         Savings mySavings;      //instance of Savings class
@@ -42,9 +42,9 @@ class UserMenu
         ~UserMenu();
 
         //user manipulators
-        void mainMenu();
+        void displayMainMenu();
         void editUserInfo();
-        void transferHandler(bool); 
+        void crossAccountTypeTransferHandler(bool); 
 
         //friend
         friend ostream & operator << (ostream &, UserInfo &);  

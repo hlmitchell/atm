@@ -165,7 +165,7 @@ void Accounts::createAccount(string id)
 
     //assign name to temp variable
     getline(cin, tempName);
-    errorCatcher.removeExtraWhiteSpaceFromString(tempName);
+    inputErrorCatcher.removeExtraWhiteSpaceFromString(tempName);
     tempNode = myList.findNode(tempName);
     //make sure name isn't repeat
     while (tempNode != NULL)
@@ -192,7 +192,7 @@ void Accounts::createAccount(string id)
     //deposit money into the account
     cout << "How much money would you like to deposit (Enter 0 if none)? ";
     cin >> newNode->total;
-    errorCatcher.boundsCheck(newNode->total, 0.0, 1000000000.0);
+    inputErrorCatcher.boundsCheck(newNode->total, 0.0, 1000000000.0);
 
     //success message
     cout << endl << "Successfully created account " << newNode->accountName
@@ -240,7 +240,7 @@ void Accounts::deleteAccount()
     //confirm deletion
     cout << endl << "Delete account " << nodePtr->accountName << " (Y/N)? ";
     cin >> confirm;
-    errorCatcher.yesOrNoValidator(confirm); //error check
+    inputErrorCatcher.yesOrNoValidator(confirm); //error check
 
     //if yes
     if (confirm == 'Y')
@@ -261,7 +261,7 @@ void Accounts::deposit()
     //enter deposit amount
     cout << endl << "Deposit amount: ";
     cin >> withdep;
-    errorCatcher.boundsCheck(withdep, 0.0, 1000000000.0);
+    inputErrorCatcher.boundsCheck(withdep, 0.0, 1000000000.0);
 
     //if deposit is more than 0
     if (withdep > 0)
@@ -318,7 +318,7 @@ void Accounts::merge()
     cout << "Are you sure you want to merge " << nodePtr->accountName
          << " into " << mergPtr->accountName << " (Y/N)? ";
     cin >> confirm;
-    errorCatcher.yesOrNoValidator(confirm);
+    inputErrorCatcher.yesOrNoValidator(confirm);
 
     //delete selected account and transfer funds to merger account
     if (confirm == 'Y')
@@ -381,7 +381,7 @@ void Accounts::sameTypeTransfer()
     cout << "How much money would you like to transfer from " << nodePtr->accountName
          << " to " << transferPtr->accountName << "? ";
     cin >> withdep;
-    errorCatcher.boundsCheck(withdep, 0.0, nodePtr->total);
+    inputErrorCatcher.boundsCheck(withdep, 0.0, nodePtr->total);
 
     //if transfer is not 0
     if (withdep > 0)

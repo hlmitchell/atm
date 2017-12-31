@@ -50,8 +50,8 @@ void Checking::accountOptionsMenu()
 
         //validate input
         cin >> userSelection;
-        errorCatcher.boundsCheck(userSelection, 1, 7);
-        errorCatcher.clearKeyboardBuffer();
+        inputErrorCatcher.boundsCheck(userSelection, 1, 7);
+        inputErrorCatcher.clearKeyboardBuffer();
 
         switch(userSelection)
         {
@@ -99,7 +99,7 @@ void Checking::withdraw()
     //ask for withdraw amount and subtract from total
     cout << endl << "Withdraw amount: ";
     cin >> withdep;
-    errorCatcher.boundsCheck(withdep, 0.0, 1000000000.0);
+    inputErrorCatcher.boundsCheck(withdep, 0.0, 1000000000.0);
 
     //make sure there isn't overdraft
     if (nodePtr->total - withdep < 0)
@@ -125,7 +125,7 @@ void Checking::transfer()
 {
     //choose an accounts type
     cout << endl << "In to which account type would you like to transfer funds?";
-    userSelection = errorCatcher.chooseAccountType();
+    userSelection = inputErrorCatcher.chooseAccountType();
 
     //checking vs savings
     if (userSelection == 1) sameTypeTransfer();

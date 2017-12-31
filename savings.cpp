@@ -47,8 +47,8 @@ void Savings::accountOptionsMenu()
 
         //validate input
         cin >> userSelection;
-        errorCatcher.boundsCheck(userSelection, 1, 6);
-        errorCatcher.clearKeyboardBuffer();
+        inputErrorCatcher.boundsCheck(userSelection, 1, 6);
+        inputErrorCatcher.clearKeyboardBuffer();
 
         switch(userSelection)
         {
@@ -88,7 +88,7 @@ void Savings::transfer()
 {
     //choose an accounts type
     cout << endl << "In to which account type would you like to transfer funds?";
-    userSelection = errorCatcher.chooseAccountType();
+    userSelection = inputErrorCatcher.chooseAccountType();
 
     //checking vs savings
     if (userSelection == 2) sameTypeTransfer();

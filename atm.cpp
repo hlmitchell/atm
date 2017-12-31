@@ -24,7 +24,7 @@ int main()
     const int MAXIMUM_MENU_INPUT = 3;
     
     //variables
-    InputError errorCatcher;     //catches input errors
+    InputError inputErrorCatcher;     //catches input errors
     int menuUserSelection;       //selection for first menu
 
     do {
@@ -37,14 +37,14 @@ int main()
 
         //checks if user input is integer between 1 and 3
         cin >> menuUserSelection;
-        errorCatcher.boundsCheck(menuUserSelection, MINIMUM_MENU_INPUT, MAXIMUM_MENU_INPUT);
-        errorCatcher.clearKeyboardBuffer();
+        inputErrorCatcher.boundsCheck(menuUserSelection, MINIMUM_MENU_INPUT, MAXIMUM_MENU_INPUT);
+        inputErrorCatcher.clearKeyboardBuffer();
 
         switch (menuUserSelection)
         {
             case 1:
             {
-                attemptLogin(errorCatcher);
+                attemptLogin(inputErrorCatcher);
                 break;
             }
             case 2:
@@ -64,7 +64,7 @@ int main()
 
 
 //attempt to login to account using id and pin
-void attemptLogin(InputError &errorCatcher)
+void attemptLogin(InputError &inputErrorCatcher)
 {
     //variables
     string id;                   //user ID
@@ -82,7 +82,7 @@ void attemptLogin(InputError &errorCatcher)
     getline(cin, pin);
     
     //checks if pin is all integers
-    errorCatcher.checkForValidPinEntry(pin);
+    inputErrorCatcher.checkForValidPinEntry(pin);
     
     //calls object user
     UserMenu myClient(id, pin);
