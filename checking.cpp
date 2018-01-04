@@ -10,13 +10,13 @@ Checking::Checking() : Accounts()
 {}
 
 //sets file name
-void Checking::specifyFileType(string id, string file)
+void Checking::specifyFileType(string id, string fileName)
 {
     //pointer to selected account
     pointerToActiveAccount = listOfOpenAccounts.getActiveAccount();
     
     //create file name
-    pointerToActiveAccount->accountFileName = "C" + id + file + ".txt";
+    pointerToActiveAccount->accountFileName = "C" + id + fileName + ".txt";
 }
 
 //displays account header
@@ -56,7 +56,7 @@ void Checking::accountOptionsMenu()
         switch(menuUserSelection)
         {
             case 1:
-                withdraw();
+                withdrawFunds();
                 break;
             case 2:
                 depositFunds();
@@ -70,7 +70,7 @@ void Checking::accountOptionsMenu()
                 if (crossTransfer == true) return;
                 break;
             case 5:
-                pointerToActiveAccount->myHistory.display();
+                pointerToActiveAccount->myHistory.displayHistory();
                 break;
             case 6:
                 deleteAccount();
@@ -89,7 +89,7 @@ void Checking::accountOptionsMenu()
 }
 
 //withdraw money
-void Checking::withdraw()
+void Checking::withdrawFunds()
 {
     //set to selected account
     pointerToActiveAccount = listOfOpenAccounts.getActiveAccount();
@@ -115,7 +115,7 @@ void Checking::withdraw()
             cout << "New " << pointerToActiveAccount->accountName << " total is $" << pointerToActiveAccount->totalFunds << endl;
             
             //send to history
-            pointerToActiveAccount->myHistory.push("Withdrawal", withdrawOrDepositValue, pointerToActiveAccount->totalFunds, "NULL");
+            pointerToActiveAccount->myHistory.addToHistory("Withdrawal", withdrawOrDepositValue, pointerToActiveAccount->totalFunds, "NULL");
         }
     }
 }

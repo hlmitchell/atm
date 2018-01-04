@@ -36,8 +36,8 @@ class History
         ~History();
 
         //history manipulators
-        void push(string, double, double, string);
-        void display();
+        void addToHistory(string, double, double, string);
+        void displayHistory();
         void uploadHistory(fstream &);
         void downloadHistory(fstream &);
 };

@@ -201,7 +201,7 @@ void Accounts::createAccount(string id)
          << newAccount->totalFunds << "!" << endl;
 
     //send to history
-    newAccount->myHistory.push("Open Deposit", newAccount->totalFunds, newAccount->totalFunds, "NULL");
+    newAccount->myHistory.addToHistory("Open Deposit", newAccount->totalFunds, newAccount->totalFunds, "NULL");
 }
 
 //selects an account to edit 
@@ -274,7 +274,7 @@ void Accounts::depositFunds()
         cout << "New " << pointerToActiveAccount->accountName << " total is $" << pointerToActiveAccount->totalFunds << endl;
 
         //send to history
-        pointerToActiveAccount->myHistory.push("Deposit", withdrawOrDepositValue, pointerToActiveAccount->totalFunds, "NULL");
+        pointerToActiveAccount->myHistory.addToHistory("Deposit", withdrawOrDepositValue, pointerToActiveAccount->totalFunds, "NULL");
     }
 }
 
@@ -329,7 +329,7 @@ void Accounts::mergeAccounts()
         cout << "Merge Successful!" << endl;
 
         //send to history
-        mergerAccount->myHistory.push("Merger Deposit", pointerToActiveAccount->totalFunds, mergerAccount->totalFunds, "NULL");
+        mergerAccount->myHistory.addToHistory("Merger Deposit", pointerToActiveAccount->totalFunds, mergerAccount->totalFunds, "NULL");
 
         //delete account
         listOfOpenAccounts.deleteNode(pointerToActiveAccount->accountName);
@@ -397,8 +397,8 @@ void Accounts::sameAccountTypeTransfer()
         cout << "New " << transferPtr->accountName << " total is $" << transferPtr->totalFunds << endl;
 
         //send to histories
-        pointerToActiveAccount->myHistory.push("Transfer Withdrawal", withdrawOrDepositValue, pointerToActiveAccount->totalFunds, "NULL");
-        transferPtr->myHistory.push("Transfer Deposit", withdrawOrDepositValue, transferPtr->totalFunds, "NULL");
+        pointerToActiveAccount->myHistory.addToHistory("Transfer Withdrawal", withdrawOrDepositValue, pointerToActiveAccount->totalFunds, "NULL");
+        transferPtr->myHistory.addToHistory("Transfer Deposit", withdrawOrDepositValue, transferPtr->totalFunds, "NULL");
     }
 
 }
@@ -410,5 +410,5 @@ void Accounts::sendToHistory(string transactionType, double transactionAmount, d
     pointerToActiveAccount = listOfOpenAccounts.getActiveAccount();
     
     //send to history
-    pointerToActiveAccount->myHistory.push(transactionType, transactionAmount, newTotal, date);
+    pointerToActiveAccount->myHistory.addToHistory(transactionType, transactionAmount, newTotal, date);
 }

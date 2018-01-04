@@ -10,13 +10,13 @@ Savings::Savings() : Accounts()
 {}
 
 //sets file name
-void Savings::specifyFileType(string id, string file)
+void Savings::specifyFileType(string id, string fileName)
 {
     //pointer to selected account
     pointerToActiveAccount = listOfOpenAccounts.getActiveAccount();
     
     //create file name
-    pointerToActiveAccount->accountFileName = "S" + id + file + ".txt";
+    pointerToActiveAccount->accountFileName = "S" + id + fileName + ".txt";
 }
 
 //displays account header
@@ -64,7 +64,7 @@ void Savings::accountOptionsMenu()
                 if (crossTransfer == true) return;
                 break;
             case 4:
-                pointerToActiveAccount->myHistory.display();
+                pointerToActiveAccount->myHistory.displayHistory();
                 break;
             case 5:
                 deleteAccount();

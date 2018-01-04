@@ -30,7 +30,7 @@ class Checking : public Accounts
         //account options
         void displayAccounts();
         void accountOptionsMenu();
-        void withdraw();
+        void withdrawFunds();
         void transferFunds();
         
 };
