@@ -8,7 +8,7 @@
 //sets all variables to NULL
 UserInfo::UserInfo()
 {
-    pin = id = first = last = "";
+    pin = id = firstName = lastName = "";
     age = 0;
 }
 
@@ -25,15 +25,15 @@ void UserInfo::setId(string i)
 }
 
 //set First name
-void UserInfo::setFirst(string f)
+void UserInfo::setFirstName(string f)
 {
-    first = f;
+    firstName = f;
 }
 
 //set Last name
-void UserInfo::setLast(string l)
+void UserInfo::setLastName(string l)
 {
-    last = l;
+    lastName = l;
 }
 
 //set age
@@ -55,15 +55,15 @@ string UserInfo::getId()
 }
 
 //return first name
-string UserInfo::getFirst()
+string UserInfo::getFirstName()
 {
-    return first;
+    return firstName;
 }
 
 //return last name
-string UserInfo::getLast()
+string UserInfo::getLastName()
 {
-    return last;
+    return lastName;
 }
 
 //return age

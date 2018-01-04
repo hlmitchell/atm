@@ -41,11 +41,11 @@ UserMenu::UserMenu()
     cout << "What is your first name? ";
     getline(cin, tempStr);
     inputErrorCatcher.removeExtraWhiteSpaceFromString(tempStr);
-    myInfo.setFirst(tempStr);
+    myInfo.setFirstName(tempStr);
     cout << "What is your last name? ";
     getline(cin, tempStr);
     inputErrorCatcher.removeExtraWhiteSpaceFromString(tempStr);
-    myInfo.setLast(tempStr);
+    myInfo.setLastName(tempStr);
 
     //get age
     cout << "Please enter your age: ";
@@ -79,9 +79,9 @@ UserMenu::UserMenu(string userID, string userPin)
     userInfoFile >> tempStr;
     myInfo.setId(tempStr);
     userInfoFile >> tempStr;
-    myInfo.setFirst(tempStr);
+    myInfo.setFirstName(tempStr);
     userInfoFile >> tempStr;
-    myInfo.setLast(tempStr);
+    myInfo.setLastName(tempStr);
     userInfoFile >> tempInt;
     myInfo.setAge(tempInt);
 
@@ -94,20 +94,20 @@ UserMenu::UserMenu(string userID, string userPin)
     }
 
     //read out file names and store them in vector
-    string vecTemp;
-    while (userInfoFile >> vecTemp) accountFileNames.push_back(vecTemp);
+    string fileName;
+    while (userInfoFile >> fileName) accountFileNames.push_back(fileName);
 
     //send account names to correct account class type
     for (int i = 0; i < accountFileNames.size(); i++)
     {
         if (accountFileNames[i][0] == 'C')
-            myChecking.setAccountFileNames(accountFileNames[i]);
-        else mySavings.setAccountFileNames(accountFileNames[i]);
+            myChecking.downloadExistingAccounts(accountFileNames[i]);
+        else mySavings.downloadExistingAccounts(accountFileNames[i]);
     }
 
     //welcome message and main menu
     userInfoFile.close();
-    cout << endl << "Welcome Back " << myInfo.getFirst() << "!" << endl;
+    cout << endl << "Welcome Back " << myInfo.getFirstName() << "!" << endl;
     displayMainMenu();
 }
 
@@ -119,8 +119,8 @@ UserMenu::~UserMenu()
     //write to file
     userInfoFile << myInfo.getPin() << endl;
     userInfoFile << myInfo.getId() << endl;
-    userInfoFile << myInfo.getFirst() << endl;
-    userInfoFile << myInfo.getLast() << endl;
+    userInfoFile << myInfo.getFirstName() << endl;
+    userInfoFile << myInfo.getLastName() << endl;
     userInfoFile << myInfo.getAge() << endl;
 
     //delete file names in vector
@@ -170,7 +170,7 @@ void UserMenu::displayMainMenu()
                 if (menuUserSelection == 1)
                 {
                     do {
-                        crossAccountTypeTransfer = myChecking.selectAnAccount("checking");
+                        crossAccountTypeTransfer = myChecking.selectAccountForCrossTransfer("checking");
 
                         //calls transfer between account types function
                         if (crossAccountTypeTransfer == true) crossAccountTypeTransferHandler(true);
@@ -181,7 +181,7 @@ void UserMenu::displayMainMenu()
                 else if (menuUserSelection == 2)
                 {
                     do {
-                        crossAccountTypeTransfer = mySavings.selectAnAccount("savings");
+                        crossAccountTypeTransfer = mySavings.selectAccountForCrossTransfer("savings");
 
                         //calls transfer between account types function
                         if (crossAccountTypeTransfer == true) crossAccountTypeTransferHandler(false); 
@@ -210,7 +210,7 @@ void UserMenu::displayMainMenu()
                 cout << fixed << setprecision(2);
                 //display total balance across acounts
                 cout << endl << "Your total balance for all accounts is: $" 
-                     << myChecking.getTotals() + mySavings.getTotals() << endl;
+                     << myChecking.getTotalMoneyForAllAccounts() + mySavings.getTotalMoneyForAllAccounts() << endl;
             default:
                 break;
         }
@@ -259,13 +259,13 @@ void UserMenu::editUserInfo()
                 cout << "Enter First Name: ";
                 getline(cin, tempStr);
                 inputErrorCatcher.removeExtraWhiteSpaceFromString(tempStr);
-                myInfo.setFirst(tempStr);
+                myInfo.setFirstName(tempStr);
                 cout << "Enter Last Name: ";
                 getline(cin, tempStr);
                 inputErrorCatcher.removeExtraWhiteSpaceFromString(tempStr);
-                myInfo.setLast(tempStr);
-                cout << endl << "New Name set to " << myInfo.getFirst() << " " 
-                     << myInfo.getLast() << "!" << endl;
+                myInfo.setLastName(tempStr);
+                cout << endl << "New Name set to " << myInfo.getFirstName() << " " 
+                     << myInfo.getLastName() << "!" << endl;
                 break;
             case 3:
                 //request and store new age
@@ -290,20 +290,20 @@ void UserMenu::editUserInfo()
 void UserMenu::crossAccountTypeTransferHandler(bool accountType)
 {
     //placeholders for checking and savings accounts
-    accountNode *savingsPtr;
-    accountNode *checkingPtr;
+    accountNode *savingsAccount;
+    accountNode *checkingAccount;
     double transferAmount;
 
     if (accountType == true)
     {
         //establish checking account
-        checkingPtr = myChecking.getSelectedAccount();
+        checkingAccount = myChecking.callGetActiveAccount();
 
         //reset crossTransfer var
         myChecking.resetCrossTransfer();
 
         //check to see if savings accounts exist
-        if (!mySavings.getHead())
+        if (!mySavings.getHeadOfAccountList())
         {
             cout << endl << "You have not created a savings account yet!" << endl;
             return;
@@ -311,36 +311,36 @@ void UserMenu::crossAccountTypeTransferHandler(bool accountType)
         //display and select savings accounts
         mySavings.displayAccounts();
         mySavings.selectAccount();
-        savingsPtr = mySavings.getSelectedAccount();
+        savingsAccount = mySavings.callGetActiveAccount();
 
         //get transfer amount
-        cout << "How much money would you like to transfer from " << checkingPtr->accountName
-             << " to " << savingsPtr->accountName << "? ";
+        cout << "How much money would you like to transfer from " << checkingAccount->accountName
+             << " to " << savingsAccount->accountName << "? ";
         cin >> transferAmount;
-        inputErrorCatcher.boundsCheck(transferAmount, 0.0, checkingPtr->total);
+        inputErrorCatcher.boundsCheck(transferAmount, 0.0, checkingAccount->totalFunds);
 
         //ammend account totals
-        checkingPtr->total -= transferAmount;
-        savingsPtr->total += transferAmount;
+        checkingAccount->totalFunds -= transferAmount;
+        savingsAccount->totalFunds += transferAmount;
 
         //send to history
-        myChecking.sendToHistory("Transfer Withdrawal", transferAmount, checkingPtr->total, "NULL");
-        mySavings.sendToHistory("Transfer Deposit", transferAmount, savingsPtr->total, "NULL");
+        myChecking.sendToHistory("Transfer Withdrawal", transferAmount, checkingAccount->totalFunds, "NULL");
+        mySavings.sendToHistory("Transfer Deposit", transferAmount, savingsAccount->totalFunds, "NULL");
 
         //reset selected accounts
-        mySavings.resetSelectedAccount();
+        mySavings.resetActiveAccount();
     }
 
      else if (accountType == false)
     {
         //establish checking account
-        savingsPtr = mySavings.getSelectedAccount();
+        savingsAccount = mySavings.callGetActiveAccount();
 
         //reset crossTransfer var
         mySavings.resetCrossTransfer();
 
         //check to see if savings accounts exist
-        if (!myChecking.getHead())
+        if (!myChecking.getHeadOfAccountList())
         {
             cout << endl << "You have not created a checking account yet!" << endl;
             return;
@@ -348,30 +348,30 @@ void UserMenu::crossAccountTypeTransferHandler(bool accountType)
         //display and select savings accounts
         myChecking.displayAccounts();
         myChecking.selectAccount();
-        checkingPtr = myChecking.getSelectedAccount();
+        checkingAccount = myChecking.callGetActiveAccount();
 
         //get transfer amount
-        cout << "How much money would you like to transfer from " << savingsPtr->accountName
-             << " to " << checkingPtr->accountName << "? ";
+        cout << "How much money would you like to transfer from " << savingsAccount->accountName
+             << " to " << checkingAccount->accountName << "? ";
         cin >> transferAmount;
-        inputErrorCatcher.boundsCheck(transferAmount, 0.0, savingsPtr->total);
+        inputErrorCatcher.boundsCheck(transferAmount, 0.0, savingsAccount->totalFunds);
 
         //ammend account totals
-        savingsPtr->total -= transferAmount;
-        checkingPtr->total += transferAmount;
+        savingsAccount->totalFunds -= transferAmount;
+        checkingAccount->totalFunds += transferAmount;
 
         //send to history
-        myChecking.sendToHistory("Transfer Deposit", transferAmount, checkingPtr->total, "NULL");
-        mySavings.sendToHistory("Transfer Withdrawal", transferAmount, savingsPtr->total, "NULL");
+        myChecking.sendToHistory("Transfer Deposit", transferAmount, checkingAccount->totalFunds, "NULL");
+        mySavings.sendToHistory("Transfer Withdrawal", transferAmount, savingsAccount->totalFunds, "NULL");
 
         //reset selected accounts
-        myChecking.resetSelectedAccount();
+        myChecking.resetActiveAccount();
     }
 
     //output success message and new totals for accounts
     cout << endl << "Successfully transfered $" << transferAmount << "!" << endl;
-    cout << "New " << checkingPtr->accountName << " total is $" << checkingPtr->total << endl;
-    cout << "New " << savingsPtr->accountName << " total is $" << savingsPtr->total << endl;
+    cout << "New " << checkingAccount->accountName << " total is $" << checkingAccount->totalFunds << endl;
+    cout << "New " << savingsAccount->accountName << " total is $" << savingsAccount->totalFunds << endl;
 }
 
 //overloaded operator
@@ -380,7 +380,7 @@ ostream &operator << (ostream &os, UserInfo &user)
     os << endl 
        << "User ID: " << user.getId() << endl 
        << "User Pin: " << user.getPin() << endl
-       << "Name: " << user.getFirst() << " " << user.getLast() << endl 
+       << "Name: " << user.getFirstName() << " " << user.getLastName() << endl 
        << "Age: " << user.getAge() << endl;
     return os;
 }

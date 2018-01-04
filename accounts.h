@@ -20,17 +20,18 @@ using namespace std;
 class Accounts
 {
     protected:
+
+    //variables
         InputError inputErrorCatcher;   //error catcher
-        fstream myFile;                 //file for specific account
 
-        accountList myList;             //list of accounts
-        accountNode *nodePtr;           //pointer to selected account
+        accountList listOfOpenAccounts;       //list of accounts
+        accountNode *pointerToActiveAccount;  //pointer to selected account
 
-        string activeAccount;           //name of active account
-        int userSelection;              //menu selection
-        double withdep;                 //either with withdrawal or deposit amount
-        char confirm;                   //user input for y/n prompt
-        bool crossTransfer;             //indicates a transfer between account types
+        string activeAccountName;           //name of active account
+        int menuUserSelection;                  //menu selection
+        double withdrawOrDepositValue;      //either with withdrawal or deposit amount
+        char yesOrNo;                       //user input for y/n prompt
+        bool crossTransfer;                 //indicates a transfer between account types
 
     public:
         //constructors and destructor
@@ -38,35 +39,35 @@ class Accounts
         virtual ~Accounts();
 
         //setters
-        void setAccountFileNames(string);
-        void setFileNameGeneral(string);
-        void resetSelectedAccount();
+        void downloadExistingAccounts(string);
+        void setTextFileName(string);
+        void resetActiveAccount();
         void resetCrossTransfer();
 
         //getters
-        bool getHead();
+        bool getHeadOfAccountList();
         vector<string> getAccountFileNames();
-        accountNode *getSelectedAccount();
-        double getTotals();
+        accountNode *callGetActiveAccount();
+        double getTotalMoneyForAllAccounts();
         bool getCrossTransfer();
 
         //main menu actions
-        bool selectAnAccount(string);
+        bool selectAccountForCrossTransfer(string);
 
         //account actions
         void createAccount(string);
         void selectAccount();
         void deleteAccount();
-        void deposit();
-        void merge();
-        void sameTypeTransfer();
+        void depositFunds();
+        void mergeAccounts();
+        void sameAccountTypeTransfer();
         void sendToHistory(string, double, double, string);
 
         //pure virtual functions
-        virtual void setFileNameSpecific(string, string) = 0;
+        virtual void specifyFileType(string, string) = 0;
         virtual void displayAccounts() = 0;
         virtual void accountOptionsMenu() = 0;
-        virtual void transfer() = 0;
+        virtual void transferFunds() = 0;
 };
 
 #endif

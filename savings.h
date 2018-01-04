@@ -24,12 +24,12 @@ class Savings : public Accounts
         Savings();
 
         //setters
-        void setFileNameSpecific(string, string);
+        void specifyFileType(string, string);
 
         //account options
         void displayAccounts();
         void accountOptionsMenu();
-        void transfer();
+        void transferFunds();
 };
 
 #endif

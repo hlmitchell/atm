@@ -20,7 +20,7 @@ using namespace std;
 struct accountNode {
     string accountFileName;         //file name
     string accountName;             //account name
-    double total;                   //total money in account
+    double totalFunds;                   //total money in account
     History myHistory;              //instantiate history for the account
     struct accountNode *next;       //pointer to next node in list
 };
@@ -29,7 +29,7 @@ class accountList {
     
     private:
         accountNode *head;              //pointer to head of list
-        accountNode *selectedAccount;   //current selected account 
+        accountNode *activeAccount;     //current selected account 
 
         fstream myFile;                 //account files
 
@@ -39,10 +39,10 @@ class accountList {
         ~accountList();
 
         //setters
-        void setSelectedAccount(accountNode *);
+        void setActiveAccount(accountNode *);
 
         //getters
-        accountNode *getSelectedAccount();
+        accountNode *getActiveAccount();
         accountNode *getListHead();
 
         //node manipulators

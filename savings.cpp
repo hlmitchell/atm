@@ -10,34 +10,34 @@ Savings::Savings() : Accounts()
 {}
 
 //sets file name
-void Savings::setFileNameSpecific(string id, string file)
+void Savings::specifyFileType(string id, string file)
 {
     //pointer to selected account
-    nodePtr = myList.getSelectedAccount();
+    pointerToActiveAccount = listOfOpenAccounts.getActiveAccount();
     
     //create file name
-    nodePtr->accountFileName = "S" + id + file + ".txt";
+    pointerToActiveAccount->accountFileName = "S" + id + file + ".txt";
 }
 
 //displays account header
 void Savings::displayAccounts()
 {
     cout << endl << "Savings Account(s)" << endl;
-    myList.displayNodes();
+    listOfOpenAccounts.displayNodes();
 }
 
 //displays savings menu and switch
 void Savings::accountOptionsMenu()
 {
     //set to selected account
-    nodePtr = myList.getSelectedAccount();
+    pointerToActiveAccount = listOfOpenAccounts.getActiveAccount();
     
     do {
-        cout << endl << "Current Account: " << nodePtr->accountName << endl;
-        cout << "Account Funds: $" << nodePtr->total << endl;
+        cout << endl << "Current Account: " << pointerToActiveAccount->accountName << endl;
+        cout << "Account Funds: $" << pointerToActiveAccount->totalFunds << endl;
 
         //advanced options
-        cout << endl << "*** " << nodePtr->accountName << " Options ***" << endl << endl;
+        cout << endl << "*** " << pointerToActiveAccount->accountName << " Options ***" << endl << endl;
         cout << "1. Deposit" << endl;
         cout << "2. Merge Accounts" << endl;
         cout << "3. Transfer Money" << endl;
@@ -46,51 +46,51 @@ void Savings::accountOptionsMenu()
         cout << "6. Back" << endl;
 
         //validate input
-        cin >> userSelection;
-        inputErrorCatcher.boundsCheck(userSelection, 1, 6);
+        cin >> menuUserSelection;
+        inputErrorCatcher.boundsCheck(menuUserSelection, 1, 6);
         inputErrorCatcher.clearKeyboardBuffer();
 
-        switch(userSelection)
+        switch(menuUserSelection)
         {
             case 1:
-                deposit();
+                depositFunds();
                 break;
             case 2:
-                merge();
+                mergeAccounts();
                 break;
             case 3:
-                transfer();
+                transferFunds();
                 //activate transfer function in user.h
                 if (crossTransfer == true) return;
                 break;
             case 4:
-                nodePtr->myHistory.display();
+                pointerToActiveAccount->myHistory.display();
                 break;
             case 5:
                 deleteAccount();
                 break;
             default:
-                resetSelectedAccount();
+                resetActiveAccount();
                 break;
         }
 
         //if account is deleted or merged, exit this menu automatically
-        if (nodePtr == NULL) userSelection = 6;
+        if (pointerToActiveAccount == NULL) menuUserSelection = 6;
 
-    } while (userSelection != 6);
+    } while (menuUserSelection != 6);
 
     //reset variable
-    userSelection = 0;
+    menuUserSelection = 0;
 }
 
 //validates if transfer is savings or savings
-void Savings::transfer()
+void Savings::transferFunds()
 {
     //choose an accounts type
     cout << endl << "In to which account type would you like to transfer funds?";
-    userSelection = inputErrorCatcher.chooseAccountType();
+    menuUserSelection = inputErrorCatcher.chooseAccountType();
 
     //checking vs savings
-    if (userSelection == 2) sameTypeTransfer();
-    else if (userSelection == 1) crossTransfer = true; 
+    if (menuUserSelection == 2) sameAccountTypeTransfer();
+    else if (menuUserSelection == 1) crossTransfer = true; 
 }

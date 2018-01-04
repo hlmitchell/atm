@@ -20,11 +20,11 @@ using namespace std;
 class UserInfo 
 {
     private:
-        string pin;             //user pin number
-        string id;              //user id
-        string first;           //user first name
-        string last;            //user last name
-        int age;                //user age
+        string pin;                 //user pin number
+        string id;                  //user id
+        string firstName;           //user first name
+        string lastName;            //user last name
+        int age;                    //user age
 
     public:
         //constructor
@@ -33,15 +33,15 @@ class UserInfo
         //setters
         void setPin(string);
         void setId(string);
-        void setFirst(string);
-        void setLast(string);
+        void setFirstName(string);
+        void setLastName(string);
         void setAge(int);
 
         //getters
         string getPin();
         string getId();
-        string getFirst();
-        string getLast();
+        string getFirstName();
+        string getLastName();
         int getAge();
 };
 

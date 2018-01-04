@@ -25,13 +25,13 @@ class Checking : public Accounts
         Checking();
 
         //setters
-        void setFileNameSpecific(string, string);
+        void specifyFileType(string, string);
 
         //account options
         void displayAccounts();
         void accountOptionsMenu();
         void withdraw();
-        void transfer();
+        void transferFunds();
         
 };
 

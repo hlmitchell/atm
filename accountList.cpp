@@ -9,7 +9,7 @@
 accountList::accountList()
 {
     head = NULL;
-    selectedAccount = NULL;
+    activeAccount = NULL;
 }
 
 //destructor
@@ -24,7 +24,7 @@ accountList::~accountList()
     {
         myFile.open(nodePtr->accountFileName.c_str(), ios::out);
         myFile << nodePtr->accountName << endl;
-        myFile << nodePtr->total << endl;
+        myFile << nodePtr->totalFunds << endl;
         //add history to file
         nodePtr->myHistory.uploadHistory(myFile);
         myFile.close();
@@ -46,19 +46,19 @@ accountList::~accountList()
         //move nodePtr to next node
         nodePtr = nextNode;
     }
-    selectedAccount = NULL;
+    activeAccount = NULL;
 }
 
 //sets selected Account
-void accountList::setSelectedAccount(accountNode *node)
+void accountList::setActiveAccount(accountNode *node)
 {
-    selectedAccount = node;
+    activeAccount = node;
 }
 
 //return selected account
-accountNode *accountList::getSelectedAccount()
+accountNode *accountList::getActiveAccount()
 {
-    return selectedAccount;
+    return activeAccount;
 }
 
 //return head of list
@@ -77,7 +77,7 @@ void accountList::createNode(string fileName)
     newNode = new accountNode;
     newNode->accountName = "";
     newNode->accountFileName = fileName;
-    newNode->total = 0;
+    newNode->totalFunds = 0;
     newNode->next = NULL;
 
     //if there are no nodes yet, make the first one
@@ -104,13 +104,13 @@ void accountList::createNode(string fileName)
         {
             cout << endl << newNode->accountFileName << " could not be found!" << endl;
             cout << "Removing memory file....." << endl;
-            selectedAccount = newNode;
+            activeAccount = newNode;
             deleteNode(newNode->accountName);
             return;
         }
         //otherwise upload file info
         myFile >> newNode->accountName;
-        myFile >> newNode->total;
+        myFile >> newNode->totalFunds;
 
         //download history
         newNode->myHistory.downloadHistory(myFile);
@@ -149,8 +149,8 @@ void accountList::displayNodes()
     while (nodePtr)
     {
         //for merging accounts, the selected account name is not displayed
-        if (selectedAccount != NULL)
-            if (selectedAccount->accountName == nodePtr->accountName)
+        if (activeAccount != NULL)
+            if (activeAccount->accountName == nodePtr->accountName)
             {
                 nodePtr = nodePtr->next;
                 continue;
@@ -160,7 +160,7 @@ void accountList::displayNodes()
         cout << nodePtr->accountName << ": ";
         //formatting
         cout << fixed << setprecision(2);
-        cout << "$" << nodePtr->total << endl;
+        cout << "$" << nodePtr->totalFunds << endl;
 
         //move to next node
         nodePtr = nodePtr->next;    
@@ -171,7 +171,7 @@ void accountList::displayNodes()
 void accountList::deleteNode(string name)
 {
     //delete file
-    remove(selectedAccount->accountFileName.c_str());
+    remove(activeAccount->accountFileName.c_str());
     
     //pointers to nodes
     accountNode *nodePtr;

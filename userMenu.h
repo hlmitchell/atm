@@ -22,6 +22,8 @@ ostream &operator << (ostream &, UserInfo &);
 class UserMenu
 {
     private:
+
+        //variables
         int menuUserSelection;            //user input from menus
         bool crossAccountTypeTransfer;    //returned from accounts menu, signals transferHandler()
 
