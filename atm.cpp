@@ -14,6 +14,7 @@
 using namespace std;
 
 //prototypes
+void displayMainMenu();
 void attemptLogin(InputError&);
 bool checkIfFileExists(string&);
 
@@ -28,16 +29,11 @@ int main()
     int menuUserSelection;       //selection for first menu
 
     do {
-        //display main menu
-        cout << endl << "***Welcome to Hannah's Bank!***" << endl << endl;
-        cout << "Please select an option from below:" << endl << endl;
-        cout << "1. Login" << endl;
-        cout << "2. Create a User Account" << endl;
-        cout << "3. Exit" << endl;
-
+        displayMainMenu();
+        
         //checks if user input is integer between 1 and 3
         cin >> menuUserSelection;
-        inputErrorCatcher.boundsCheck(menuUserSelection, MINIMUM_MENU_INPUT, MAXIMUM_MENU_INPUT);
+        inputErrorCatcher.checkForValidUserInput(menuUserSelection, MINIMUM_MENU_INPUT, MAXIMUM_MENU_INPUT);
         inputErrorCatcher.clearKeyboardBuffer();
 
         switch (menuUserSelection)
@@ -62,6 +58,15 @@ int main()
     menuUserSelection = 0;
 }
 
+//displays main menu
+void displayMainMenu()
+{
+    cout << endl << "***Welcome to Hannah's Bank!***" << endl << endl;
+    cout << "Please select an option from below:" << endl << endl;
+    cout << "1. Login" << endl;
+    cout << "2. Create a User Account" << endl;
+    cout << "3. Exit" << endl;
+}
 
 //attempt to login to account using id and pin
 void attemptLogin(InputError &inputErrorCatcher)

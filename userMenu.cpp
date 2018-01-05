@@ -8,82 +8,105 @@
 //Gathers user information for a new user
 UserMenu::UserMenu()
 {
-    //set variables
+    initializeClassVariables();
+    collectNewUserInfo();
+}
+
+void UserMenu::initializeClassVariables()
+{
     menuUserSelection = 0;
     crossAccountTypeTransfer = false;
-    
-    //temp vars for passing input to class userInfo
-    string tempStr;
-    int tempInt;
+}
 
+void UserMenu::collectNewUserInfo()
+{
     //collect basic information from user
     cout << endl << "Thank you for choosing Hannah's Bank!" << endl << endl;
-    cout << "Please enter a username: ";
-    getline(cin, tempStr);
-    //check if username already exists
-    inputErrorCatcher.checkForValidIDEntry(tempStr);
-    myInfo.setId(tempStr);
+    
+    requestUserName();
+    requestUserPin();
 
-    //Create file
+    createUserFile();
+
+    cout << endl << "Now we'll need to know some information about you!" << endl;
+
+    requestFirstName();
+    requestLastName();
+    requestAge();
+
+    mainMenu();
+}
+
+void UserMenu::requestUserName()
+{
+    //get user name
+    cout << "Please enter a username: ";
+    getline(cin, stringSetter); 
+
+    //check if username already exists
+    inputErrorCatcher.checkForValidIDEntry(stringSetter);
+    myInfo.setId(stringSetter);
+}
+
+void UserMenu::createUserFile()
+{
     txtFileName = myInfo.getId() + ".txt";
     userInfoFile.open(txtFileName.c_str(), ios::out);
     userInfoFile.close();
-    
+}
+
+void UserMenu::requestUserPin()
+{
     //get pin
     cout << "Choose a 4 digit pin: ";
-    getline(cin, tempStr);
+    getline(cin, stringSetter);
+    
     //check for valid input for pin
-    inputErrorCatcher.checkForValidPinEntry(tempStr);
-    myInfo.setPin(tempStr);
+    inputErrorCatcher.checkForValidPinEntry(stringSetter);
+    myInfo.setPin(stringSetter);
+}
 
-    //get name and check for errors
-    cout << endl << "Now we'll need to know some information about you!" << endl;
+void UserMenu::requestFirstName()
+{
+    //get first name
     cout << "What is your first name? ";
-    getline(cin, tempStr);
-    inputErrorCatcher.removeExtraWhiteSpaceFromString(tempStr);
-    myInfo.setFirstName(tempStr);
-    cout << "What is your last name? ";
-    getline(cin, tempStr);
-    inputErrorCatcher.removeExtraWhiteSpaceFromString(tempStr);
-    myInfo.setLastName(tempStr);
+    getline(cin, stringSetter);
 
+    //check input validity
+    inputErrorCatcher.removeExtraWhiteSpaceFromString(stringSetter);
+    myInfo.setFirstName(stringSetter);
+}
+
+void UserMenu::requestLastName()
+{
+    //get last name
+    cout << "What is your last name? ";
+    getline(cin, stringSetter);
+
+    //check input validity
+    inputErrorCatcher.removeExtraWhiteSpaceFromString(stringSetter);
+    myInfo.setLastName(stringSetter);
+}
+
+void UserMenu::requestAge()
+{
     //get age
     cout << "Please enter your age: ";
-    cin >> tempInt;
+    cin >> intSetter;
+    
     //check for valid input for age
-    inputErrorCatcher.boundsCheck(tempInt, 16, 125);
-    myInfo.setAge(tempInt);
+    inputErrorCatcher.checkForValidUserInput(intSetter, 16, 125);
+    myInfo.setAge(intSetter);
     inputErrorCatcher.clearKeyboardBuffer();
-
-    displayMainMenu();
 }
 
 //uploads user information from a previous user
 UserMenu::UserMenu(string userID, string userPin)
 {
-    //set variables
-    menuUserSelection = 0;
-    crossAccountTypeTransfer = false;
+    initializeClassVariables();
 
-    //temp vars for reading data
-    string tempStr;
-    int tempInt;
-    
-    //open file to extract user info
-    txtFileName = userID;
-    userInfoFile.open(txtFileName.c_str(), ios::in);
-
-    //read user pin from file and send to user info
-    userInfoFile >> tempStr;
-    myInfo.setPin(tempStr);
-    userInfoFile >> tempStr;
-    myInfo.setId(tempStr);
-    userInfoFile >> tempStr;
-    myInfo.setFirstName(tempStr);
-    userInfoFile >> tempStr;
-    myInfo.setLastName(tempStr);
-    userInfoFile >> tempInt;
-    myInfo.setAge(tempInt);
+    openUserFile(userID);
+    readUserInfoFromFile();
 
     //if pin is incorrect, return to login screen
     if (userPin != myInfo.getPin())
@@ -93,124 +116,127 @@ UserMenu::UserMenu(string userID, string userPin)
         return;
     }
 
-    //read out file names and store them in vector
-    string fileName;
-    while (userInfoFile >> fileName) accountFileNames.push_back(fileName);
+    readAccountNamesFromFile();
+    userInfoFile.close();
 
+    cout << endl << "Welcome Back " << myInfo.getFirstName() << "!" << endl;
+
+    mainMenu();
+}
+
+void UserMenu::openUserFile(string id)
+{
+    txtFileName = id;
+    userInfoFile.open(txtFileName.c_str(), ios::in);
+}
+
+void UserMenu::readUserInfoFromFile()
+{
+    userInfoFile >> stringSetter;
+    myInfo.setPin(stringSetter);
+
+    userInfoFile >> stringSetter;
+    myInfo.setId(stringSetter);
+
+    userInfoFile >> stringSetter;
+    myInfo.setFirstName(stringSetter);
+
+    userInfoFile >> stringSetter;
+    myInfo.setLastName(stringSetter);
+
+    userInfoFile >> intSetter;
+    myInfo.setAge(intSetter);
+}
+
+void UserMenu::readAccountNamesFromFile()
+{
+    //read out file names and store them in vector
+    while (userInfoFile >> stringSetter) accountFileNames.push_back(stringSetter);
+
+    categorizeAccountNames();
+}
+
+void UserMenu::categorizeAccountNames()
+{
     //send account names to correct account class type
     for (int i = 0; i < accountFileNames.size(); i++)
     {
         if (accountFileNames[i][0] == 'C')
             myChecking.downloadExistingAccounts(accountFileNames[i]);
-        else mySavings.downloadExistingAccounts(accountFileNames[i]);
+        else if (accountFileNames[i][0] == 'S')
+            mySavings.downloadExistingAccounts(accountFileNames[i]);
     }
 
-    //welcome message and main menu
-    userInfoFile.close();
-    cout << endl << "Welcome Back " << myInfo.getFirstName() << "!" << endl;
-    displayMainMenu();
+    //delete file names in vector
+    accountFileNames.clear();
 }
 
 //uploads user contents to file
 UserMenu::~UserMenu()
 {
-    //open file
     userInfoFile.open(txtFileName.c_str(), ios::out);
-    //write to file
+
+    writeUserInfoToFile();
+    getAndWriteAccountFileNames();
+
+    userInfoFile.close();
+}
+
+void UserMenu::writeUserInfoToFile()
+{
     userInfoFile << myInfo.getPin() << endl;
     userInfoFile << myInfo.getId() << endl;
     userInfoFile << myInfo.getFirstName() << endl;
     userInfoFile << myInfo.getLastName() << endl;
     userInfoFile << myInfo.getAge() << endl;
+}
 
-    //delete file names in vector
-    accountFileNames.clear();
+void UserMenu::getAndWriteAccountFileNames()
+{
+    getCheckingAccountFileNames();
+    writeAccountNamesToFile();
 
-    //temp vector for holding file names
-    vector<string> tempAccountNamesHolder;
+    getSavingsAccountFileNames();
+    writeAccountNamesToFile();
+}
 
-    //reaquire checking file names and fill vector
-    tempAccountNamesHolder = myChecking.getAccountFileNames();
-    for (int i = 0; i < tempAccountNamesHolder.size(); i++) accountFileNames.push_back(tempAccountNamesHolder[i]);
-    //reaquire savings file names and fill vector
-    tempAccountNamesHolder = mySavings.getAccountFileNames();
-    for (int i = 0; i < tempAccountNamesHolder.size(); i++) accountFileNames.push_back(tempAccountNamesHolder[i]);
+void UserMenu::getCheckingAccountFileNames()
+{
+    accountFileNames = myChecking.getAccountFileNames();
+}
 
-    //add file names to user info file
-    for (int i = 0; i < accountFileNames.size(); i++) userInfoFile << accountFileNames[i] << endl;
+void UserMenu::getSavingsAccountFileNames()
+{
+    accountFileNames = mySavings.getAccountFileNames();
+}
 
-    //close
-    userInfoFile.close();
+void UserMenu::writeAccountNamesToFile()
+{
+    for (int i = 0; i < accountFileNames.size(); i++) 
+        userInfoFile << accountFileNames[i] << endl;
 }
 
 //display main menu and switch
-void UserMenu::displayMainMenu()
+void UserMenu::mainMenu()
 {
     do {
-        //main menu
-        cout << endl << "*** Main Menu ***" << endl << endl;
-        cout << "1. Select an Account" << endl;
-        cout << "2. Create an Account" << endl;
-        cout << "3. Edit User Information" << endl;
-        cout << "4. Request Total Balance" << endl;
-        cout << "5. Log Out" << endl;
-
-        //validate input
-        cin >> menuUserSelection;
-        inputErrorCatcher.boundsCheck(menuUserSelection, 1, 5);
-        inputErrorCatcher.clearKeyboardBuffer();
+        
+        displayMenuOptions();
+        validateUserInput();
 
         switch(menuUserSelection)
         {
             case 1:
-                //Menu requesting checking or savings account
-                cout << endl << "Which account type would you like to access?";
-                menuUserSelection = inputErrorCatcher.chooseAccountType();
-                //check for existing checking accounts
-                if (menuUserSelection == 1)
-                {
-                    do {
-                        crossAccountTypeTransfer = myChecking.selectAccountForCrossTransfer("checking");
-
-                        //calls transfer between account types function
-                        if (crossAccountTypeTransfer == true) crossAccountTypeTransferHandler(true);
-                    } while (crossAccountTypeTransfer == true);
-                }
-
-                //check for existing savings accounts
-                else if (menuUserSelection == 2)
-                {
-                    do {
-                        crossAccountTypeTransfer = mySavings.selectAccountForCrossTransfer("savings");
-
-                        //calls transfer between account types function
-                        if (crossAccountTypeTransfer == true) crossAccountTypeTransferHandler(false); 
-                    } while (crossAccountTypeTransfer == true);                 
-                }
-                //reset transfer variable
-                crossAccountTypeTransfer = false;
-
+                selectAnAccountMenuOption();
                 break;
             case 2:
-                //Menu requesting checking or savings account
-                cout << endl << "Which type of account would you like to create?";
-                menuUserSelection = inputErrorCatcher.chooseAccountType();
-
-                //create node for checking
-                if (menuUserSelection == 1) myChecking.createAccount(myInfo.getId());
-                //create node for savings
-                else if (menuUserSelection == 2) mySavings.createAccount(myInfo.getId());
-
+                createAnAccountMenuOption();
                 break;
             case 3:
                 editUserInfo();
                 break;
             case 4:
-                //formatting
-                cout << fixed << setprecision(2);
-                //display total balance across acounts
-                cout << endl << "Your total balance for all accounts is: $" 
-                     << myChecking.getTotalMoneyForAllAccounts() + mySavings.getTotalMoneyForAllAccounts() << endl;
+                requestTotalBalanceMenuOption();
             default:
                 break;
         }
@@ -220,6 +246,104 @@ void UserMenu::displayMainMenu()
     menuUserSelection = 0;
 }
 
+void UserMenu::displayMenuOptions()
+{
+    cout << endl << "*** Main Menu ***" << endl << endl;
+    cout << "1. Select an Account" << endl;
+    cout << "2. Create an Account" << endl;
+    cout << "3. Edit User Information" << endl;
+    cout << "4. Request Total Balance" << endl;
+    cout << "5. Log Out" << endl;
+}
+
+void UserMenu::validateUserInput()
+{
+    cin >> menuUserSelection;
+    inputErrorCatcher.checkForValidUserInput(menuUserSelection, 1, 5);
+    inputErrorCatcher.clearKeyboardBuffer();
+}
+
+void UserMenu::selectAnAccountMenuOption()
+{
+    cout << endl << "Which account type would you like to access?";
+    menuUserSelection = inputErrorCatcher.chooseAccountType();
+
+    //check for existing checking accounts
+    if (menuUserSelection == 1) selectCheckingAccount();
+
+    //check for existing savings accounts
+    else if (menuUserSelection == 2) selectSavingsAccount();
+
+    //reset transfer variable
+    crossAccountTypeTransfer = false;
+}
+
+void UserMenu::selectCheckingAccount()
+{
+    do {
+        //convulated way of displaying and selecting checking accounts
+        crossAccountTypeTransfer = myChecking.selectAccountForCrossTransfer("checking");
+
+        //calls transfer between account types function
+        if (crossAccountTypeTransfer == true) crossAccountTypeTransferHandler(true);
+
+    } while (crossAccountTypeTransfer == true);
+}
+
+void UserMenu::selectSavingsAccount()
+{
+    do {
+        //convulated way of displaying and selecting checking accounts
+        crossAccountTypeTransfer = mySavings.selectAccountForCrossTransfer("savings");
+
+        //calls transfer between account types function
+        if (crossAccountTypeTransfer == true) crossAccountTypeTransferHandler(false);
+
+    } while (crossAccountTypeTransfer == true);
+}
+
+void UserMenu::createAnAccountMenuOption()
+{
+    //Menu requesting checking or savings account
+    cout << endl << "Which type of account would you like to create?";
+    menuUserSelection = inputErrorCatcher.chooseAccountType();
+
+    //create node for checking
+    if (menuUserSelection == 1) myChecking.createAccount(myInfo.getId());
+    //create node for savings
+    else if (menuUserSelection == 2) mySavings.createAccount(myInfo.getId());
+
+}
+
+void UserMenu::requestTotalBalanceMenuOption()
+{
+    //formatting
+    cout << fixed << setprecision(2);
+
+    //display total balance across acounts
+    cout << endl << "Your total balance for all accounts is: $" 
+         << myChecking.getTotalMoneyForAllAccounts() + mySavings.getTotalMoneyForAllAccounts() 
+         << endl;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //edits user information
 void UserMenu::editUserInfo()
 {
@@ -227,8 +351,8 @@ void UserMenu::editUserInfo()
     cout << myInfo;
 
     //temp vars for input
-    string tempStr;
-    int tempInt;
+    string stringSetter;
+    int intSetter;
 
     //menu for ammending user information
     do {
@@ -241,7 +365,7 @@ void UserMenu::editUserInfo()
 
         //check input selection
         cin >> menuUserSelection;
-        inputErrorCatcher.boundsCheck(menuUserSelection, 1, 4);
+        inputErrorCatcher.checkForValidUserInput(menuUserSelection, 1, 4);
         inputErrorCatcher.clearKeyboardBuffer();
 
         switch(menuUserSelection)
@@ -249,30 +373,30 @@ void UserMenu::editUserInfo()
             case 1:
                 //request and store new pin
                 cout << "Enter New Pin: ";
-                getline(cin, tempStr);
-                inputErrorCatcher.checkForValidPinEntry(tempStr);
-                myInfo.setPin(tempStr);
+                getline(cin, stringSetter);
+                inputErrorCatcher.checkForValidPinEntry(stringSetter);
+                myInfo.setPin(stringSetter);
                 cout << endl << "New Pin set to " << myInfo.getId() << "!" << endl;
                 break;
             case 2:
                 //request and store new name
                 cout << "Enter First Name: ";
-                getline(cin, tempStr);
-                inputErrorCatcher.removeExtraWhiteSpaceFromString(tempStr);
-                myInfo.setFirstName(tempStr);
+                getline(cin, stringSetter);
+                inputErrorCatcher.removeExtraWhiteSpaceFromString(stringSetter);
+                myInfo.setFirstName(stringSetter);
                 cout << "Enter Last Name: ";
-                getline(cin, tempStr);
-                inputErrorCatcher.removeExtraWhiteSpaceFromString(tempStr);
-                myInfo.setLastName(tempStr);
+                getline(cin, stringSetter);
+                inputErrorCatcher.removeExtraWhiteSpaceFromString(stringSetter);
+                myInfo.setLastName(stringSetter);
                 cout << endl << "New Name set to " << myInfo.getFirstName() << " " 
                      << myInfo.getLastName() << "!" << endl;
                 break;
             case 3:
                 //request and store new age
                 cout << "Enter New Age: ";
-                cin >> tempInt;
-                inputErrorCatcher.boundsCheck(tempInt, 16, 125);
-                myInfo.setAge(tempInt);
+                cin >> intSetter;
+                inputErrorCatcher.checkForValidUserInput(intSetter, 16, 125);
+                myInfo.setAge(intSetter);
                 inputErrorCatcher.clearKeyboardBuffer();
                 cout << endl << "New Age set to " << myInfo.getAge() << "!" << endl;
                 break;
@@ -317,7 +441,7 @@ void UserMenu::crossAccountTypeTransferHandler(bool accountType)
         cout << "How much money would you like to transfer from " << checkingAccount->accountName
              << " to " << savingsAccount->accountName << "? ";
         cin >> transferAmount;
-        inputErrorCatcher.boundsCheck(transferAmount, 0.0, checkingAccount->totalFunds);
+        inputErrorCatcher.checkForValidUserInput(transferAmount, 0.0, checkingAccount->totalFunds);
 
         //ammend account totals
         checkingAccount->totalFunds -= transferAmount;
@@ -354,7 +478,7 @@ void UserMenu::crossAccountTypeTransferHandler(bool accountType)
         cout << "How much money would you like to transfer from " << savingsAccount->accountName
              << " to " << checkingAccount->accountName << "? ";
         cin >> transferAmount;
-        inputErrorCatcher.boundsCheck(transferAmount, 0.0, savingsAccount->totalFunds);
+        inputErrorCatcher.checkForValidUserInput(transferAmount, 0.0, savingsAccount->totalFunds);
 
         //ammend account totals
         savingsAccount->totalFunds -= transferAmount;

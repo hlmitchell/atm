@@ -26,17 +26,17 @@ class InputError
         void clearKeyboardBuffer();
         void yesOrNoValidator(char&);
         void removeExtraWhiteSpaceFromString(string&);
-        
+
         //template functions
         template <class T>
-        void boundsCheck(T&, const T, const T);
+        void checkForValidUserInput(T&, const T, const T);
         template <class T>
         void checkIfCinFail(T&);
 };
 
 //bounds check for menu selection or money movement
 template <class T>
-void InputError::boundsCheck(T &userSelection, const T lowerBound, const T upperBound)
+void InputError::checkForValidUserInput(T &userSelection, const T lowerBound, const T upperBound)
 {
     while (cin.fail() || userSelection < lowerBound || userSelection > upperBound)
     {

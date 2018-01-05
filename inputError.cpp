@@ -22,7 +22,7 @@ int InputError::chooseAccountType()
 
     //check bounds
     cin >> menuUserSelection;
-    boundsCheck(menuUserSelection, 1, 3);
+    checkForValidUserInput(menuUserSelection, 1, 3);
     return menuUserSelection;
 }
 

@@ -26,7 +26,9 @@ class UserMenu
         //variables
         int menuUserSelection;            //user input from menus
         bool crossAccountTypeTransfer;    //returned from accounts menu, signals transferHandler()
-
+        string stringSetter;              //holds strings to be set in a class
+        int intSetter;                    //holds int to be set in a class
+        
         UserInfo myInfo;                  //instance of userInfo class holding user data
         InputError inputErrorCatcher;          //catches user input errors
         vector<string> accountFileNames;       //list of all account file names
@@ -43,8 +45,44 @@ class UserMenu
         UserMenu(string, string);
         ~UserMenu();
 
-        //user manipulators
-        void displayMainMenu();
+        //handle new user
+        void initializeClassVariables();
+        void collectNewUserInfo();
+        void requestUserName();
+        void createUserFile();
+        void requestUserPin();
+        void requestFirstName();
+        void requestLastName();
+        void requestAge();
+
+        //handle returning user
+        void openUserFile(string);
+        void readUserInfoFromFile();
+        void readAccountNamesFromFile();
+        void categorizeAccountNames();
+
+        //log out procedure
+        void writeUserInfoToFile();
+        void getAndWriteAccountFileNames();
+        void getCheckingAccountFileNames();
+        void getSavingsAccountFileNames();
+        void writeAccountNamesToFile();
+
+        //main menu
+        void mainMenu();
+        void displayMenuOptions();
+        void validateUserInput();
+        void selectAnAccountMenuOption();
+        void selectCheckingAccount();
+        void selectSavingsAccount();
+        void createAnAccountMenuOption();
+        void requestTotalBalanceMenuOption();
+
+
+
+
+
+
         void editUserInfo();
         void crossAccountTypeTransferHandler(bool); 
 

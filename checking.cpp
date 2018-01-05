@@ -50,7 +50,7 @@ void Checking::accountOptionsMenu()
 
         //validate input
         cin >> menuUserSelection;
-        inputErrorCatcher.boundsCheck(menuUserSelection, 1, 7);
+        inputErrorCatcher.checkForValidUserInput(menuUserSelection, 1, 7);
         inputErrorCatcher.clearKeyboardBuffer();
 
         switch(menuUserSelection)
@@ -99,7 +99,7 @@ void Checking::withdrawFunds()
     //ask for withdraw amount and subtract from total
     cout << endl << "Withdraw amount: ";
     cin >> withdrawOrDepositValue;
-    inputErrorCatcher.boundsCheck(withdrawOrDepositValue, 0.0, 1000000000.0);
+    inputErrorCatcher.checkForValidUserInput(withdrawOrDepositValue, 0.0, 1000000000.0);
 
     //make sure there isn't overdraft
     if (pointerToActiveAccount->totalFunds - withdrawOrDepositValue < 0)

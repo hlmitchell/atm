@@ -193,7 +193,7 @@ void Accounts::createAccount(string id)
     //deposit money into the account
     cout << "How much money would you like to deposit (Enter 0 if none)? ";
     cin >> newAccount->totalFunds;
-    inputErrorCatcher.boundsCheck(newAccount->totalFunds, 0.0, 1000000000.0);
+    inputErrorCatcher.checkForValidUserInput(newAccount->totalFunds, 0.0, 1000000000.0);
 
     //success message
     cout << endl << "Successfully created account " << newAccount->accountName
@@ -262,7 +262,7 @@ void Accounts::depositFunds()
     //enter deposit amount
     cout << endl << "Deposit amount: ";
     cin >> withdrawOrDepositValue;
-    inputErrorCatcher.boundsCheck(withdrawOrDepositValue, 0.0, 1000000000.0);
+    inputErrorCatcher.checkForValidUserInput(withdrawOrDepositValue, 0.0, 1000000000.0);
 
     //if deposit is more than 0
     if (withdrawOrDepositValue > 0)
@@ -382,7 +382,7 @@ void Accounts::sameAccountTypeTransfer()
     cout << "How much money would you like to transfer from " << pointerToActiveAccount->accountName
          << " to " << transferPtr->accountName << "? ";
     cin >> withdrawOrDepositValue;
-    inputErrorCatcher.boundsCheck(withdrawOrDepositValue, 0.0, pointerToActiveAccount->totalFunds);
+    inputErrorCatcher.checkForValidUserInput(withdrawOrDepositValue, 0.0, pointerToActiveAccount->totalFunds);
 
     //if transfer is not 0
     if (withdrawOrDepositValue > 0)
