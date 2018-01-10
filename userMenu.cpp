@@ -57,11 +57,13 @@ void UserMenu::createUserFile()
 
 void UserMenu::requestUserPin()
 {
-    //get pin
     cout << "Choose a 4 digit pin: ";
     getline(cin, stringSetter);
-    
-    //check for valid input for pin
+    validateUserPin();
+}
+
+void UserMenu::validateUserPin()
+{
     inputErrorCatcher.checkForValidPinEntry(stringSetter);
     myInfo.setPin(stringSetter);
 }
@@ -222,7 +224,7 @@ void UserMenu::mainMenu()
     do {
         
         displayMenuOptions();
-        validateUserInput();
+        validateUserInput(5);
 
         switch(menuUserSelection)
         {
@@ -256,10 +258,10 @@ void UserMenu::displayMenuOptions()
     cout << "5. Log Out" << endl;
 }
 
-void UserMenu::validateUserInput()
+void UserMenu::validateUserInput(int upperBounds)
 {
     cin >> menuUserSelection;
-    inputErrorCatcher.checkForValidUserInput(menuUserSelection, 1, 5);
+    inputErrorCatcher.checkForValidUserInput(menuUserSelection, 1, upperBounds);
     inputErrorCatcher.clearKeyboardBuffer();
 }
 
@@ -326,79 +328,28 @@ void UserMenu::requestTotalBalanceMenuOption()
          << endl;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //edits user information
 void UserMenu::editUserInfo()
 {
     //output original file info
     cout << myInfo;
 
-    //temp vars for input
-    string stringSetter;
-    int intSetter;
-
     //menu for ammending user information
     do {
-        //menu
-        cout << endl << "Which of the following would you like to edit: " << endl;
-        cout << "1. Pin" << endl;
-        cout << "2. Name" << endl;
-        cout << "3. Age" << endl;
-        cout << "4. Back" << endl;
 
-        //check input selection
-        cin >> menuUserSelection;
-        inputErrorCatcher.checkForValidUserInput(menuUserSelection, 1, 4);
-        inputErrorCatcher.clearKeyboardBuffer();
+        displayMenuEditOptions();
+        validateUserInput(4);
 
         switch(menuUserSelection)
         {
             case 1:
-                //request and store new pin
-                cout << "Enter New Pin: ";
-                getline(cin, stringSetter);
-                inputErrorCatcher.checkForValidPinEntry(stringSetter);
-                myInfo.setPin(stringSetter);
-                cout << endl << "New Pin set to " << myInfo.getId() << "!" << endl;
+                requestNewPin();
                 break;
             case 2:
-                //request and store new name
-                cout << "Enter First Name: ";
-                getline(cin, stringSetter);
-                inputErrorCatcher.removeExtraWhiteSpaceFromString(stringSetter);
-                myInfo.setFirstName(stringSetter);
-                cout << "Enter Last Name: ";
-                getline(cin, stringSetter);
-                inputErrorCatcher.removeExtraWhiteSpaceFromString(stringSetter);
-                myInfo.setLastName(stringSetter);
-                cout << endl << "New Name set to " << myInfo.getFirstName() << " " 
-                     << myInfo.getLastName() << "!" << endl;
+                requestNewFullName();
                 break;
             case 3:
-                //request and store new age
-                cout << "Enter New Age: ";
-                cin >> intSetter;
-                inputErrorCatcher.checkForValidUserInput(intSetter, 16, 125);
-                myInfo.setAge(intSetter);
-                inputErrorCatcher.clearKeyboardBuffer();
-                cout << endl << "New Age set to " << myInfo.getAge() << "!" << endl;
+                requestNewAge();
                 break;
             default:
                 break;
@@ -410,93 +361,173 @@ void UserMenu::editUserInfo()
     menuUserSelection = 0;
 }
 
+void UserMenu::displayMenuEditOptions()
+{
+    cout << endl << "Which of the following would you like to edit: " << endl;
+    cout << "1. Pin" << endl;
+    cout << "2. Name" << endl;
+    cout << "3. Age" << endl;
+    cout << "4. Back" << endl;
+}
+
+void UserMenu::requestNewPin()
+{
+    cout << "Enter New Pin: ";
+    getline(cin, stringSetter);
+    
+    validateUserPin();
+
+    cout << endl << "New Pin set to " << myInfo.getId() << "!" << endl;
+}
+
+void UserMenu::requestNewFullName()
+{
+    requestNewFirstName();
+    requestNewLastName();
+
+    cout << endl << "New Name set to " << myInfo.getFirstName() << " " 
+            << myInfo.getLastName() << "!" << endl;
+}
+
+void UserMenu::requestNewFirstName()
+{
+    cout << "Enter First Name: ";
+    getline(cin, stringSetter);
+
+    inputErrorCatcher.removeExtraWhiteSpaceFromString(stringSetter);
+    myInfo.setFirstName(stringSetter); 
+}
+
+void UserMenu::requestNewLastName()
+{
+    cout << "Enter Last Name: ";
+    getline(cin, stringSetter);
+
+    inputErrorCatcher.removeExtraWhiteSpaceFromString(stringSetter);
+    myInfo.setLastName(stringSetter);
+}
+
+void UserMenu::requestNewAge()
+{
+    cout << "Enter New Age: ";
+    cin >> intSetter;
+
+    inputErrorCatcher.checkForValidUserInput(intSetter, 16, 125);
+    myInfo.setAge(intSetter);
+    inputErrorCatcher.clearKeyboardBuffer();
+
+    cout << endl << "New Age set to " << myInfo.getAge() << "!" << endl;
+}
+
+
+
+
+
+
 //coordinates money transfers between account types
 void UserMenu::crossAccountTypeTransferHandler(bool accountType)
 {
-    //placeholders for checking and savings accounts
-    accountNode *savingsAccount;
-    accountNode *checkingAccount;
-    double transferAmount;
+    if (accountType == true) checkingTransfer();
 
-    if (accountType == true)
+    else if (accountType == false) savingsTransfer();
+
+    outputNewAccountTotals();
+}
+
+
+void UserMenu::checkingTransfer()
+{
+    checkingAccount = myChecking.callGetActiveAccount();
+
+    //reset crossTransfer var
+    myChecking.resetCrossTransfer();
+
+    //check to see if savings accounts exist
+    if (!mySavings.getHeadOfAccountList())
     {
-        //establish checking account
-        checkingAccount = myChecking.callGetActiveAccount();
-
-        //reset crossTransfer var
-        myChecking.resetCrossTransfer();
-
-        //check to see if savings accounts exist
-        if (!mySavings.getHeadOfAccountList())
-        {
-            cout << endl << "You have not created a savings account yet!" << endl;
-            return;
-        }
-        //display and select savings accounts
-        mySavings.displayAccounts();
-        mySavings.selectAccount();
-        savingsAccount = mySavings.callGetActiveAccount();
-
-        //get transfer amount
-        cout << "How much money would you like to transfer from " << checkingAccount->accountName
-             << " to " << savingsAccount->accountName << "? ";
-        cin >> transferAmount;
-        inputErrorCatcher.checkForValidUserInput(transferAmount, 0.0, checkingAccount->totalFunds);
-
-        //ammend account totals
-        checkingAccount->totalFunds -= transferAmount;
-        savingsAccount->totalFunds += transferAmount;
-
-        //send to history
-        myChecking.sendToHistory("Transfer Withdrawal", transferAmount, checkingAccount->totalFunds, "NULL");
-        mySavings.sendToHistory("Transfer Deposit", transferAmount, savingsAccount->totalFunds, "NULL");
-
-        //reset selected accounts
-        mySavings.resetActiveAccount();
+        cout << endl << "You have not created a savings account yet!" << endl;
+        return;
     }
+    //display and select savings accounts
+    mySavings.displayAccounts();
+    mySavings.selectAccount();
+    savingsAccount = mySavings.callGetActiveAccount();
 
-     else if (accountType == false)
+    //get transfer amount
+    cout << "How much money would you like to transfer from " << checkingAccount->accountName
+            << " to " << savingsAccount->accountName << "? ";
+    cin >> transferAmount;
+    inputErrorCatcher.checkForValidUserInput(transferAmount, 0.0, checkingAccount->totalFunds);
+
+    //ammend account totals
+    checkingAccount->totalFunds -= transferAmount;
+    savingsAccount->totalFunds += transferAmount;
+
+    //send to history
+    myChecking.sendToHistory("Transfer Withdrawal", transferAmount, checkingAccount->totalFunds, "NULL");
+    mySavings.sendToHistory("Transfer Deposit", transferAmount, savingsAccount->totalFunds, "NULL");
+
+    //reset selected accounts
+    mySavings.resetActiveAccount();
+}
+
+void UserMenu::savingsTransfer()
+{
+    savingsAccount = mySavings.callGetActiveAccount();
+
+    //reset crossTransfer var
+    mySavings.resetCrossTransfer();
+
+    //check to see if savings accounts exist
+    if (!myChecking.getHeadOfAccountList())
     {
-        //establish checking account
-        savingsAccount = mySavings.callGetActiveAccount();
-
-        //reset crossTransfer var
-        mySavings.resetCrossTransfer();
-
-        //check to see if savings accounts exist
-        if (!myChecking.getHeadOfAccountList())
-        {
-            cout << endl << "You have not created a checking account yet!" << endl;
-            return;
-        }
-        //display and select savings accounts
-        myChecking.displayAccounts();
-        myChecking.selectAccount();
-        checkingAccount = myChecking.callGetActiveAccount();
-
-        //get transfer amount
-        cout << "How much money would you like to transfer from " << savingsAccount->accountName
-             << " to " << checkingAccount->accountName << "? ";
-        cin >> transferAmount;
-        inputErrorCatcher.checkForValidUserInput(transferAmount, 0.0, savingsAccount->totalFunds);
-
-        //ammend account totals
-        savingsAccount->totalFunds -= transferAmount;
-        checkingAccount->totalFunds += transferAmount;
-
-        //send to history
-        myChecking.sendToHistory("Transfer Deposit", transferAmount, checkingAccount->totalFunds, "NULL");
-        mySavings.sendToHistory("Transfer Withdrawal", transferAmount, savingsAccount->totalFunds, "NULL");
-
-        //reset selected accounts
-        myChecking.resetActiveAccount();
+        cout << endl << "You have not created a checking account yet!" << endl;
+        return;
     }
+    //display and select savings accounts
+    myChecking.displayAccounts();
+    myChecking.selectAccount();
+    checkingAccount = myChecking.callGetActiveAccount();
 
-    //output success message and new totals for accounts
+    //get transfer amount
+    cout << "How much money would you like to transfer from " << savingsAccount->accountName
+            << " to " << checkingAccount->accountName << "? ";
+    cin >> transferAmount;
+    inputErrorCatcher.checkForValidUserInput(transferAmount, 0.0, savingsAccount->totalFunds);
+
+    //ammend account totals
+    savingsAccount->totalFunds -= transferAmount;
+    checkingAccount->totalFunds += transferAmount;
+
+    //send to history
+    myChecking.sendToHistory("Transfer Deposit", transferAmount, checkingAccount->totalFunds, "NULL");
+    mySavings.sendToHistory("Transfer Withdrawal", transferAmount, savingsAccount->totalFunds, "NULL");
+
+    //reset selected accounts
+    myChecking.resetActiveAccount();
+}
+
+void UserMenu::outputNewAccountTotals()
+{
     cout << endl << "Successfully transfered $" << transferAmount << "!" << endl;
     cout << "New " << checkingAccount->accountName << " total is $" << checkingAccount->totalFunds << endl;
     cout << "New " << savingsAccount->accountName << " total is $" << savingsAccount->totalFunds << endl;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //overloaded operator
 ostream &operator << (ostream &os, UserInfo &user)

@@ -28,6 +28,10 @@ class UserMenu
         bool crossAccountTypeTransfer;    //returned from accounts menu, signals transferHandler()
         string stringSetter;              //holds strings to be set in a class
         int intSetter;                    //holds int to be set in a class
+
+        accountNode *savingsAccount;
+        accountNode *checkingAccount;
+        double transferAmount;
         
         UserInfo myInfo;                  //instance of userInfo class holding user data
         InputError inputErrorCatcher;          //catches user input errors
@@ -51,6 +55,7 @@ class UserMenu
         void requestUserName();
         void createUserFile();
         void requestUserPin();
+        void validateUserPin();
         void requestFirstName();
         void requestLastName();
         void requestAge();
@@ -71,20 +76,27 @@ class UserMenu
         //main menu
         void mainMenu();
         void displayMenuOptions();
-        void validateUserInput();
+        void validateUserInput(int);
         void selectAnAccountMenuOption();
         void selectCheckingAccount();
         void selectSavingsAccount();
         void createAnAccountMenuOption();
         void requestTotalBalanceMenuOption();
-
-
-
-
-
-
         void editUserInfo();
+
+        //user info editting functions
+        void displayMenuEditOptions();
+        void requestNewPin();
+        void requestNewFullName();
+        void requestNewFirstName();
+        void requestNewLastName();
+        void requestNewAge();
+
+        //transfer crap
         void crossAccountTypeTransferHandler(bool); 
+        void checkingTransfer();
+        void savingsTransfer();
+        void outputNewAccountTotals();
 
         //friend
         friend ostream & operator << (ostream &, UserInfo &);  
