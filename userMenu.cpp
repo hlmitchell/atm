@@ -419,11 +419,6 @@ void UserMenu::requestNewAge()
     cout << endl << "New Age set to " << myInfo.getAge() << "!" << endl;
 }
 
-
-
-
-
-
 //coordinates money transfers between account types
 void UserMenu::crossAccountTypeTransferHandler(bool accountType)
 {
@@ -434,77 +429,107 @@ void UserMenu::crossAccountTypeTransferHandler(bool accountType)
     outputNewAccountTotals();
 }
 
-
 void UserMenu::checkingTransfer()
 {
     checkingAccount = myChecking.callGetActiveAccount();
 
-    //reset crossTransfer var
     myChecking.resetCrossTransfer();
 
-    //check to see if savings accounts exist
+    selectASavingsAccount();
+
+    getTransferAmountChecking();
+
+    ammendAccountTotalsChecking();
+    
+    sendToHistory("Transfer Withdrawal", "Transfer Deposit");
+
+    mySavings.resetActiveAccount();
+}
+
+void UserMenu::selectASavingsAccount()
+{
+    checkIfSavingsAccountExists();
+    mySavings.displayAccounts();
+    mySavings.selectAccount();
+    savingsAccount = mySavings.callGetActiveAccount();
+}
+
+void UserMenu::checkIfSavingsAccountExists()
+{
     if (!mySavings.getHeadOfAccountList())
     {
         cout << endl << "You have not created a savings account yet!" << endl;
         return;
     }
-    //display and select savings accounts
-    mySavings.displayAccounts();
-    mySavings.selectAccount();
-    savingsAccount = mySavings.callGetActiveAccount();
+}
 
-    //get transfer amount
+void UserMenu::getTransferAmountChecking()
+{
     cout << "How much money would you like to transfer from " << checkingAccount->accountName
             << " to " << savingsAccount->accountName << "? ";
     cin >> transferAmount;
     inputErrorCatcher.checkForValidUserInput(transferAmount, 0.0, checkingAccount->totalFunds);
+}
 
-    //ammend account totals
+void UserMenu::ammendAccountTotalsChecking()
+{
     checkingAccount->totalFunds -= transferAmount;
     savingsAccount->totalFunds += transferAmount;
+}
 
+void UserMenu::sendToHistory(string checkingAction, string savingsAction)
+{
     //send to history
-    myChecking.sendToHistory("Transfer Withdrawal", transferAmount, checkingAccount->totalFunds, "NULL");
-    mySavings.sendToHistory("Transfer Deposit", transferAmount, savingsAccount->totalFunds, "NULL");
-
-    //reset selected accounts
-    mySavings.resetActiveAccount();
+    myChecking.sendToHistory(checkingAction, transferAmount, checkingAccount->totalFunds, "NULL");
+    mySavings.sendToHistory(savingsAction, transferAmount, savingsAccount->totalFunds, "NULL");
 }
 
 void UserMenu::savingsTransfer()
 {
     savingsAccount = mySavings.callGetActiveAccount();
 
-    //reset crossTransfer var
     mySavings.resetCrossTransfer();
 
-    //check to see if savings accounts exist
+    selectACheckingAccount();
+
+    getTransferAmountSavings();
+    
+    ammendAccountTotalsSavings();
+
+    sendToHistory("Transfer Deposit", "Transfer Withdrawal");
+
+    myChecking.resetActiveAccount();
+}
+
+void UserMenu::selectACheckingAccount()
+{
+    checkIfCheckingAccountExists();
+    myChecking.displayAccounts();
+    myChecking.selectAccount();
+    checkingAccount = myChecking.callGetActiveAccount();
+}
+
+void UserMenu::checkIfCheckingAccountExists()
+{
     if (!myChecking.getHeadOfAccountList())
     {
         cout << endl << "You have not created a checking account yet!" << endl;
         return;
     }
-    //display and select savings accounts
-    myChecking.displayAccounts();
-    myChecking.selectAccount();
-    checkingAccount = myChecking.callGetActiveAccount();
+}
 
-    //get transfer amount
+void UserMenu::getTransferAmountSavings()
+{
     cout << "How much money would you like to transfer from " << savingsAccount->accountName
             << " to " << checkingAccount->accountName << "? ";
     cin >> transferAmount;
     inputErrorCatcher.checkForValidUserInput(transferAmount, 0.0, savingsAccount->totalFunds);
+}
 
-    //ammend account totals
+void UserMenu::ammendAccountTotalsSavings()
+{
     savingsAccount->totalFunds -= transferAmount;
     checkingAccount->totalFunds += transferAmount;
-
-    //send to history
-    myChecking.sendToHistory("Transfer Deposit", transferAmount, checkingAccount->totalFunds, "NULL");
-    mySavings.sendToHistory("Transfer Withdrawal", transferAmount, savingsAccount->totalFunds, "NULL");
-
-    //reset selected accounts
-    myChecking.resetActiveAccount();
 }
 
 void UserMenu::outputNewAccountTotals()
@@ -515,21 +540,6 @@ void UserMenu::outputNewAccountTotals()
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//overloaded operator
 ostream &operator << (ostream &os, UserInfo &user)
 {
     os << endl 

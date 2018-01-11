@@ -97,6 +97,15 @@ class UserMenu
         void checkingTransfer();
         void savingsTransfer();
         void outputNewAccountTotals();
+        void selectASavingsAccount();
+        void checkIfSavingsAccountExists();
+        void getTransferAmountChecking();
+        void ammendAccountTotalsChecking();
+        void sendToHistory(string, string);
+        void selectACheckingAccount();
+        void checkIfCheckingAccountExists();
+        void getTransferAmountSavings();
+        void ammendAccountTotalsSavings();
 
         //friend
         friend ostream & operator << (ostream &, UserInfo &);  
