@@ -5,106 +5,91 @@
 
 #include "accounts.h"
 
-//constructor
 Accounts::Accounts()
 {
-    //set variables
     activeAccountName = "";
     menuUserSelection = 0;
     withdrawOrDepositValue = 0;
 }
 
-//deletes linked list
 Accounts::~Accounts()
 {
     pointerToActiveAccount = NULL;
 }
 
-//uploading existing accounts from user info file
 void Accounts::downloadExistingAccounts(string accountName)
 {
     listOfOpenAccounts.createNode(accountName);
 }
 
-//converts account name into file name
 void Accounts::setTextFileName(string id)
 {
-    //pointer to selected account
     pointerToActiveAccount = listOfOpenAccounts.getActiveAccount();
     
-    //eliminate spaces from account name and store in file var
+    string accountNameWithoutSpaces = removeSpacesFromAccountName();
+
+    specifyFileType(id, accountNameWithoutSpaces);
+}
+
+string Accounts::removeSpacesFromAccountName()
+{
     string accountNameWithoutSpaces;
     string originalAccountName = pointerToActiveAccount->accountName;
+
     for (int i = 0; i < originalAccountName.length(); i++)
     {
         if (originalAccountName[i] == ' ') continue;
         accountNameWithoutSpaces += originalAccountName[i];
     }
-    //label as checking or savings
-    specifyFileType(id, accountNameWithoutSpaces);
+
+    return accountNameWithoutSpaces;
 }
 
-//sets selected account to null
 void Accounts::resetActiveAccount()
 {
-    //pointer to selected account
     listOfOpenAccounts.setActiveAccount(NULL);
     
     pointerToActiveAccount = NULL;
     activeAccountName = "";
 }
 
-//reset cross transfer bool to false
 void Accounts::resetCrossTransfer()
 {
     crossTransfer = false;
 }
 
-//returns true or false if the list has been created
 bool Accounts::getHeadOfAccountList()
 {
     if (listOfOpenAccounts.getListHead()) return true;
     else return false;
 }
 
-//return account file name
 vector<string> Accounts::getAccountFileNames()
 {
-    //temp vector to return file names
     vector<string> fileNames;
-    //assign pointer to head of list
     pointerToActiveAccount = listOfOpenAccounts.getListHead();          
 
-    //add all file names to temp vector
     while (pointerToActiveAccount)
     {
         fileNames.push_back(pointerToActiveAccount->accountFileName);
         pointerToActiveAccount = pointerToActiveAccount->next;
     }
 
-    //return temp vector
     return fileNames;
 }
 
-//returns a selected account name
 accountNode *Accounts::callGetActiveAccount()
 {
     return listOfOpenAccounts.getActiveAccount();
 }
 
-//returns money total of all checking accounts
 double Accounts::getTotalMoneyForAllAccounts()
 {
-    //holds total funds
     double accountTotals = 0;
 
-    //initialize pointerToActiveAccount to head of list
     pointerToActiveAccount = listOfOpenAccounts.getListHead();
-
-    //if no accounts exist return 0
     if (pointerToActiveAccount == NULL) return 0;
 
-    //add all account totals together
     while (pointerToActiveAccount)
     {
         accountTotals += pointerToActiveAccount->totalFunds;
@@ -113,7 +98,6 @@ double Accounts::getTotalMoneyForAllAccounts()
     return accountTotals;
 }
 
-//return cross Transfer bool
 bool Accounts::getCrossTransfer()
 {
     return crossTransfer;

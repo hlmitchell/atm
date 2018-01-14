@@ -40,7 +40,10 @@ class Accounts
 
         //setters
         void downloadExistingAccounts(string);
+
         void setTextFileName(string);
+        string removeSpacesFromAccountName();
+
         void resetActiveAccount();
         void resetCrossTransfer();
 

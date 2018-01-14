@@ -28,6 +28,7 @@ class UserMenu
         bool crossAccountTypeTransfer;    //returned from accounts menu, signals transferHandler()
         string stringSetter;              //holds strings to be set in a class
         int intSetter;                    //holds int to be set in a class
+        bool accountTypeDoesNotExist;
 
         accountNode *savingsAccount;
         accountNode *checkingAccount;
