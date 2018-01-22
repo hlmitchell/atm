@@ -23,29 +23,27 @@ class UserMenu
 {
     private:
 
-        //variables
-        int menuUserSelection;            //user input from menus
-        bool crossAccountTypeTransfer;    //returned from accounts menu, signals transferHandler()
-        string stringSetter;              //holds strings to be set in a class
-        int intSetter;                    //holds int to be set in a class
+        int menuUserSelection;            
+        bool crossAccountTypeTransfer;    
+        string stringSetter;              
+        int intSetter;                    
         bool accountTypeDoesNotExist;
 
         accountNode *savingsAccount;
         accountNode *checkingAccount;
         double transferAmount;
         
-        UserInfo myInfo;                  //instance of userInfo class holding user data
-        InputError inputErrorCatcher;          //catches user input errors
-        vector<string> accountFileNames;       //list of all account file names
+        UserInfo myInfo;                  
+        InputError inputErrorCatcher;          
+        vector<string> accountFileNames;       
 
-        string txtFileName;             //user file name with '.txt'
-        fstream userInfoFile;           //user file and account names
+        string txtFileName;             
+        fstream userInfoFile;           
 
-        Checking myChecking;    //instance of Checking class
-        Savings mySavings;      //instance of Savings class
+        Checking myChecking;    
+        Savings mySavings;      
 
     public:
-        //constructor and destructor
         UserMenu();
         UserMenu(string, string);
         ~UserMenu();
@@ -83,7 +81,7 @@ class UserMenu
         void selectSavingsAccount();
         void createAnAccountMenuOption();
         void requestTotalBalanceMenuOption();
-        void editUserInfo();
+        void editUserInfoMenuOption();
 
         //user info editting functions
         void displayMenuEditOptions();

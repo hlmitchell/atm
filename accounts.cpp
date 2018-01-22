@@ -103,10 +103,9 @@ bool Accounts::getCrossTransfer()
     return crossTransfer;
 }
 
-//select an account for transfering funds across account types
+//bad code
 bool Accounts::selectAccountForCrossTransfer(string accountType)
 {
-    //if no account exists then break
     if (!getHeadOfAccountList()) 
     {
         cout << endl << "You have not created a " << accountType <<  " account yet!" << endl;
@@ -120,7 +119,6 @@ bool Accounts::selectAccountForCrossTransfer(string accountType)
     }
     else
     {   
-        //else display all checking accounts
         displayAccounts();       
         selectAccount();
 
@@ -137,56 +135,83 @@ bool Accounts::selectAccountForCrossTransfer(string accountType)
     }
 }
 
-//creates a new account
 void Accounts::createAccount(string id)
-{
-    accountNode *newAccount;    //temp holder for new node
-    string accountName;         //temp holder for account name
-    accountNode *verifyAccount;      //temp holder to allow movement through list
+{ 
+    nameAccount();
+    setTextFileName(id);
+
+    pointerToActiveAccount = listOfOpenAccounts.getActiveAccount();
+
+    makeInitialDeposit();
+
+    confirmationOfNewAccountMessage();
     
-    //name the account
+    sendToHistory(
+        "Open Deposit", 
+        pointerToActiveAccount->totalFunds, 
+        pointerToActiveAccount->totalFunds, 
+        "NULL"
+    );
+
+    resetActiveAccount();
+}
+
+void Accounts::nameAccount()
+{
+    string accountName;        
+    
     cout << endl << "What would you like to name this account? ";
     cin.ignore();
-
-    //assign name to temp variable
     getline(cin, accountName);
-    inputErrorCatcher.removeExtraWhiteSpaceFromString(accountName);
-    verifyAccount = listOfOpenAccounts.findNode(accountName);
 
-    //make sure name isn't repeat
-    while (verifyAccount != NULL)
+    inputErrorCatcher.removeExtraWhiteSpaceFromString(accountName);
+    verifyUniqueAccountName(accountName);
+
+    setAccountName(accountName);
+}
+
+void Accounts::verifyUniqueAccountName(string accountName)
+{
+    accountNode *verifiedAccount;
+    verifiedAccount = listOfOpenAccounts.findNode(accountName);
+
+    while (verifiedAccount != NULL)
     {
         cout << "Name already taken! Please try again: ";
         getline(cin, accountName);
-        verifyAccount = listOfOpenAccounts.findNode(accountName);
+        verifiedAccount = listOfOpenAccounts.findNode(accountName);
     }
-
-    //create a new node in the list
-    listOfOpenAccounts.createNode("NULL");
-    //assign the memory address to newAccount
-    newAccount = listOfOpenAccounts.findNode("");
-    //assign name
-    newAccount->accountName = accountName;
-    //set to selected Account
-    listOfOpenAccounts.setActiveAccount(newAccount);
-    //assign file name
-    setTextFileName(id);
-    //reset
-    resetActiveAccount();
-
-    //deposit money into the account
-    cout << "How much money would you like to deposit (Enter 0 if none)? ";
-    cin >> newAccount->totalFunds;
-    inputErrorCatcher.checkForValidUserInput(newAccount->totalFunds, 0.0, 1000000000.0);
-
-    //success message
-    cout << endl << "Successfully created account " << newAccount->accountName
-         << " with current value of $" << fixed << setprecision(2)
-         << newAccount->totalFunds << "!" << endl;
-
-    //send to history
-    newAccount->myHistory.addToHistory("Open Deposit", newAccount->totalFunds, newAccount->totalFunds, "NULL");
 }
+
+void Accounts::setAccountName(string accountName)
+{
+    accountNode *newAccount;
+    
+    listOfOpenAccounts.createNode("NULL");
+    newAccount = listOfOpenAccounts.findNode("");
+
+    newAccount->accountName = accountName;
+    listOfOpenAccounts.setActiveAccount(newAccount);
+}
+
+void Accounts::makeInitialDeposit()
+{
+    cout << "How much money would you like to deposit (Enter 0 if none)? ";
+    cin >> pointerToActiveAccount->totalFunds;
+    inputErrorCatcher.checkForValidUserInput(pointerToActiveAccount->totalFunds, 0.0, 1000000000.0);
+}
+
+void Accounts::confirmationOfNewAccountMessage()
+{
+    cout << endl << "Successfully created account " << pointerToActiveAccount->accountName
+         << " with current value of $" << fixed << setprecision(2)
+         << pointerToActiveAccount->totalFunds << "!" << endl;
+}
+
+
+
+
+
 
 //selects an account to edit 
 void Accounts::selectAccount()

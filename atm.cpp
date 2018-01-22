@@ -13,25 +13,21 @@
 
 using namespace std;
 
-//prototypes
 void displayMainMenu();
 void attemptLogin(InputError&);
 bool checkIfFileExists(string&);
 
 int main()
 {
-    //constants
     const int MINIMUM_MENU_INPUT = 1;
     const int MAXIMUM_MENU_INPUT = 3;
-    
-    //variables
-    InputError inputErrorCatcher;     //catches input errors
-    int menuUserSelection;       //selection for first menu
+
+    InputError inputErrorCatcher;
+    int menuUserSelection;  
 
     do {
         displayMainMenu();
         
-        //checks if user input is integer between 1 and 3
         cin >> menuUserSelection;
         inputErrorCatcher.checkForValidUserInput(menuUserSelection, MINIMUM_MENU_INPUT, MAXIMUM_MENU_INPUT);
         inputErrorCatcher.clearKeyboardBuffer();
@@ -54,11 +50,9 @@ int main()
 
     } while (menuUserSelection != MAXIMUM_MENU_INPUT);
 
-    //reset variable
     menuUserSelection = 0;
 }
 
-//displays main menu
 void displayMainMenu()
 {
     cout << endl << "***Welcome to Hannah's Bank!***" << endl << endl;
@@ -68,41 +62,30 @@ void displayMainMenu()
     cout << "3. Exit" << endl;
 }
 
-//attempt to login to account using id and pin
 void attemptLogin(InputError &inputErrorCatcher)
 {
-    //variables
-    string id;                   //user ID
-    string pin;                  //user pin
+    string id;
+    string pin;
 
-    //request user ID
     cout << endl << "Please Enter User ID: ";
     getline(cin, id);
 
-    //checks to see if user file exists
     if (!checkIfFileExists(id)) return;
     
-    //request user PIN
     cout << "Please Enter Pin: ";
     getline(cin, pin);
     
-    //checks if pin is all integers
     inputErrorCatcher.checkForValidPinEntry(pin);
     
-    //calls object user
     UserMenu myClient(id, pin);
 }
 
-//function checks if user ID exists by searching for file of same name
 bool checkIfFileExists(string &idInquiry)
 {
-    //create file
     fstream clientFile;
 
-    //convert id input to file name
     idInquiry = idInquiry + ".txt";
 
-    //check to see if open, otherwise return false
     clientFile.open(idInquiry.c_str());
     if (clientFile.fail())
     {

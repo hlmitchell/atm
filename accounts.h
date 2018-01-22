@@ -22,23 +22,21 @@ class Accounts
     protected:
 
     //variables
-        InputError inputErrorCatcher;   //error catcher
+        InputError inputErrorCatcher;
 
-        accountList listOfOpenAccounts;       //list of accounts
-        accountNode *pointerToActiveAccount;  //pointer to selected account
+        accountList listOfOpenAccounts;   
+        accountNode *pointerToActiveAccount;
 
-        string activeAccountName;           //name of active account
-        int menuUserSelection;                  //menu selection
-        double withdrawOrDepositValue;      //either with withdrawal or deposit amount
-        char yesOrNo;                       //user input for y/n prompt
-        bool crossTransfer;                 //indicates a transfer between account types
+        string activeAccountName;          
+        int menuUserSelection;                 
+        double withdrawOrDepositValue;     
+        char yesOrNo;                       
+        bool crossTransfer;                 
 
     public:
-        //constructors and destructor
         Accounts();
         virtual ~Accounts();
 
-        //setters
         void downloadExistingAccounts(string);
 
         void setTextFileName(string);
@@ -47,18 +45,24 @@ class Accounts
         void resetActiveAccount();
         void resetCrossTransfer();
 
-        //getters
         bool getHeadOfAccountList();
         vector<string> getAccountFileNames();
         accountNode *callGetActiveAccount();
         double getTotalMoneyForAllAccounts();
         bool getCrossTransfer();
 
-        //main menu actions
         bool selectAccountForCrossTransfer(string);
 
-        //account actions
         void createAccount(string);
+        void nameAccount();
+        void verifyUniqueAccountName(string);
+        void setAccountName(string);
+        void makeInitialDeposit();
+        void confirmationOfNewAccountMessage();
+        void sendCreationToAccountHistory();
+
+
+
         void selectAccount();
         void deleteAccount();
         void depositFunds();
@@ -66,7 +70,6 @@ class Accounts
         void sameAccountTypeTransfer();
         void sendToHistory(string, double, double, string);
 
-        //pure virtual functions
         virtual void specifyFileType(string, string) = 0;
         virtual void displayAccounts() = 0;
         virtual void accountOptionsMenu() = 0;

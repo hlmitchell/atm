@@ -5,14 +5,12 @@
 
 #include "accountList.h"
 
-//constructor
 accountList::accountList()
 {
     head = NULL;
     activeAccount = NULL;
 }
 
-//destructor
 accountList::~accountList()
 {
     //for uploading the files
@@ -49,19 +47,16 @@ accountList::~accountList()
     activeAccount = NULL;
 }
 
-//sets selected Account
 void accountList::setActiveAccount(accountNode *node)
 {
     activeAccount = node;
 }
 
-//return selected account
 accountNode *accountList::getActiveAccount()
 {
     return activeAccount;
 }
 
-//return head of list
 accountNode *accountList::getListHead()
 {
     return head;
