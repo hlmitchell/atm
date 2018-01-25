@@ -17,6 +17,10 @@
 
 using namespace std;
 
+
+//In this file I am treating what is mearly a data structure as a class.
+//This is stupid and I should change this data back into a data structure.
+
 class UserInfo 
 {
     private:

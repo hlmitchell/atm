@@ -26,8 +26,10 @@ class Accounts
 
         accountList listOfOpenAccounts;   
         accountNode *pointerToActiveAccount;
-
-        string activeAccountName;          
+        accountNode *mergerAccount;
+        
+        string activeAccountName;   
+        string mergerAccountName;       
         int menuUserSelection;                 
         double withdrawOrDepositValue;     
         char yesOrNo;                       
@@ -59,14 +61,27 @@ class Accounts
         void setAccountName(string);
         void makeInitialDeposit();
         void confirmationOfNewAccountMessage();
-        void sendCreationToAccountHistory();
-
-
 
         void selectAccount();
+        void requestAccountName();
+
         void deleteAccount();
+        bool checkIfAccountFundsAreZero();
+        void confirmAccountDeletion();
+        void confirmedDeletion();
+
         void depositFunds();
+        void requestDepositAmount();
+        void addFundsToTotal();
+
         void mergeAccounts();
+        bool checkIfOtherAccountsExist();
+        void requestMergerAccountName();
+        void verifyAccountMerge();
+        void confirmedMerge();
+
+
+
         void sameAccountTypeTransfer();
         void sendToHistory(string, double, double, string);
 
