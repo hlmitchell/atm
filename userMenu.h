@@ -24,7 +24,6 @@ class UserMenu
     private:
 
         int menuUserSelection;            
-        bool crossAccountTypeTransfer;    
         string stringSetter;              
         int intSetter;                    
         bool accountTypeDoesNotExist;
@@ -77,8 +76,6 @@ class UserMenu
         void displayMenuOptions();
         void validateUserInput(int);
         void selectAnAccountMenuOption();
-        void selectCheckingAccount();
-        void selectSavingsAccount();
         void createAnAccountMenuOption();
         void requestTotalBalanceMenuOption();
         void editUserInfoMenuOption();
@@ -90,21 +87,6 @@ class UserMenu
         void requestNewFirstName();
         void requestNewLastName();
         void requestNewAge();
-
-        //transfer crap
-        void crossAccountTypeTransferHandler(bool); 
-        void checkingTransfer();
-        void savingsTransfer();
-        void outputNewAccountTotals();
-        void selectASavingsAccount();
-        void checkIfSavingsAccountExists();
-        void getTransferAmountChecking();
-        void ammendAccountTotalsChecking();
-        void sendToHistory(string, string);
-        void selectACheckingAccount();
-        void checkIfCheckingAccountExists();
-        void getTransferAmountSavings();
-        void ammendAccountTotalsSavings();
 
         //friend
         friend ostream & operator << (ostream &, UserInfo &);  

@@ -60,8 +60,6 @@ void Savings::accountOptionsMenu()
                 break;
             case 3:
                 transferFunds();
-                //activate transfer function in user.h
-                if (crossTransfer == true) return;
                 break;
             case 4:
                 pointerToActiveAccount->myHistory.displayHistory();
@@ -92,5 +90,8 @@ void Savings::transferFunds()
 
     //checking vs savings
     if (menuUserSelection == 2) sameAccountTypeTransfer();
-    else if (menuUserSelection == 1) crossTransfer = true; 
+    else if (menuUserSelection == 1)
+    {
+        cout << "Cross transfer feature currently broken!" << endl;
+    }
 }

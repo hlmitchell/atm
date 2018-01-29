@@ -9,6 +9,7 @@ Accounts::Accounts()
 {
     activeAccountName = "";
     mergerAccountName = "";
+    transferAccountName = "";
     menuUserSelection = 0;
     withdrawOrDepositValue = 0;
 }
@@ -54,11 +55,6 @@ void Accounts::resetActiveAccount()
     activeAccountName = "";
 }
 
-void Accounts::resetCrossTransfer()
-{
-    crossTransfer = false;
-}
-
 bool Accounts::getHeadOfAccountList()
 {
     if (listOfOpenAccounts.getListHead()) return true;
@@ -99,40 +95,18 @@ double Accounts::getTotalMoneyForAllAccounts()
     return accountTotals;
 }
 
-bool Accounts::getCrossTransfer()
-{
-    return crossTransfer;
-}
-
-//bad code in here
-bool Accounts::selectAccountForCrossTransfer(string accountType)
+void Accounts::selectAccount(string accountType)
 {
     if (!getHeadOfAccountList()) 
     {
         cout << endl << "You have not created a " << accountType <<  " account yet!" << endl;
-        return false;
-    }
-    //if returning from cross transfer go straight to menu
-    else if (listOfOpenAccounts.getActiveAccount())
-    {
-        accountOptionsMenu();
-        return false;
+        return;
     }
     else
     {   
         displayAccounts();       
         selectAccount();
-
-        //indicates transfer across account types
-        bool crossAccountTransfer;
-
-        //display further menu
         accountOptionsMenu();
-                
-        //check for transfer selection in account options menu
-        crossAccountTransfer = getCrossTransfer();
-        if (crossAccountTransfer == true) return true;
-        else return false;
     }
 }
 
@@ -299,10 +273,9 @@ void Accounts::addFundsToTotal()
 
 void Accounts::mergeAccounts()
 {
-    pointerToActiveAccount = listOfOpenAccounts.getListHead();
-    pointerToActiveAccount = listOfOpenAccounts.getActiveAccount();
-
     if (!checkIfOtherAccountsExist()) return;
+
+    pointerToActiveAccount = listOfOpenAccounts.getActiveAccount();
 
     requestMergerAccountName();
     verifyAccountMerge();
@@ -315,6 +288,8 @@ void Accounts::mergeAccounts()
 
 bool Accounts::checkIfOtherAccountsExist()
 {
+    pointerToActiveAccount = listOfOpenAccounts.getListHead();
+
     if (pointerToActiveAccount->next == NULL)
     {
         cout << endl << "There are no other accounts of the same type!" << endl;
@@ -360,18 +335,10 @@ void Accounts::confirmedMerge()
     confirmedDeletion();
 }
 
-
-
-//transferring money between like accounts
 void Accounts::sameAccountTypeTransfer()
 {
-    //set to head
     pointerToActiveAccount = listOfOpenAccounts.getListHead();
     
-    //pointer for checking transfer
-    accountNode *transferPtr;
-    string transferAccountName;
-
     //check to see if other accounts of this type exist
     if (pointerToActiveAccount->next == NULL)
     {
@@ -394,18 +361,18 @@ void Accounts::sameAccountTypeTransfer()
         getline(cin, transferAccountName);
 
         //find account address
-        transferPtr = listOfOpenAccounts.findNode(transferAccountName);
+        transferAccount = listOfOpenAccounts.findNode(transferAccountName);
         //if address is NULL, account name was not valid
-        if (transferPtr == NULL || transferPtr->accountName == pointerToActiveAccount->accountName)
+        if (transferAccount == NULL || transferAccount->accountName == pointerToActiveAccount->accountName)
         {
             cout << "Not an available account name!" << endl;
-            transferPtr = NULL;
+            transferAccount = NULL;
         }
-    } while (transferPtr == NULL);
+    } while (transferAccount == NULL);
 
     //ask for transfer amount
     cout << "How much money would you like to transfer from " << pointerToActiveAccount->accountName
-         << " to " << transferPtr->accountName << "? ";
+         << " to " << transferAccount->accountName << "? ";
     cin >> withdrawOrDepositValue;
     inputErrorCatcher.checkForValidUserInput(withdrawOrDepositValue, 0.0, pointerToActiveAccount->totalFunds);
 
@@ -414,26 +381,22 @@ void Accounts::sameAccountTypeTransfer()
     {  
         //ammend account totals
         pointerToActiveAccount->totalFunds -= withdrawOrDepositValue;
-        transferPtr->totalFunds += withdrawOrDepositValue;
+        transferAccount->totalFunds += withdrawOrDepositValue;
  
         //output success message and new totals for accounts
         cout << endl << "Successfully transfered $" << withdrawOrDepositValue << "!" << endl;
         cout << "New " << pointerToActiveAccount->accountName << " total is $" << pointerToActiveAccount->totalFunds << endl;
-        cout << "New " << transferPtr->accountName << " total is $" << transferPtr->totalFunds << endl;
+        cout << "New " << transferAccount->accountName << " total is $" << transferAccount->totalFunds << endl;
 
         //send to histories
         pointerToActiveAccount->myHistory.addToHistory("Transfer Withdrawal", withdrawOrDepositValue, pointerToActiveAccount->totalFunds, "NULL");
-        transferPtr->myHistory.addToHistory("Transfer Deposit", withdrawOrDepositValue, transferPtr->totalFunds, "NULL");
+        transferAccount->myHistory.addToHistory("Transfer Deposit", withdrawOrDepositValue, transferAccount->totalFunds, "NULL");
     }
 
 }
 
-//sends to history from transfer handler of user class
 void Accounts::sendToHistory(string transactionType, double transactionAmount, double newTotal, string date)
 {
-    //set to selected account
     pointerToActiveAccount = listOfOpenAccounts.getActiveAccount();
-    
-    //send to history
     pointerToActiveAccount->myHistory.addToHistory(transactionType, transactionAmount, newTotal, date);
 }

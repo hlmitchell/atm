@@ -27,13 +27,15 @@ class Accounts
         accountList listOfOpenAccounts;   
         accountNode *pointerToActiveAccount;
         accountNode *mergerAccount;
+        accountNode *transferAccount;
         
         string activeAccountName;   
-        string mergerAccountName;       
+        string mergerAccountName;
+        string transferAccountName;
+
         int menuUserSelection;                 
         double withdrawOrDepositValue;     
         char yesOrNo;                       
-        bool crossTransfer;                 
 
     public:
         Accounts();
@@ -45,15 +47,14 @@ class Accounts
         string removeSpacesFromAccountName();
 
         void resetActiveAccount();
-        void resetCrossTransfer();
 
         bool getHeadOfAccountList();
         vector<string> getAccountFileNames();
         accountNode *callGetActiveAccount();
         double getTotalMoneyForAllAccounts();
-        bool getCrossTransfer();
 
-        bool selectAccountForCrossTransfer(string);
+        //fix name
+        void selectAccount(string);
 
         void createAccount(string);
         void nameAccount();

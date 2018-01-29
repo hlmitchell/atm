@@ -14,7 +14,6 @@ UserMenu::UserMenu()
 void UserMenu::initializeClassVariables()
 {
     menuUserSelection = 0;
-    crossAccountTypeTransfer = false;
     accountTypeDoesNotExist = false;
 }
 
@@ -263,39 +262,13 @@ void UserMenu::selectAnAccountMenuOption()
 
     if (menuUserSelection == 1) 
     {
-        selectCheckingAccount();
+        myChecking.selectAccount("checking");
     }
 
     else if (menuUserSelection == 2) 
     {
-        selectSavingsAccount();
+        mySavings.selectAccount("savings");
     }
-
-    crossAccountTypeTransfer = false;
-}
-
-void UserMenu::selectCheckingAccount()
-{
-    do {
-        //convulated way of displaying and selecting checking accounts
-        crossAccountTypeTransfer = myChecking.selectAccountForCrossTransfer("checking");
-
-        //calls transfer between account types function
-        if (crossAccountTypeTransfer == true) crossAccountTypeTransferHandler(true);
-
-    } while (crossAccountTypeTransfer == true);
-}
-
-void UserMenu::selectSavingsAccount()
-{
-    do {
-        //convulated way of displaying and selecting checking accounts
-        crossAccountTypeTransfer = mySavings.selectAccountForCrossTransfer("savings");
-
-        //calls transfer between account types function
-        if (crossAccountTypeTransfer == true) crossAccountTypeTransferHandler(false);
-
-    } while (crossAccountTypeTransfer == true);
 }
 
 void UserMenu::createAnAccountMenuOption()
@@ -410,137 +383,6 @@ void UserMenu::requestNewAge()
 
     cout << endl << "New Age set to " << myInfo.getAge() << "!" << endl;
 }
-
-void UserMenu::crossAccountTypeTransferHandler(bool accountType)
-{
-    if (accountType == true) checkingTransfer();
-
-    else if (accountType == false) savingsTransfer();
-
-    if (accountTypeDoesNotExist) 
-    {
-        accountTypeDoesNotExist = !accountTypeDoesNotExist;
-        return;
-    }
-
-    outputNewAccountTotals();
-}
-
-void UserMenu::checkingTransfer()
-{
-    checkingAccount = myChecking.callGetActiveAccount();
-
-    myChecking.resetCrossTransfer();
-
-    selectASavingsAccount();
-    if (accountTypeDoesNotExist) return;
-
-    getTransferAmountChecking();
-
-    ammendAccountTotalsChecking();
-    
-    sendToHistory("Transfer Withdrawal", "Transfer Deposit");
-
-    mySavings.resetActiveAccount();
-}
-
-void UserMenu::selectASavingsAccount()
-{
-    checkIfSavingsAccountExists();
-    if (accountTypeDoesNotExist) return;
-
-    mySavings.displayAccounts();
-    mySavings.selectAccount();
-    savingsAccount = mySavings.callGetActiveAccount();
-}
-
-void UserMenu::checkIfSavingsAccountExists()
-{
-    if (!mySavings.getHeadOfAccountList())
-    {
-        cout << endl << "You have not created a savings account yet!" << endl;
-        accountTypeDoesNotExist = true;
-    }
-}
-
-void UserMenu::getTransferAmountChecking()
-{
-    cout << "How much money would you like to transfer from " << checkingAccount->accountName
-            << " to " << savingsAccount->accountName << "? ";
-    cin >> transferAmount;
-    inputErrorCatcher.checkForValidUserInput(transferAmount, 0.0, checkingAccount->totalFunds);
-}
-
-void UserMenu::ammendAccountTotalsChecking()
-{
-    checkingAccount->totalFunds -= transferAmount;
-    savingsAccount->totalFunds += transferAmount;
-}
-
-void UserMenu::sendToHistory(string checkingAction, string savingsAction)
-{
-    myChecking.sendToHistory(checkingAction, transferAmount, checkingAccount->totalFunds, "NULL");
-    mySavings.sendToHistory(savingsAction, transferAmount, savingsAccount->totalFunds, "NULL");
-}
-
-void UserMenu::savingsTransfer()
-{
-    savingsAccount = mySavings.callGetActiveAccount();
-
-    mySavings.resetCrossTransfer();
-
-    selectACheckingAccount();
-    if (accountTypeDoesNotExist) return;
-
-    getTransferAmountSavings();
-    
-    ammendAccountTotalsSavings();
-
-    sendToHistory("Transfer Deposit", "Transfer Withdrawal");
-
-    myChecking.resetActiveAccount();
-}
-
-void UserMenu::selectACheckingAccount()
-{
-    checkIfCheckingAccountExists();
-    if (accountTypeDoesNotExist) return;
-
-    myChecking.displayAccounts();
-    myChecking.selectAccount();
-    checkingAccount = myChecking.callGetActiveAccount();
-}
-
-void UserMenu::checkIfCheckingAccountExists()
-{
-    if (!myChecking.getHeadOfAccountList())
-    {
-        cout << endl << "You have not created a checking account yet!" << endl;
-        accountTypeDoesNotExist = true;
-    }
-}
-
-void UserMenu::getTransferAmountSavings()
-{
-    cout << "How much money would you like to transfer from " << savingsAccount->accountName
-            << " to " << checkingAccount->accountName << "? ";
-    cin >> transferAmount;
-    inputErrorCatcher.checkForValidUserInput(transferAmount, 0.0, savingsAccount->totalFunds);
-}
-
-void UserMenu::ammendAccountTotalsSavings()
-{
-    savingsAccount->totalFunds -= transferAmount;
-    checkingAccount->totalFunds += transferAmount;
-}
-
-void UserMenu::outputNewAccountTotals()
-{
-    cout << endl << "Successfully transfered $" << transferAmount << "!" << endl;
-    cout << "New " << checkingAccount->accountName << " total is $" << checkingAccount->totalFunds << endl;
-    cout << "New " << savingsAccount->accountName << " total is $" << savingsAccount->totalFunds << endl;
-}
-
 
 ostream &operator << (ostream &os, UserInfo &user)
 {
