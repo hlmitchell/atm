@@ -20,18 +20,15 @@ using namespace std;
 class Accounts
 {
     protected:
-
-    //variables
         InputError inputErrorCatcher;
 
         accountList listOfOpenAccounts;   
         accountNode *pointerToActiveAccount;
-        accountNode *mergerAccount;
-        accountNode *transferAccount;
+        accountNode *secondAccount;
         
         string activeAccountName;   
-        string mergerAccountName;
-        string transferAccountName;
+        string secondAccountName;
+
 
         int menuUserSelection;                 
         double withdrawOrDepositValue;     
@@ -53,7 +50,6 @@ class Accounts
         accountNode *callGetActiveAccount();
         double getTotalMoneyForAllAccounts();
 
-        //fix name
         void selectAccount(string);
 
         void createAccount(string);
@@ -77,13 +73,16 @@ class Accounts
 
         void mergeAccounts();
         bool checkIfOtherAccountsExist();
-        void requestMergerAccountName();
+        void requestSecondAccountName();
         void verifyAccountMerge();
         void confirmedMerge();
 
-
-
         void sameAccountTypeTransfer();
+        void requestTransferAmount();
+        void confirmedTransfer();
+        void ammendAccountTotals();
+        void transferSuccessMessage();
+
         void sendToHistory(string, double, double, string);
 
         virtual void specifyFileType(string, string) = 0;

@@ -8,8 +8,7 @@
 Accounts::Accounts()
 {
     activeAccountName = "";
-    mergerAccountName = "";
-    transferAccountName = "";
+    secondAccountName = "";
     menuUserSelection = 0;
     withdrawOrDepositValue = 0;
 }
@@ -277,7 +276,7 @@ void Accounts::mergeAccounts()
 
     pointerToActiveAccount = listOfOpenAccounts.getActiveAccount();
 
-    requestMergerAccountName();
+    requestSecondAccountName();
     verifyAccountMerge();
 
     if (yesOrNo == 'Y')
@@ -299,100 +298,86 @@ bool Accounts::checkIfOtherAccountsExist()
     return true;
 }
 
-void Accounts::requestMergerAccountName()
+void Accounts::requestSecondAccountName()
 {
     do {
-        cout << endl << "With which account would you like to merge " 
-        << pointerToActiveAccount->accountName << "? ";
-        getline(cin, mergerAccountName);
+        cout << endl << "Enter the name of the account you wish to access: ";
+        getline(cin, secondAccountName);
 
-        mergerAccount = listOfOpenAccounts.findNode(mergerAccountName);
+        secondAccount = listOfOpenAccounts.findNode(secondAccountName);
 
-        if (mergerAccount == NULL || mergerAccount->accountName == pointerToActiveAccount->accountName)
+        if (secondAccount == NULL || secondAccount->accountName == pointerToActiveAccount->accountName)
         {
             cout << "Not an available account name!" << endl;
-            mergerAccount = NULL;
+            secondAccount = NULL;
         }
 
-    } while (mergerAccount == NULL);
+    } while (secondAccount == NULL);
 }
 
 void Accounts::verifyAccountMerge()
 {
     cout << "Are you sure you want to merge " << pointerToActiveAccount->accountName
-         << " into " << mergerAccount->accountName << " (Y/N)? ";
+         << " into " << secondAccount->accountName << " (Y/N)? ";
     cin >> yesOrNo;
     inputErrorCatcher.yesOrNoValidator(yesOrNo);
 }
 
 void Accounts::confirmedMerge()
 {
-    mergerAccount->totalFunds += pointerToActiveAccount->totalFunds;
+    secondAccount->totalFunds += pointerToActiveAccount->totalFunds;
     cout << "Merge Successful!" << endl;
 
-    mergerAccount->myHistory.addToHistory("Merger Deposit", pointerToActiveAccount->totalFunds, mergerAccount->totalFunds, "NULL");
+    secondAccount->myHistory.addToHistory("Merger Deposit", pointerToActiveAccount->totalFunds, secondAccount->totalFunds, "NULL");
 
     confirmedDeletion();
 }
 
 void Accounts::sameAccountTypeTransfer()
 {
-    pointerToActiveAccount = listOfOpenAccounts.getListHead();
-    
-    //check to see if other accounts of this type exist
-    if (pointerToActiveAccount->next == NULL)
-    {
-        cout << endl << "There are no other accounts of the same type!" << endl;
-        return;
-    }
+    if (!checkIfOtherAccountsExist()) return;
 
-    //set to selected account
     pointerToActiveAccount = listOfOpenAccounts.getActiveAccount();
+    cin.ignore();
 
-    //if accounts exist
-    do 
-    {
-        //display accounts
-        displayAccounts();
-        
-        //get account name for transfer
-        cin.ignore();
-        cout << endl << "Enter the name of the account you wish to access: ";                
-        getline(cin, transferAccountName);
+    requestSecondAccountName();         
 
-        //find account address
-        transferAccount = listOfOpenAccounts.findNode(transferAccountName);
-        //if address is NULL, account name was not valid
-        if (transferAccount == NULL || transferAccount->accountName == pointerToActiveAccount->accountName)
-        {
-            cout << "Not an available account name!" << endl;
-            transferAccount = NULL;
-        }
-    } while (transferAccount == NULL);
+    requestTransferAmount();
 
-    //ask for transfer amount
+    confirmedTransfer();
+}
+
+void Accounts::requestTransferAmount()
+{
     cout << "How much money would you like to transfer from " << pointerToActiveAccount->accountName
-         << " to " << transferAccount->accountName << "? ";
+         << " to " << secondAccount->accountName << "? ";
     cin >> withdrawOrDepositValue;
     inputErrorCatcher.checkForValidUserInput(withdrawOrDepositValue, 0.0, pointerToActiveAccount->totalFunds);
+}
 
-    //if transfer is not 0
+void Accounts::confirmedTransfer()
+{
     if (withdrawOrDepositValue > 0)
     {  
-        //ammend account totals
-        pointerToActiveAccount->totalFunds -= withdrawOrDepositValue;
-        transferAccount->totalFunds += withdrawOrDepositValue;
- 
-        //output success message and new totals for accounts
-        cout << endl << "Successfully transfered $" << withdrawOrDepositValue << "!" << endl;
-        cout << "New " << pointerToActiveAccount->accountName << " total is $" << pointerToActiveAccount->totalFunds << endl;
-        cout << "New " << transferAccount->accountName << " total is $" << transferAccount->totalFunds << endl;
-
-        //send to histories
+        ammendAccountTotals();
+        transferSuccessMessage();
+        
         pointerToActiveAccount->myHistory.addToHistory("Transfer Withdrawal", withdrawOrDepositValue, pointerToActiveAccount->totalFunds, "NULL");
-        transferAccount->myHistory.addToHistory("Transfer Deposit", withdrawOrDepositValue, transferAccount->totalFunds, "NULL");
+        secondAccount->myHistory.addToHistory("Transfer Deposit", withdrawOrDepositValue, secondAccount->totalFunds, "NULL");
     }
+}
 
+void Accounts::ammendAccountTotals()
+{
+    pointerToActiveAccount->totalFunds -= withdrawOrDepositValue;
+    secondAccount->totalFunds += withdrawOrDepositValue;
+}
+
+void Accounts::transferSuccessMessage()
+{
+    cout << endl << "Successfully transfered $" << withdrawOrDepositValue << "!" << endl;
+    cout << "New " << pointerToActiveAccount->accountName << " total is $" << pointerToActiveAccount->totalFunds << endl;
+    cout << "New " << secondAccount->accountName << " total is $" << secondAccount->totalFunds << endl;
 }
 
 void Accounts::sendToHistory(string transactionType, double transactionAmount, double newTotal, string date)

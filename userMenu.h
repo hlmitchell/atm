@@ -16,7 +16,6 @@
 
 using namespace std;
 
-//prototype for overloaded stream operator
 ostream &operator << (ostream &, UserInfo &);
 
 class UserMenu
@@ -47,7 +46,6 @@ class UserMenu
         UserMenu(string, string);
         ~UserMenu();
 
-        //handle new user
         void initializeClassVariables();
         void collectNewUserInfo();
         void requestUserName();
@@ -58,20 +56,17 @@ class UserMenu
         void requestLastName();
         void requestAge();
 
-        //handle returning user
         void openUserFile(string);
         void readUserInfoFromFile();
         void readAccountNamesFromFile();
         void categorizeAccountNames();
 
-        //log out procedure
         void writeUserInfoToFile();
         void getAndWriteAccountFileNames();
         void getCheckingAccountFileNames();
         void getSavingsAccountFileNames();
         void writeAccountNamesToFile();
 
-        //main menu
         void mainMenu();
         void displayMenuOptions();
         void validateUserInput(int);
@@ -80,7 +75,6 @@ class UserMenu
         void requestTotalBalanceMenuOption();
         void editUserInfoMenuOption();
 
-        //user info editting functions
         void displayMenuEditOptions();
         void requestNewPin();
         void requestNewFullName();
@@ -88,7 +82,6 @@ class UserMenu
         void requestNewLastName();
         void requestNewAge();
 
-        //friend
         friend ostream & operator << (ostream &, UserInfo &);  
 };
 
