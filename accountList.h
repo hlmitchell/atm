@@ -16,41 +16,42 @@
 
 using namespace std;
 
-//node for linked list of accounts
 struct accountNode {
-    string accountFileName;         //file name
-    string accountName;             //account name
-    double totalFunds;                   //total money in account
-    History myHistory;              //instantiate history for the account
-    struct accountNode *next;       //pointer to next node in list
+    string accountFileName;
+    string accountName;
+    double totalFunds;
+    History myHistory;
+    struct accountNode *next;
 };
 
 class accountList {
     
     private:
-        accountNode *head;              //pointer to head of list
-        accountNode *activeAccount;     //current selected account 
+        accountNode *head;
+        accountNode *activeAccount;
+        accountNode *pointerToAnAccount;
+        accountNode *pointerToNextAccount;
 
-        fstream myFile;                 //account files
+        fstream myFile;
 
     public:
-        //constrcutor and destructor
         accountList();
-        ~accountList();
 
-        //setters
+        ~accountList();
+        void createAccountFiles();
+        void addAccountDataToFile();
+        void addAccountHistoryToFile();
+        void deleteAccountList();
+
         void setActiveAccount(accountNode *);
 
-        //getters
         accountNode *getActiveAccount();
         accountNode *getListHead();
 
-        //node manipulators
         void createNode(string);
         accountNode *findNode(string);
         void displayNodes();
         void deleteNode(string);
-
 };
 
 #endif

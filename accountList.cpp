@@ -13,36 +13,48 @@ accountList::accountList()
 
 accountList::~accountList()
 {
-    //for uploading the files
-    accountNode *nodePtr;
-    nodePtr = head;
+    pointerToAnAccount = head;
     
-    //create file for each account
-    while (nodePtr)
+    createAccountFiles();
+
+    deleteAccountList();
+}
+
+void accountList::createAccountFiles()
+{
+    while (pointerToAnAccount)
     {
-        myFile.open(nodePtr->accountFileName.c_str(), ios::out);
-        myFile << nodePtr->accountName << endl;
-        myFile << nodePtr->totalFunds << endl;
-        //add history to file
-        nodePtr->myHistory.uploadHistory(myFile);
+        myFile.open(pointerToAnAccount->accountFileName.c_str(), ios::out);
+
+        addAccountDataToFile();
+        addAccountHistoryToFile();
+
         myFile.close();
-        nodePtr = nodePtr->next;
+
+        pointerToAnAccount = pointerToAnAccount->next;
     }
+}
 
-    //for deleting the linked list
-    accountNode *nextNode;
-    //position nodePtr at head
-    nodePtr = head;
+void accountList::addAccountDataToFile()
+{
+    myFile << pointerToAnAccount->accountName << endl;
+    myFile << pointerToAnAccount->totalFunds << endl;
+}
 
-    //while nodePtr is not at the end of the list
-    while (nodePtr != NULL)
+void accountList::addAccountHistoryToFile()
+{
+    pointerToAnAccount->myHistory.uploadHistory(myFile);
+}
+
+void accountList::deleteAccountList()
+{
+    pointerToAnAccount = head;
+
+    while (pointerToAnAccount != NULL)
     {
-        //save a pointer to the next node
-        nextNode = nodePtr->next;
-        //delete current node
-        delete nodePtr;
-        //move nodePtr to next node
-        nodePtr = nextNode;
+        pointerToNextAccount = pointerToAnAccount->next;
+        delete pointerToAnAccount;
+        pointerToAnAccount = pointerToNextAccount;
     }
     activeAccount = NULL;
 }
@@ -62,140 +74,124 @@ accountNode *accountList::getListHead()
     return head;
 }
 
-//creates a node
 void accountList::createNode(string fileName)
 {
-    accountNode *newNode;   //holder for new node
-    accountNode *nodePtr;   //temp node to move through list
-
     //make a new node for the linked list and assign variable values
-    newNode = new accountNode;
-    newNode->accountName = "";
-    newNode->accountFileName = fileName;
-    newNode->totalFunds = 0;
-    newNode->next = NULL;
+    pointerToAnAccount = new accountNode;
+    pointerToAnAccount->accountName = "";
+    pointerToAnAccount->accountFileName = fileName;
+    pointerToAnAccount->totalFunds = 0;
+    pointerToAnAccount->next = NULL;
 
     //if there are no nodes yet, make the first one
-    if (!head) head = newNode;
+    if (!head) head = pointerToAnAccount;
     //else add new node to end of list
     else
     {
-        //initialize nodePtr to head of list
-        nodePtr = head;
+        //initialize pointerToAnAccount to head of list
+        pointerToNextAccount = head;
         //find the last node in the list
-        while (nodePtr->next) nodePtr = nodePtr->next;
-        //insert newNode as the last node
-        nodePtr->next = newNode;
+        while (pointerToNextAccount->next) pointerToNextAccount = pointerToNextAccount->next;
+        //insert pointerToAnAccount as the last node
+        pointerToNextAccount->next = pointerToAnAccount;
     }
 
     //if file is being dowloaded, assign variable names
-    if (newNode->accountFileName != "NULL")
+    if (pointerToAnAccount->accountFileName != "NULL")
     {
         //open file
-        myFile.open(newNode->accountFileName.c_str(), ios::in);
+        myFile.open(pointerToAnAccount->accountFileName.c_str(), ios::in);
 
         //if file doesn't exist, delete file info and return
         if (!myFile)
         {
-            cout << endl << newNode->accountFileName << " could not be found!" << endl;
+            cout << endl << pointerToAnAccount->accountFileName << " could not be found!" << endl;
             cout << "Removing memory file....." << endl;
-            activeAccount = newNode;
-            deleteNode(newNode->accountName);
+            activeAccount = pointerToAnAccount;
+            deleteNode(pointerToAnAccount->accountName);
             return;
         }
         //otherwise upload file info
-        myFile >> newNode->accountName;
-        myFile >> newNode->totalFunds;
+        myFile >> pointerToAnAccount->accountName;
+        myFile >> pointerToAnAccount->totalFunds;
 
         //download history
-        newNode->myHistory.downloadHistory(myFile);
+        pointerToAnAccount->myHistory.downloadHistory(myFile);
 
         myFile.close();
     }
 }
 
-//finds node in list
 accountNode *accountList::findNode(string name)
 {
-    //pointer to node
-    accountNode *nodePtr;
+    //initialize pointerToAnAccount to head of list
+    pointerToAnAccount = head;
 
-    //initialize nodePtr to head of list
-    nodePtr = head;
-
-    //while nodePtr isn't NULL, move through list
-    while (nodePtr)
+    //while pointerToAnAccount isn't NULL, move through list
+    while (pointerToAnAccount)
     {
-        if (nodePtr->accountName == name) return nodePtr;
-        else nodePtr = nodePtr->next;
+        if (pointerToAnAccount->accountName == name) return pointerToAnAccount;
+        else pointerToAnAccount = pointerToAnAccount->next;
     }
     return NULL;
 }
 
-//display nodes of a type
 void accountList::displayNodes()
 {
-    accountNode *nodePtr;
+    //initialize pointerToAnAccount to head of list
+    pointerToAnAccount = head;
 
-    //initialize nodePtr to head of list
-    nodePtr = head;
-
-    //while nodePtr isn't NULL, move through list
-    while (nodePtr)
+    //while pointerToAnAccount isn't NULL, move through list
+    while (pointerToAnAccount)
     {
         //for merging accounts, the selected account name is not displayed
         if (activeAccount != NULL)
-            if (activeAccount->accountName == nodePtr->accountName)
+            if (activeAccount->accountName == pointerToAnAccount->accountName)
             {
-                nodePtr = nodePtr->next;
+                pointerToAnAccount = pointerToAnAccount->next;
                 continue;
             }
 
         //display the account values
-        cout << nodePtr->accountName << ": ";
+        cout << pointerToAnAccount->accountName << ": ";
         //formatting
         cout << fixed << setprecision(2);
-        cout << "$" << nodePtr->totalFunds << endl;
+        cout << "$" << pointerToAnAccount->totalFunds << endl;
 
         //move to next node
-        nodePtr = nodePtr->next;    
+        pointerToAnAccount = pointerToAnAccount->next;    
     }
 }
 
-//deletes a node
 void accountList::deleteNode(string name)
 {
     //delete file
     remove(activeAccount->accountFileName.c_str());
-    
-    //pointers to nodes
-    accountNode *nodePtr;
-    accountNode *previousNode;
 
     //check head of chain first
     if (head->accountName == name)
     {
-        nodePtr = head->next;
+        pointerToAnAccount = head->next;
         delete head;
-        head = nodePtr;
+        head = pointerToAnAccount;
     }
 
     //else delete node from chain
     else
     {
-        //initialize nodePtr to head of list
-        nodePtr = head;
+        //initialize pointerToAnAccount to head of list
+        pointerToAnAccount = head;
         //run through nodes to find accountName that matches
-        while (nodePtr != NULL && nodePtr->accountName != name)
+        while (pointerToAnAccount != NULL && pointerToAnAccount->accountName != name)
         {
-            previousNode = nodePtr;
-            nodePtr = nodePtr->next;
+            pointerToNextAccount = pointerToAnAccount;
+            pointerToAnAccount = pointerToAnAccount->next;
         }
         //deletes node
-        if (nodePtr)
+        if (pointerToAnAccount)
         {
-            previousNode->next = nodePtr->next;
-            delete nodePtr;
+            pointerToNextAccount->next = pointerToAnAccount->next;
+            delete pointerToAnAccount;
         }
 
     }
