@@ -74,60 +74,68 @@ accountNode *accountList::getListHead()
     return head;
 }
 
+void accountList::downloadNode(string fileName)
+{
+    createNode(fileName);
+    
+    myFile.open(pointerToAnAccount->accountFileName.c_str(), ios::in);
+    if (!checkIfAccountFileExists()) return;
+    downloadFileContents();
+    myFile.close();
+}
+
 void accountList::createNode(string fileName)
 {
-    //make a new node for the linked list and assign variable values
+    assignAccountVariables(fileName);
+    appendNewAccountToAccountList();
+}
+
+void accountList::assignAccountVariables(string fileName)
+{
     pointerToAnAccount = new accountNode;
     pointerToAnAccount->accountName = "";
     pointerToAnAccount->accountFileName = fileName;
     pointerToAnAccount->totalFunds = 0;
     pointerToAnAccount->next = NULL;
+}
 
-    //if there are no nodes yet, make the first one
+void accountList::appendNewAccountToAccountList()
+{
     if (!head) head = pointerToAnAccount;
-    //else add new node to end of list
+    
     else
     {
-        //initialize pointerToAnAccount to head of list
         pointerToNextAccount = head;
-        //find the last node in the list
         while (pointerToNextAccount->next) pointerToNextAccount = pointerToNextAccount->next;
-        //insert pointerToAnAccount as the last node
         pointerToNextAccount->next = pointerToAnAccount;
     }
+}
 
-    //if file is being dowloaded, assign variable names
-    if (pointerToAnAccount->accountFileName != "NULL")
+bool accountList::checkIfAccountFileExists()
+{
+    if (!myFile)
     {
-        //open file
-        myFile.open(pointerToAnAccount->accountFileName.c_str(), ios::in);
-
-        //if file doesn't exist, delete file info and return
-        if (!myFile)
-        {
-            cout << endl << pointerToAnAccount->accountFileName << " could not be found!" << endl;
-            cout << "Removing memory file....." << endl;
-            activeAccount = pointerToAnAccount;
-            deleteNode(pointerToAnAccount->accountName);
-            return;
-        }
-        //otherwise upload file info
-        myFile >> pointerToAnAccount->accountName;
-        myFile >> pointerToAnAccount->totalFunds;
-
-        //download history
-        pointerToAnAccount->myHistory.downloadHistory(myFile);
-
-        myFile.close();
+        cout << endl << pointerToAnAccount->accountFileName << " could not be found!" << endl;
+        cout << "Removing memory file....." << endl;
+        activeAccount = pointerToAnAccount;
+        deleteNode(pointerToAnAccount->accountName);
+        return false;
     }
+    return true;
+}
+
+void accountList::downloadFileContents()
+{
+    myFile >> pointerToAnAccount->accountName;
+    myFile >> pointerToAnAccount->totalFunds;
+
+    pointerToAnAccount->myHistory.downloadHistory(myFile);
 }
 
 accountNode *accountList::findNode(string name)
 {
-    //initialize pointerToAnAccount to head of list
     pointerToAnAccount = head;
 
-    //while pointerToAnAccount isn't NULL, move through list
     while (pointerToAnAccount)
     {
         if (pointerToAnAccount->accountName == name) return pointerToAnAccount;

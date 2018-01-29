@@ -49,6 +49,13 @@ class accountList {
         accountNode *getListHead();
 
         void createNode(string);
+        void assignAccountVariables(string);
+        void appendNewAccountToAccountList();
+
+        void downloadNode(string);
+        bool checkIfAccountFileExists();
+        void downloadFileContents();
+
         accountNode *findNode(string);
         void displayNodes();
         void deleteNode(string);

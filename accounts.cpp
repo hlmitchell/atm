@@ -20,7 +20,7 @@ Accounts::~Accounts()
 
 void Accounts::downloadExistingAccounts(string accountName)
 {
-    listOfOpenAccounts.createNode(accountName);
+    listOfOpenAccounts.downloadNode(accountName);
 }
 
 void Accounts::setTextFileName(string id)
@@ -94,7 +94,7 @@ double Accounts::getTotalMoneyForAllAccounts()
     return accountTotals;
 }
 
-void Accounts::selectAccount(string accountType)
+void Accounts::accessAccounts(string accountType)
 {
     if (!getHeadOfAccountList()) 
     {

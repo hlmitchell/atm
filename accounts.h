@@ -50,7 +50,7 @@ class Accounts
         accountNode *callGetActiveAccount();
         double getTotalMoneyForAllAccounts();
 
-        void selectAccount(string);
+        void accessAccounts(string);
 
         void createAccount(string);
         void nameAccount();

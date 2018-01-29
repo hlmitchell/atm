@@ -262,12 +262,12 @@ void UserMenu::selectAnAccountMenuOption()
 
     if (menuUserSelection == 1) 
     {
-        myChecking.selectAccount("checking");
+        myChecking.accessAccounts("checking");
     }
 
     else if (menuUserSelection == 2) 
     {
-        mySavings.selectAccount("savings");
+        mySavings.accessAccounts("savings");
     }
 }
 
