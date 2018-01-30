@@ -17,25 +17,23 @@ using namespace std;
 
 struct accountHistory
 {
-    string action;                  //action that occured
-    double amount;                  //amount of money moved
-    double total;                   //new account total after move
-    string date;                    //date and time of transaction
-    struct accountHistory *next;    //pointer to next accountHistory node
+    string action;
+    double amount;
+    double total;
+    string date;
+    struct accountHistory *next;
 };
 
 class History
 {
     protected:
-        accountHistory *top;    //top of linked list stack of account history
-        time_t rawTime;         //time stamp holder
+        accountHistory *top;
+        time_t rawTime;
 
     public:
-        //constructors and destructor
         History();
         ~History();
 
-        //history manipulators
         void addToHistory(string, double, double, string);
         void displayHistory();
         void uploadHistory(fstream &);

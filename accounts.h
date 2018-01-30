@@ -52,6 +52,9 @@ class Accounts
 
         void accessAccounts(string);
 
+        void displayActiveAccountDetails();
+        void validateMenuInput(int);
+
         void createAccount(string);
         void nameAccount();
         void verifyUniqueAccountName(string);
@@ -85,6 +88,8 @@ class Accounts
 
         void sendToHistory(string, double, double, string);
 
+        //virtual void displayMenuOptions();
+        //virtual void menuInterface();
         virtual void specifyFileType(string, string) = 0;
         virtual void displayAccounts() = 0;
         virtual void accountOptionsMenu() = 0;

@@ -109,6 +109,19 @@ void Accounts::accessAccounts(string accountType)
     }
 }
 
+void Accounts::displayActiveAccountDetails()
+{
+    cout << endl << "Current Account: " << pointerToActiveAccount->accountName << endl;
+    cout << "Account Funds: $" << pointerToActiveAccount->totalFunds << endl;
+}
+
+void Accounts::validateMenuInput(int max)
+{
+    cin >> menuUserSelection;
+    inputErrorCatcher.checkForValidUserInput(menuUserSelection, 1, max);
+    inputErrorCatcher.clearKeyboardBuffer();
+}
+
 void Accounts::createAccount(string id)
 { 
     nameAccount();

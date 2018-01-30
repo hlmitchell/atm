@@ -18,19 +18,24 @@ using namespace std;
 class Checking : public Accounts
 {
     protected:
-        fstream checkingFile;       //checking file
+        fstream checkingFile;
 
     public:
-        //constructor
         Checking();
 
-        //setters
         void specifyFileType(string, string);
 
-        //account options
         void displayAccounts();
         void accountOptionsMenu();
+        void displayMenuOptions();
+        void menuInterface();
+
         void withdrawFunds();
+        void requestWithdrawalAmount();
+        bool checkForOverdraft();
+        void confirmedWithdrawal();
+        void displayNewTotals();
+
         void transferFunds();
         
 };

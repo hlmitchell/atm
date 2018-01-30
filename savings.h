@@ -18,17 +18,16 @@ using namespace std;
 class Savings : public Accounts
 {
     protected:
-        fstream savingsFile;    //savings file
+        fstream savingsFile;
     public:
-        //constructor
         Savings();
 
-        //setters
         void specifyFileType(string, string);
 
-        //account options
         void displayAccounts();
         void accountOptionsMenu();
+        void displayMenuOptions();
+        void menuInterface();
         void transferFunds();
 };
 

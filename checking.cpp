@@ -5,53 +5,27 @@
 
 #include "checking.h"
 
-//empty constructor
 Checking::Checking() : Accounts()
 {}
 
-//sets file name
 void Checking::specifyFileType(string id, string fileName)
 {
-    //pointer to selected account
     pointerToActiveAccount = listOfOpenAccounts.getActiveAccount();
-    
-    //create file name
     pointerToActiveAccount->accountFileName = "C" + id + fileName + ".txt";
 }
 
-//displays account header
 void Checking::displayAccounts()
 {
-    //header before account names listed
     cout << endl << "Checking Account(s)" << endl;
     listOfOpenAccounts.displayNodes();
 }
 
-//displays account options menu and switch
 void Checking::accountOptionsMenu()
 {   
-    //set to selected account
     pointerToActiveAccount = listOfOpenAccounts.getActiveAccount();
     
     do {
-        //display current account details
-        cout << endl << "Current Account: " << pointerToActiveAccount->accountName << endl;
-        cout << "Account Funds: $" << pointerToActiveAccount->totalFunds << endl;
-
-        //advanced options
-        cout << endl << "*** " << pointerToActiveAccount->accountName << " Options ***" << endl << endl;
-        cout << "1. Withdraw" << endl;
-        cout << "2. Deposit" << endl;
-        cout << "3. Merge Accounts" << endl;
-        cout << "4. Transfer Money" << endl;
-        cout << "5. Display Account History" << endl;
-        cout << "6. Delete Account" << endl;
-        cout << "7. Back" << endl;
-
-        //validate input
-        cin >> menuUserSelection;
-        inputErrorCatcher.checkForValidUserInput(menuUserSelection, 1, 7);
-        inputErrorCatcher.clearKeyboardBuffer();
+        menuInterface();
 
         switch(menuUserSelection)
         {
@@ -77,55 +51,82 @@ void Checking::accountOptionsMenu()
                 break;
         }
         
-        //if account is deleted or merged, exit this menu automatically
         if (pointerToActiveAccount == NULL) menuUserSelection = 7;
 
     } while (menuUserSelection != 7);
 
-    //reset variable
     menuUserSelection = 0;
 }
 
-//withdraw money
+void Checking::menuInterface()
+{
+    displayActiveAccountDetails();
+    displayMenuOptions();
+    validateMenuInput(7);
+}
+
+void Checking::displayMenuOptions()
+{
+    cout << endl << "*** " << pointerToActiveAccount->accountName << " Options ***" << endl << endl;
+    cout << "1. Withdraw" << endl;
+    cout << "2. Deposit" << endl;
+    cout << "3. Merge Accounts" << endl;
+    cout << "4. Transfer Money" << endl;
+    cout << "5. Display Account History" << endl;
+    cout << "6. Delete Account" << endl;
+    cout << "7. Back" << endl;
+}
+
 void Checking::withdrawFunds()
 {
-    //set to selected account
     pointerToActiveAccount = listOfOpenAccounts.getActiveAccount();
     
-    //formatting
-    cout << fixed << setprecision(2);
-    //ask for withdraw amount and subtract from total
+    requestWithdrawalAmount();
+    if (checkForOverdraft()) return;
+    confirmedWithdrawal();
+}
+
+void Checking::requestWithdrawalAmount()
+{
     cout << endl << "Withdraw amount: ";
     cin >> withdrawOrDepositValue;
     inputErrorCatcher.checkForValidUserInput(withdrawOrDepositValue, 0.0, 1000000000.0);
+}
 
-    //make sure there isn't overdraft
+bool Checking::checkForOverdraft()
+{
     if (pointerToActiveAccount->totalFunds - withdrawOrDepositValue < 0)
-        cout << endl << "You do not have sufficient funds!" << endl;
-    else 
     {
-        //if deposit is more than 0
-        if (withdrawOrDepositValue > 0)
-        {
-            pointerToActiveAccount->totalFunds = pointerToActiveAccount->totalFunds -= withdrawOrDepositValue;
-            //display withdraw amount and new total
-            cout << "Successfully withdrew $" << withdrawOrDepositValue << endl;
-            cout << "New " << pointerToActiveAccount->accountName << " total is $" << pointerToActiveAccount->totalFunds << endl;
-            
-            //send to history
-            pointerToActiveAccount->myHistory.addToHistory("Withdrawal", withdrawOrDepositValue, pointerToActiveAccount->totalFunds, "NULL");
-        }
+        cout << endl << "You do not have sufficient funds!" << endl;
+        return true;
+    }
+    return false;
+}
+
+void Checking::confirmedWithdrawal()
+{
+    if (withdrawOrDepositValue > 0)
+    {
+        pointerToActiveAccount->totalFunds = pointerToActiveAccount->totalFunds -= withdrawOrDepositValue;
+        displayNewTotals();
+        
+        sendToHistory("Withdrawal", withdrawOrDepositValue, pointerToActiveAccount->totalFunds, "NULL");
     }
 }
 
-//verify if transfer is a checking or savings
+void Checking::displayNewTotals()
+{
+    cout << fixed << setprecision(2);
+    cout << "Successfully withdrew $" << withdrawOrDepositValue << endl;
+    cout << "New " << pointerToActiveAccount->accountName << " total is $" << pointerToActiveAccount->totalFunds << endl;
+}
+
+//cross account trasnfers need to be redone
 void Checking::transferFunds()
 {
-    //choose an accounts type
     cout << endl << "In to which account type would you like to transfer funds?";
     menuUserSelection = inputErrorCatcher.chooseAccountType();
 
-    //checking vs savings
     if (menuUserSelection == 1) sameAccountTypeTransfer();
     else if (menuUserSelection == 2)
     {
