@@ -1,8 +1,3 @@
-//ATM MACHINE
-//Hannah Mitchell
-//CS M10B
-//December 11th 2017
-
 #ifndef ACCOUNTLIST_H
 #define ACCOUNTLIST_H
 

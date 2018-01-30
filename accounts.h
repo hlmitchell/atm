@@ -1,8 +1,3 @@
-//ATM MACHINE
-//Hannah Mitchell
-//CS M10B
-//December 11th 2017
-
 #ifndef ACCOUNTS_H
 #define ACCOUNTS_H
 
@@ -88,8 +83,8 @@ class Accounts
 
         void sendToHistory(string, double, double, string);
 
-        //virtual void displayMenuOptions();
-        //virtual void menuInterface();
+        virtual void displayMenuOptions() = 0;
+        virtual void menuInterface() = 0;
         virtual void specifyFileType(string, string) = 0;
         virtual void displayAccounts() = 0;
         virtual void accountOptionsMenu() = 0;

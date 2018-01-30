@@ -1,8 +1,3 @@
-//ATM MACHINE
-//Hannah Mitchell
-//CS M10B
-//December 11th 2017
-
 #ifndef HISTORY_H
 #define HISTORY_H
 
