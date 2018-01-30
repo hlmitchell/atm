@@ -146,61 +146,78 @@ accountNode *accountList::findNode(string name)
 
 void accountList::displayNodes()
 {
-    //initialize pointerToAnAccount to head of list
     pointerToAnAccount = head;
 
-    //while pointerToAnAccount isn't NULL, move through list
     while (pointerToAnAccount)
     {
-        //for merging accounts, the selected account name is not displayed
-        if (activeAccount != NULL)
-            if (activeAccount->accountName == pointerToAnAccount->accountName)
-            {
-                pointerToAnAccount = pointerToAnAccount->next;
-                continue;
-            }
+        if (skipActiveAccountNameForMergers()) continue;
+        displayAccountNameAndFunds();
 
-        //display the account values
-        cout << pointerToAnAccount->accountName << ": ";
-        //formatting
-        cout << fixed << setprecision(2);
-        cout << "$" << pointerToAnAccount->totalFunds << endl;
-
-        //move to next node
         pointerToAnAccount = pointerToAnAccount->next;    
     }
 }
 
+bool accountList::skipActiveAccountNameForMergers()
+{
+    if (activeAccount != NULL)
+        if (activeAccount->accountName == pointerToAnAccount->accountName)
+        {
+            pointerToAnAccount = pointerToAnAccount->next;
+            return true;
+        }
+    return false;
+}
+
+void accountList::displayAccountNameAndFunds()
+{
+    cout << pointerToAnAccount->accountName << ": ";
+    cout << fixed << setprecision(2);
+    cout << "$" << pointerToAnAccount->totalFunds << endl;
+}
+
 void accountList::deleteNode(string name)
 {
-    //delete file
-    remove(activeAccount->accountFileName.c_str());
+    deleteAccountFile();
 
-    //check head of chain first
     if (head->accountName == name)
     {
-        pointerToAnAccount = head->next;
-        delete head;
-        head = pointerToAnAccount;
+        deleteListHead();
     }
-
-    //else delete node from chain
     else
     {
-        //initialize pointerToAnAccount to head of list
-        pointerToAnAccount = head;
-        //run through nodes to find accountName that matches
-        while (pointerToAnAccount != NULL && pointerToAnAccount->accountName != name)
-        {
-            pointerToNextAccount = pointerToAnAccount;
-            pointerToAnAccount = pointerToAnAccount->next;
-        }
-        //deletes node
-        if (pointerToAnAccount)
-        {
-            pointerToNextAccount->next = pointerToAnAccount->next;
-            delete pointerToAnAccount;
-        }
+        transverseAccountListForDeletion(name);
+    }
+}
 
+void accountList::deleteAccountFile()
+{
+    remove(activeAccount->accountFileName.c_str());
+}
+
+void accountList::deleteListHead()
+{
+    pointerToAnAccount = head->next;
+    delete head;
+    head = pointerToAnAccount;
+}
+
+void accountList::transverseAccountListForDeletion(string name)
+{
+    pointerToAnAccount = head;
+    while (pointerToAnAccount != NULL && pointerToAnAccount->accountName != name)
+    {
+        pointerToNextAccount = pointerToAnAccount;
+        pointerToAnAccount = pointerToAnAccount->next;
+    }
+    
+    deleteAccount();
+}
+
+void accountList::deleteAccount()
+{
+    if (pointerToAnAccount)
+    {
+        pointerToNextAccount->next = pointerToAnAccount->next;
+        delete pointerToAnAccount;
     }
 }

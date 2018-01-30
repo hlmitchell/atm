@@ -57,8 +57,16 @@ class accountList {
         void downloadFileContents();
 
         accountNode *findNode(string);
+
         void displayNodes();
+        bool skipActiveAccountNameForMergers();
+        void displayAccountNameAndFunds();
+
         void deleteNode(string);
+        void deleteAccountFile();
+        void deleteListHead();
+        void transverseAccountListForDeletion(string);
+        void deleteAccount();
 };
 
 #endif
