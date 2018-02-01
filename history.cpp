@@ -1,143 +1,152 @@
 #include "history.h"
 
-//constructor sets top to NULL
 History::History()
 {
     top = NULL;
 }
 
-//destructor deletes linked list
 History::~History()
 {
-    //temp pointers
-    accountHistory *nodePtr;
-    accountHistory *nextNode;
+    deleteHistory();
+}
 
-    //position nodePtr at top
-    nodePtr = top;
+void History::deleteHistory()
+{
+    accountHistoryNode = top;
 
-    //while nodePtr is not at the end of the list
-    while (nodePtr != NULL)
+    while (accountHistoryNode != NULL)
     {
-        //save a pointer to the next node
-        nextNode = nodePtr->next;
-        //delete current node
-        delete nodePtr;
-        //move nodePtr to next node
-        nodePtr = nextNode;
+        nextaccountHistoryNode = accountHistoryNode->next;
+        delete accountHistoryNode;
+        accountHistoryNode = nextaccountHistoryNode;
     }
 }
 
-//pushes new history node onto top of stack
+void History::addToHistory(string transactionType, double transactionAmount, double newTotal)
+{
+    allocateNewHistoryNode(transactionType, transactionAmount, newTotal);
+    timeStampTransaction();
+
+    appendHistoryNodeToList();  
+}
+
 void History::addToHistory(string transactionType, double transactionAmount, double newTotal, string date)
 {
-    accountHistory *newTransactionHistory;    //pointer to new node
+    allocateNewHistoryNode(transactionType, transactionAmount, newTotal);
+    newTransactionHistory->date = date;
 
-    //get time
-    time (&rawTime);
+    appendHistoryNodeToList();
+}
 
-    //allocate new node and store arguments there
+void History::allocateNewHistoryNode(string transactionType, double transactionAmount, double newTotal)
+{
     newTransactionHistory = new accountHistory;
     newTransactionHistory->action = transactionType;
     newTransactionHistory->amount = transactionAmount;
     newTransactionHistory->total = newTotal;
-    if (date == "NULL")
-    {
-        newTransactionHistory->date = ctime(&rawTime);
-        //remove '\n' from end
-        newTransactionHistory->date.pop_back();
-    }
-    else newTransactionHistory->date = date;
+}
 
-    //if stack is empty, assign new node to top
+void History::timeStampTransaction()
+{
+    time (&rawTime);
+    newTransactionHistory->date = ctime(&rawTime);
+    newTransactionHistory->date.pop_back();
+}
+
+void History::appendHistoryNodeToList()
+{
     if (top == NULL)
     {
         top = newTransactionHistory;
         top->next = NULL;
     }
-    //otherwise set new node to top and push others down stack
     else
     {
         newTransactionHistory->next = top;
         top = newTransactionHistory;
-    }    
+    }  
 }
 
-//display account history
+
+
+
 void History::displayHistory()
 {
-    accountHistory *transactionHistory;    //temp pointer
-    transactionHistory = top;              //set temp pointer to top of stack
+    accountHistoryNode = top;
 
-    //if top is NULL, there is no history available
-    if (transactionHistory == NULL) 
+    if (!checkForHistory()) return;
+
+    displayHistoryHeader();
+    displayTransactionHistory();
+
+    cout << endl << "***End Transaction History***" << endl;
+}
+
+bool History::checkForHistory()
+{
+    if (accountHistoryNode == NULL) 
     {
         cout << endl << "There seems to be nothing here!" << endl;
-        return;
+        return false;
     }
+    return true;
+}
 
-    //header message
+void History::displayHistoryHeader()
+{
     cout << endl << "***Transaction History***" << endl;
-    //item line description
     cout << endl << left << setw(21) << "Description" << setw(14) << "Amount" << setw(23) << "Available Balance";
     cout << setw(20) << "Posting Date" << endl;
-
-    //if top isn't NULL, go through list and display accounts
-    while (transactionHistory)
-    {
-        //formatting
-        cout << fixed << setprecision(2) << left;
-        cout << endl << setw(21) << transactionHistory->action;
-        cout << setw(14) << transactionHistory->amount;
-        cout << setw(23)<< transactionHistory->total;
-        cout << setw(20) << transactionHistory->date << endl;
-        //move to next node
-        transactionHistory = transactionHistory->next;
-    }
-
-    //footer message
-    cout << endl << "***End Transaction History***" << endl;
-    return;
 }
+
+void History::displayTransactionHistory()
+{
+    while (accountHistoryNode)
+    {
+        cout << fixed << setprecision(2) << left;
+        cout << endl << setw(21) << accountHistoryNode->action;
+        cout << setw(14) << accountHistoryNode->amount;
+        cout << setw(23)<< accountHistoryNode->total;
+        cout << setw(20) << accountHistoryNode->date << endl;
+
+        accountHistoryNode = accountHistoryNode->next;
+    }
+}
+
 
 //upload history into file
 void History::uploadHistory(fstream &file)
 {    
-    //temp nodes for moving through files
-    accountHistory *nodePtr;
-    accountHistory *prevNode;
-
-    //set nodePtr to end of list
-    nodePtr = top;
-    while(nodePtr) 
+    accountHistoryNode = top;
+    while(accountHistoryNode) 
     {
-        if (nodePtr->next == NULL) break;
-        nodePtr = nodePtr->next;
+        if (accountHistoryNode->next == NULL) break;
+        accountHistoryNode = accountHistoryNode->next;
     }
 
     //upload files in reverse order
-    while (nodePtr != top)
+    while (accountHistoryNode != top)
     {
         //upload files
-        file << nodePtr->action << endl;
-        file << nodePtr->amount << endl;
-        file << nodePtr->total << endl;
-        file << nodePtr->date << endl;
+        file << accountHistoryNode->action << endl;
+        file << accountHistoryNode->amount << endl;
+        file << accountHistoryNode->total << endl;
+        file << accountHistoryNode->date << endl;
 
-        //set prevNode to node before nodePtr
-        prevNode = top;
-        while (prevNode)
+        //set nextaccountHistoryNode to node before accountHistoryNode
+        nextaccountHistoryNode = top;
+        while (nextaccountHistoryNode)
         {
-            if (prevNode->next == nodePtr || prevNode->next == NULL) break;
-            prevNode = prevNode->next;
+            if (nextaccountHistoryNode->next == accountHistoryNode || nextaccountHistoryNode->next == NULL) break;
+            nextaccountHistoryNode = nextaccountHistoryNode->next;
         }
 
-        //set nodePtr to previous node then start again
-        nodePtr = prevNode;
+        //set accountHistoryNode to previous node then start again
+        accountHistoryNode = nextaccountHistoryNode;
     } 
 
     //upload top files
-    if (nodePtr == top)
+    if (accountHistoryNode == top)
     {
         file << top->action << endl;
         file << top->amount << endl;

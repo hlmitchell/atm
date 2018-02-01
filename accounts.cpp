@@ -128,12 +128,7 @@ void Accounts::createAccount(string id)
 
     confirmationOfNewAccountMessage();
     
-    sendToHistory(
-        "Open Deposit", 
-        pointerToActiveAccount->totalFunds, 
-        pointerToActiveAccount->totalFunds, 
-        "NULL"
-    );
+    sendToHistory("Open Deposit", pointerToActiveAccount->totalFunds, pointerToActiveAccount->totalFunds);
 
     resetActiveAccount();
 }
@@ -274,7 +269,7 @@ void Accounts::addFundsToTotal()
         cout << "Successfully deposited $" << withdrawOrDepositValue << endl;
         cout << "New " << pointerToActiveAccount->accountName << " total is $" << pointerToActiveAccount->totalFunds << endl;
 
-        pointerToActiveAccount->myHistory.addToHistory("Deposit", withdrawOrDepositValue, pointerToActiveAccount->totalFunds, "NULL");
+        pointerToActiveAccount->myHistory.addToHistory("Deposit", withdrawOrDepositValue, pointerToActiveAccount->totalFunds);
     }
 }
 
@@ -336,7 +331,7 @@ void Accounts::confirmedMerge()
     secondAccount->totalFunds += pointerToActiveAccount->totalFunds;
     cout << "Merge Successful!" << endl;
 
-    secondAccount->myHistory.addToHistory("Merger Deposit", pointerToActiveAccount->totalFunds, secondAccount->totalFunds, "NULL");
+    secondAccount->myHistory.addToHistory("Merger Deposit", pointerToActiveAccount->totalFunds, secondAccount->totalFunds);
 
     confirmedDeletion();
 }
@@ -370,8 +365,8 @@ void Accounts::confirmedTransfer()
         ammendAccountTotals();
         transferSuccessMessage();
         
-        pointerToActiveAccount->myHistory.addToHistory("Transfer Withdrawal", withdrawOrDepositValue, pointerToActiveAccount->totalFunds, "NULL");
-        secondAccount->myHistory.addToHistory("Transfer Deposit", withdrawOrDepositValue, secondAccount->totalFunds, "NULL");
+        pointerToActiveAccount->myHistory.addToHistory("Transfer Withdrawal", withdrawOrDepositValue, pointerToActiveAccount->totalFunds);
+        secondAccount->myHistory.addToHistory("Transfer Deposit", withdrawOrDepositValue, secondAccount->totalFunds);
     }
 }
 
@@ -388,8 +383,8 @@ void Accounts::transferSuccessMessage()
     cout << "New " << secondAccount->accountName << " total is $" << secondAccount->totalFunds << endl;
 }
 
-void Accounts::sendToHistory(string transactionType, double transactionAmount, double newTotal, string date)
+void Accounts::sendToHistory(string transactionType, double transactionAmount, double newTotal)
 {
     pointerToActiveAccount = listOfOpenAccounts.getActiveAccount();
-    pointerToActiveAccount->myHistory.addToHistory(transactionType, transactionAmount, newTotal, date);
+    pointerToActiveAccount->myHistory.addToHistory(transactionType, transactionAmount, newTotal);
 }

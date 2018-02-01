@@ -25,12 +25,27 @@ class History
         accountHistory *top;
         time_t rawTime;
 
+        accountHistory *accountHistoryNode;
+        accountHistory *nextaccountHistoryNode;
+        accountHistory *newTransactionHistory;
+
     public:
         History();
         ~History();
 
+        void deleteHistory();
+
+        void addToHistory(string, double, double);
         void addToHistory(string, double, double, string);
+        void timeStampTransaction();
+        void allocateNewHistoryNode(string, double, double);
+        void appendHistoryNodeToList();
+
         void displayHistory();
+        bool checkForHistory();
+        void displayHistoryHeader();
+        void displayTransactionHistory();
+
         void uploadHistory(fstream &);
         void downloadHistory(fstream &);
 };

@@ -105,7 +105,7 @@ void Checking::confirmedWithdrawal()
         pointerToActiveAccount->totalFunds = pointerToActiveAccount->totalFunds -= withdrawOrDepositValue;
         displayNewTotals();
         
-        sendToHistory("Withdrawal", withdrawOrDepositValue, pointerToActiveAccount->totalFunds, "NULL");
+        sendToHistory("Withdrawal", withdrawOrDepositValue, pointerToActiveAccount->totalFunds);
     }
 }
 

@@ -81,7 +81,7 @@ class Accounts
         void ammendAccountTotals();
         void transferSuccessMessage();
 
-        void sendToHistory(string, double, double, string);
+        void sendToHistory(string, double, double);
 
         virtual void displayMenuOptions() = 0;
         virtual void menuInterface() = 0;
