@@ -19,22 +19,50 @@ class UserInfo
         string id;                  
         string firstName;           
         string lastName;            
-        int age;                    
+        int age;    
+
+        vector<string> accountFileNames;       
+        string txtFileName;             
+        fstream userInfoFile;
+
+        //Checking *myChecking;
+        //Savings *mySavings;
+
+        InputError inputErrorCatcher;      
+
+        void setUserName();
+        void setPin();
+        void setFirstName();
+        void setLastName();
+        void setAge();       
 
     public:
         UserInfo();
 
-        void setPin(string);
-        void setId(string);
-        void setFirstName(string);
-        void setLastName(string);
-        void setAge(int);
-
-        string getPin();
+        void displayUserInfo();
         string getId();
-        string getFirstName();
-        string getLastName();
-        int getAge();
+
+        void requestUserName();
+        void requestUserPin();
+        void requestFullName();
+        void requestFirstName();
+        void requestLastName();
+        void requestAge();
+
+        //void setAccountPointers(Checking&, Savings&);
+
+        void createUserFile();
+        bool readUserInfoFromFile(string, string);
+        void openUserFile(string);
+        void downloadUserInfo();
+        bool checkIfUserPinValid(string);
+        void downloadAccountNamesFromFile();
+        void categorizeAccountNames();
+
+        void writeUserInfoToFile();
+        void uploadUserInfoToFile();
+        void getAccountFileNames();
+        void writeAccountNamesToFile();
 };
 
 #endif

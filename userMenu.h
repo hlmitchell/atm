@@ -16,51 +16,22 @@ ostream &operator << (ostream &, UserInfo &);
 class UserMenu
 {
     private:
-
         int menuUserSelection;            
-        string stringSetter;              
-        int intSetter;                    
         bool accountTypeDoesNotExist;
 
-        accountNode *savingsAccount;
-        accountNode *checkingAccount;
+        //accountNode *savingsAccount;
+        //accountNode *checkingAccount;
         double transferAmount;
         
-        UserInfo myInfo;                  
-        InputError inputErrorCatcher;          
-        vector<string> accountFileNames;       
+        UserInfo myInfo;                          
+                   
+        //Checking myChecking;    
+        //Savings mySavings;  
 
-        string txtFileName;             
-        fstream userInfoFile;           
-
-        Checking myChecking;    
-        Savings mySavings;      
-
-    public:
-        UserMenu();
-        UserMenu(string, string);
-        ~UserMenu();
+        InputError inputErrorCatcher;
 
         void initializeClassVariables();
         void collectNewUserInfo();
-        void requestUserName();
-        void createUserFile();
-        void requestUserPin();
-        void validateUserPin();
-        void requestFirstName();
-        void requestLastName();
-        void requestAge();
-
-        void openUserFile(string);
-        void readUserInfoFromFile();
-        void readAccountNamesFromFile();
-        void categorizeAccountNames();
-
-        void writeUserInfoToFile();
-        void getAndWriteAccountFileNames();
-        void getCheckingAccountFileNames();
-        void getSavingsAccountFileNames();
-        void writeAccountNamesToFile();
 
         void mainMenu();
         void displayMenuOptions();
@@ -69,15 +40,12 @@ class UserMenu
         void createAnAccountMenuOption();
         void requestTotalBalanceMenuOption();
         void editUserInfoMenuOption();
-
         void displayMenuEditOptions();
-        void requestNewPin();
-        void requestNewFullName();
-        void requestNewFirstName();
-        void requestNewLastName();
-        void requestNewAge();
 
-        friend ostream & operator << (ostream &, UserInfo &);  
+    public:
+        UserMenu();
+        UserMenu(string, string);
+        ~UserMenu();
 };
 
 #endif
