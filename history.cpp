@@ -67,9 +67,6 @@ void History::appendHistoryNodeToList()
     }  
 }
 
-
-
-
 void History::displayHistory()
 {
     accountHistoryNode = top;
@@ -113,56 +110,76 @@ void History::displayTransactionHistory()
     }
 }
 
-
-//upload history into file
 void History::uploadHistory(fstream &file)
 {    
+    setHistoryNodeToBottomOfList();
+    uploadFilesInReverseOrder(file);
+}
+
+void History::setHistoryNodeToBottomOfList()
+{
     accountHistoryNode = top;
     while(accountHistoryNode) 
     {
         if (accountHistoryNode->next == NULL) break;
         accountHistoryNode = accountHistoryNode->next;
     }
+}
 
-    //upload files in reverse order
+void History::uploadFilesInReverseOrder(fstream &file)
+{
     while (accountHistoryNode != top)
     {
-        //upload files
-        file << accountHistoryNode->action << endl;
-        file << accountHistoryNode->amount << endl;
-        file << accountHistoryNode->total << endl;
-        file << accountHistoryNode->date << endl;
+        writeToFile(file);
 
-        //set nextaccountHistoryNode to node before accountHistoryNode
-        nextaccountHistoryNode = top;
-        while (nextaccountHistoryNode)
-        {
-            if (nextaccountHistoryNode->next == accountHistoryNode || nextaccountHistoryNode->next == NULL) break;
-            nextaccountHistoryNode = nextaccountHistoryNode->next;
-        }
-
-        //set accountHistoryNode to previous node then start again
+        moveUpList();
         accountHistoryNode = nextaccountHistoryNode;
-    } 
 
-    //upload top files
-    if (accountHistoryNode == top)
+        uploadTopFile(file);
+    } 
+}
+
+void History::moveUpList()
+{
+    nextaccountHistoryNode = top;
+    while (nextaccountHistoryNode)
     {
-        file << top->action << endl;
-        file << top->amount << endl;
-        file << top->total << endl;
-        file << top->date << endl;
+        if (nextaccountHistoryNode->next == accountHistoryNode || nextaccountHistoryNode->next == NULL) break;
+        nextaccountHistoryNode = nextaccountHistoryNode->next;
     }
 }
 
-//download history from file
+void History::uploadTopFile(fstream &file)
+{
+    if (accountHistoryNode == top)
+    {
+        writeToFile(file);
+    }
+}
+
+void History::writeToFile(fstream &file)
+{
+    file << accountHistoryNode->action << endl;
+    file << accountHistoryNode->amount << endl;
+    file << accountHistoryNode->total << endl;
+    file << accountHistoryNode->date << endl;
+}
+
 void History::downloadHistory(fstream &accountFile)
 {
-    //temp vars
     string accountType, date, dummy;
     double transactionAmount, finalTotal;
 
-    //extract first history which has an extra dummy variable
+    downloadFirstHistoryTransaction(accountFile);
+    downloadRemainingHistoryTransactions(accountFile);
+}
+
+void History::downloadFirstHistoryTransaction(fstream &accountFile)
+{
+    string accountType, date, dummy;
+    double transactionAmount, finalTotal;
+    
+    //read first history transaction which has 2 dummy variables that I can't figure out
     getline(accountFile, dummy);
     getline(accountFile, accountType);
     accountFile >> transactionAmount;
@@ -171,8 +188,14 @@ void History::downloadHistory(fstream &accountFile)
     getline(accountFile, date);
 
     addToHistory(accountType, transactionAmount, finalTotal, date);
+}
 
-    //extract rest of data and place in list in correct order
+void History::downloadRemainingHistoryTransactions(fstream &accountFile)
+{
+    string accountType, date, dummy;
+    double transactionAmount, finalTotal;
+    
+    //read remaining history transactions which have 1 dummy variable that I can't figure out
     while (accountFile)
     {
         getline(accountFile, accountType);
@@ -184,6 +207,6 @@ void History::downloadHistory(fstream &accountFile)
         addToHistory(accountType, transactionAmount, finalTotal, date);
     }
 
-    //delete weird extra node
+    //the top node will be a weird incomplete Node that I can't figure out so this step ignores it
     top = top->next;
 }
