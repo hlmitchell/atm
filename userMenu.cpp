@@ -33,7 +33,7 @@ UserMenu::UserMenu(string userID, string userPin)
     initializeClassVariables();
 
     openUserFile(userID);
-    readUserInfoFromFile();
+    myInfo.downloadUserInfoFromFile(userInfoFile);
 
     if (userPin != myInfo.getPin())
     {
@@ -42,7 +42,7 @@ UserMenu::UserMenu(string userID, string userPin)
         return;
     }
 
-    readAccountNamesFromFile();
+    downloadAccountNamesFromFile();
     userInfoFile.close();
 
     cout << endl << "Welcome Back " << myInfo.getFirstName() << "!" << endl;
@@ -55,26 +55,10 @@ void UserMenu::openUserFile(string id)
     userInfoFile.open(textFileName.c_str(), ios::in);
 }
 
-void UserMenu::readUserInfoFromFile()
+void UserMenu::downloadAccountNamesFromFile()
 {
-    userInfoFile >> stringSetter;
-    myInfo.setPin(stringSetter);
-
-    userInfoFile >> stringSetter;
-    myInfo.setId(stringSetter);
-
-    userInfoFile >> stringSetter;
-    myInfo.setFirstName(stringSetter);
-
-    userInfoFile >> stringSetter;
-    myInfo.setLastName(stringSetter);
-
-    userInfoFile >> intSetter;
-    myInfo.setAge(intSetter);
-}
-
-void UserMenu::readAccountNamesFromFile()
-{
+    string stringSetter;
+    
     while (userInfoFile >> stringSetter) 
     {
         accountFileNames.push_back(stringSetter);
@@ -141,6 +125,12 @@ void UserMenu::writeAccountNamesToFile()
     for (int i = 0; i < accountFileNames.size(); i++) 
         userInfoFile << accountFileNames[i] << endl;
 }
+
+
+
+
+
+
 
 
 
@@ -219,7 +209,6 @@ void UserMenu::createAnAccountMenuOption()
     {
         mySavings.createAccount(myInfo.getId());
     }
-
 }
 
 void UserMenu::requestTotalBalanceMenuOption()

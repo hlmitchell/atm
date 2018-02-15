@@ -5,7 +5,6 @@
 #include <fstream>
 #include <string>
 #include <iomanip>
-#include <vector>
 
 #include "checking.h"
 #include "savings.h"
@@ -26,12 +25,6 @@ class UserInfo
     public:
         UserInfo();
 
-        void setPin(string);
-        void setId(string);
-        void setFirstName(string);
-        void setLastName(string);
-        void setAge(int);
-
         string getPin();
         string getId();
         string getFirstName();
@@ -46,6 +39,8 @@ class UserInfo
         void requestFirstName();
         void requestLastName();
         void requestAge();
+
+        void downloadUserInfoFromFile(fstream&);
 };
 
 #endif

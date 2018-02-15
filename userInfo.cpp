@@ -6,31 +6,6 @@ UserInfo::UserInfo()
     age = 0;
 }
 
-void UserInfo::setPin(string p)
-{
-    pin = p;
-}
-
-void UserInfo::setId(string i)
-{
-    id = i;
-}
-
-void UserInfo::setFirstName(string f)
-{
-    firstName = f;
-}
-
-void UserInfo::setLastName(string l)
-{
-    lastName = l;
-}
-
-void UserInfo::setAge(int a)
-{
-    age = a;
-}   
-
 string UserInfo::getPin()
 {
     return pin;
@@ -82,7 +57,6 @@ void UserInfo::requestNewUserInfo()
 void UserInfo::requestUserName()
 {
     cout << "Please enter a username: ";
-    
     getline(cin, id); 
     inputErrorCatcher.checkForValidIDEntry(id);
 }
@@ -97,7 +71,6 @@ void UserInfo::requestUserPin()
 void UserInfo::requestFirstName()
 {
     cout << "What is your first name? ";
-
     getline(cin, firstName);
     inputErrorCatcher.removeExtraWhiteSpaceFromString(firstName);
 }
@@ -105,7 +78,6 @@ void UserInfo::requestFirstName()
 void UserInfo::requestLastName()
 {
     cout << "What is your last name? ";
-    
     getline(cin, lastName);
     inputErrorCatcher.removeExtraWhiteSpaceFromString(lastName);
 }
@@ -113,8 +85,16 @@ void UserInfo::requestLastName()
 void UserInfo::requestAge()
 {
     cout << "Please enter your age: ";
-    
     cin >> age;
     inputErrorCatcher.checkForValidUserInput(age, 16, 125);
     inputErrorCatcher.clearKeyboardBuffer();
+}
+
+void UserInfo::downloadUserInfoFromFile(fstream &userInfoFile)
+{
+    userInfoFile >> pin;
+    userInfoFile >> id;
+    userInfoFile >> firstName;
+    userInfoFile >> lastName;
+    userInfoFile >> age;
 }

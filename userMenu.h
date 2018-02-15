@@ -11,26 +11,23 @@
 
 using namespace std;
 
-ostream &operator << (ostream &, UserInfo &);
-
 class UserMenu
 {
     private:
 
         int menuUserSelection;            
-        string stringSetter;              
-        int intSetter;                    
         bool accountTypeDoesNotExist;
 
         accountNode *savingsAccount;
         accountNode *checkingAccount;
         double transferAmount;
         
-        UserInfo myInfo;                  
+        UserInfo myInfo;  
         InputError inputErrorCatcher;          
+        
         vector<string> accountFileNames;       
-
         string textFileName;
+        
         fstream userInfoFile;           
 
         Checking myChecking;    
@@ -46,8 +43,7 @@ class UserMenu
         void createUserFile();
 
         void openUserFile(string);
-        void readUserInfoFromFile();
-        void readAccountNamesFromFile();
+        void downloadAccountNamesFromFile();
         void categorizeAccountNames();
 
         void writeUserInfoToFile();
