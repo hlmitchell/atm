@@ -14,79 +14,18 @@ void UserMenu::initializeClassVariables()
 
 void UserMenu::collectNewUserInfo()
 {
-    cout << endl << "Thank you for choosing Hannah's Bank!" << endl << endl;
-    
-    requestUserName();
-    requestUserPin();
-
+    myInfo.requestNewUserInfo();
     createUserFile();
-
-    cout << endl << "Now we'll need to know some information about you!" << endl;
-
-    requestFirstName();
-    requestLastName();
-    requestAge();
 
     mainMenu();
 }
 
-void UserMenu::requestUserName()
-{
-    cout << "Please enter a username: ";
-    getline(cin, stringSetter); 
-
-    inputErrorCatcher.checkForValidIDEntry(stringSetter);
-    myInfo.setId(stringSetter);
-}
-
 void UserMenu::createUserFile()
 {
-    txtFileName = myInfo.getId() + ".txt";
-    userInfoFile.open(txtFileName.c_str(), ios::out);
+    textFileName = myInfo.getId() + ".txt";
+    userInfoFile.open(textFileName.c_str(), ios::out);
     userInfoFile.close();
 }
-
-void UserMenu::requestUserPin()
-{
-    cout << "Choose a 4 digit pin: ";
-    getline(cin, stringSetter);
-    validateUserPin();
-}
-
-void UserMenu::validateUserPin()
-{
-    inputErrorCatcher.checkForValidPinEntry(stringSetter);
-    myInfo.setPin(stringSetter);
-}
-
-void UserMenu::requestFirstName()
-{
-    cout << "What is your first name? ";
-    getline(cin, stringSetter);
-
-    inputErrorCatcher.removeExtraWhiteSpaceFromString(stringSetter);
-    myInfo.setFirstName(stringSetter);
-}
-
-void UserMenu::requestLastName()
-{
-    cout << "What is your last name? ";
-    getline(cin, stringSetter);
-
-    inputErrorCatcher.removeExtraWhiteSpaceFromString(stringSetter);
-    myInfo.setLastName(stringSetter);
-}
-
-void UserMenu::requestAge()
-{
-    cout << "Please enter your age: ";
-    cin >> intSetter;
-    
-    inputErrorCatcher.checkForValidUserInput(intSetter, 16, 125);
-    myInfo.setAge(intSetter);
-    inputErrorCatcher.clearKeyboardBuffer();
-}
-
 
 
 UserMenu::UserMenu(string userID, string userPin)
@@ -112,8 +51,8 @@ UserMenu::UserMenu(string userID, string userPin)
 
 void UserMenu::openUserFile(string id)
 {
-    txtFileName = id;
-    userInfoFile.open(txtFileName.c_str(), ios::in);
+    textFileName = id;
+    userInfoFile.open(textFileName.c_str(), ios::in);
 }
 
 void UserMenu::readUserInfoFromFile()
@@ -161,7 +100,7 @@ void UserMenu::categorizeAccountNames()
 
 UserMenu::~UserMenu()
 {
-    userInfoFile.open(txtFileName.c_str(), ios::out);
+    userInfoFile.open(textFileName.c_str(), ios::out);
 
     writeUserInfoToFile();
     getAndWriteAccountFileNames();
@@ -303,13 +242,14 @@ void UserMenu::editUserInfoMenuOption()
         switch(menuUserSelection)
         {
             case 1:
-                requestNewPin();
+                myInfo.requestUserPin();
                 break;
             case 2:
-                requestNewFullName();
+                myInfo.requestFirstName();
+                myInfo.requestLastName();
                 break;
             case 3:
-                requestNewAge();
+                myInfo.requestAge();
                 break;
             default:
                 break;
@@ -322,59 +262,10 @@ void UserMenu::editUserInfoMenuOption()
 
 void UserMenu::displayMenuEditOptions()
 {
-    cout << endl;
     cout << endl << "Which of the following would you like to edit: " << endl;
+    cout << endl;
     cout << "1. Pin" << endl;
     cout << "2. Name" << endl;
     cout << "3. Age" << endl;
     cout << "4. Back" << endl;
-}
-
-void UserMenu::requestNewPin()
-{
-    cout << "Enter New Pin: ";
-    getline(cin, stringSetter);
-    
-    validateUserPin();
-
-    cout << endl << "New Pin set to " << myInfo.getId() << "!" << endl;
-}
-
-void UserMenu::requestNewFullName()
-{
-    requestNewFirstName();
-    requestNewLastName();
-
-    cout << endl << "New Name set to " << myInfo.getFirstName() << " " 
-            << myInfo.getLastName() << "!" << endl;
-}
-
-void UserMenu::requestNewFirstName()
-{
-    cout << "Enter First Name: ";
-    getline(cin, stringSetter);
-
-    inputErrorCatcher.removeExtraWhiteSpaceFromString(stringSetter);
-    myInfo.setFirstName(stringSetter); 
-}
-
-void UserMenu::requestNewLastName()
-{
-    cout << "Enter Last Name: ";
-    getline(cin, stringSetter);
-
-    inputErrorCatcher.removeExtraWhiteSpaceFromString(stringSetter);
-    myInfo.setLastName(stringSetter);
-}
-
-void UserMenu::requestNewAge()
-{
-    cout << "Enter New Age: ";
-    cin >> intSetter;
-
-    inputErrorCatcher.checkForValidUserInput(intSetter, 16, 125);
-    myInfo.setAge(intSetter);
-    inputErrorCatcher.clearKeyboardBuffer();
-
-    cout << endl << "New Age set to " << myInfo.getAge() << "!" << endl;
 }

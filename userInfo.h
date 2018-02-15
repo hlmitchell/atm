@@ -19,7 +19,9 @@ class UserInfo
         string id;                  
         string firstName;           
         string lastName;            
-        int age;                    
+        int age;   
+
+        InputError inputErrorCatcher;                 
 
     public:
         UserInfo();
@@ -37,6 +39,13 @@ class UserInfo
         int getAge();
 
         void displayUserInfo();
+
+        void requestNewUserInfo();
+        void requestUserName();
+        void requestUserPin();
+        void requestFirstName();
+        void requestLastName();
+        void requestAge();
 };
 
 #endif

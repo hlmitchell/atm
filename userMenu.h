@@ -30,7 +30,7 @@ class UserMenu
         InputError inputErrorCatcher;          
         vector<string> accountFileNames;       
 
-        string txtFileName;             
+        string textFileName;
         fstream userInfoFile;           
 
         Checking myChecking;    
@@ -43,13 +43,7 @@ class UserMenu
 
         void initializeClassVariables();
         void collectNewUserInfo();
-        void requestUserName();
         void createUserFile();
-        void requestUserPin();
-        void validateUserPin();
-        void requestFirstName();
-        void requestLastName();
-        void requestAge();
 
         void openUserFile(string);
         void readUserInfoFromFile();
@@ -70,12 +64,7 @@ class UserMenu
         void requestTotalBalanceMenuOption();
         void editUserInfoMenuOption();
 
-        void displayMenuEditOptions();
-        void requestNewPin();
-        void requestNewFullName();
-        void requestNewFirstName();
-        void requestNewLastName();
-        void requestNewAge();  
+        void displayMenuEditOptions(); 
 };
 
 #endif
