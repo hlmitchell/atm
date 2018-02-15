@@ -294,10 +294,9 @@ void UserMenu::requestTotalBalanceMenuOption()
 
 void UserMenu::editUserInfoMenuOption()
 {
-    cout << myInfo;
-
     do {
 
+        myInfo.displayUserInfo();
         displayMenuEditOptions();
         validateUserInput(4);
 
@@ -323,6 +322,7 @@ void UserMenu::editUserInfoMenuOption()
 
 void UserMenu::displayMenuEditOptions()
 {
+    cout << endl;
     cout << endl << "Which of the following would you like to edit: " << endl;
     cout << "1. Pin" << endl;
     cout << "2. Name" << endl;
@@ -377,14 +377,4 @@ void UserMenu::requestNewAge()
     inputErrorCatcher.clearKeyboardBuffer();
 
     cout << endl << "New Age set to " << myInfo.getAge() << "!" << endl;
-}
-
-ostream &operator << (ostream &os, UserInfo &user)
-{
-    os << endl 
-       << "User ID: " << user.getId() << endl 
-       << "User Pin: " << user.getPin() << endl
-       << "Name: " << user.getFirstName() << " " << user.getLastName() << endl 
-       << "Age: " << user.getAge() << endl;
-    return os;
 }

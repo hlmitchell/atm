@@ -35,6 +35,8 @@ class UserInfo
         string getFirstName();
         string getLastName();
         int getAge();
+
+        void displayUserInfo();
 };
 
 #endif

@@ -55,3 +55,12 @@ int UserInfo::getAge()
 {
     return age;
 }
+
+void UserInfo::displayUserInfo()
+{
+    cout << endl 
+         << "User ID: " << id << endl 
+         << "User Pin: " << pin << endl
+         << "Name: " << firstName << " " << lastName << endl 
+         << "Age: " << age << endl;
+}

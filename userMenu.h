@@ -75,9 +75,7 @@ class UserMenu
         void requestNewFullName();
         void requestNewFirstName();
         void requestNewLastName();
-        void requestNewAge();
-
-        friend ostream & operator << (ostream &, UserInfo &);  
+        void requestNewAge();  
 };
 
 #endif
