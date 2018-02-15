@@ -19,6 +19,11 @@ struct accountHistory
     struct accountHistory *next;
 };
 
+enum transactionType
+{
+    Withdrawal, Deposit, Merger_Deposit
+};
+
 class History
 {
     protected:
