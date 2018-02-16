@@ -350,6 +350,17 @@ void Accounts::sameAccountTypeTransfer()
     confirmedTransfer();
 }
 
+void Accounts::chooseAccountType()
+{
+    cout << endl << endl;
+    cout << "1. Checking" << endl;
+    cout << "2. Savings" << endl;
+    cout << "3. Back" << endl;
+
+    cin >> menuUserSelection;
+    inputErrorCatcher.checkForValidUserInput(menuUserSelection, 1, 3);
+}
+
 void Accounts::requestTransferAmount()
 {
     cout << "How much money would you like to transfer from " << pointerToActiveAccount->accountName

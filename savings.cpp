@@ -73,7 +73,7 @@ void Savings::displayMenuOptions()
 void Savings::transferFunds()
 {
     cout << endl << "In to which account type would you like to transfer funds?";
-    menuUserSelection = inputErrorCatcher.chooseAccountType();
+    chooseAccountType();
 
     if (menuUserSelection == 2) sameAccountTypeTransfer();
     else if (menuUserSelection == 1)

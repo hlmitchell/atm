@@ -1,5 +1,8 @@
 #include "userMenu.h"
 
+const string UserMenu::CHECKING = "checking";
+const string UserMenu::SAVINGS = "savings";
+
 UserMenu::UserMenu()
 {
     menuUserSelection = 0;
@@ -68,24 +71,22 @@ void UserMenu::validateUserInput(int upperBounds)
 
 void UserMenu::selectAnAccountMenuOption()
 {
-    cout << endl << "Which account type would you like to access?";
-    menuUserSelection = inputErrorCatcher.chooseAccountType();
+    chooseAccountType();
 
     if (menuUserSelection == 1) 
     {
-        myChecking->accessAccounts("checking");
+        myChecking->accessAccounts(CHECKING);
     }
 
     else if (menuUserSelection == 2) 
     {
-        mySavings->accessAccounts("savings");
+        mySavings->accessAccounts(SAVINGS);
     }
 }
 
 void UserMenu::createAnAccountMenuOption()
 {
-    cout << endl << "Which type of account would you like to create?";
-    menuUserSelection = inputErrorCatcher.chooseAccountType();
+    chooseAccountType();
 
     if (menuUserSelection == 1) 
     {
@@ -98,12 +99,27 @@ void UserMenu::createAnAccountMenuOption()
     }
 }
 
+void UserMenu::chooseAccountType()
+{   
+    displayAccountOptions();
+    validateUserInput(3);
+}
+
+void UserMenu::displayAccountOptions()
+{
+    cout << endl << "Which type of account would you like to create?";
+    cout << endl << endl;
+    cout << "1. Checking" << endl;
+    cout << "2. Savings" << endl;
+    cout << "3. Back" << endl;
+}
+
 void UserMenu::requestTotalBalanceMenuOption()
 {
     cout << fixed << setprecision(2);
 
     cout << endl << "Your total balance for all accounts is: $" 
-         << myChecking->getTotalMoneyForAllAccounts() + mySavings->getTotalMoneyForAllAccounts() 
+         << myChecking->getTotalMoneyForAllAccounts() 
          << endl;
 }
 

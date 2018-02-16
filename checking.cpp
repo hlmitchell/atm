@@ -120,7 +120,7 @@ void Checking::displayNewTotals()
 void Checking::transferFunds()
 {
     cout << endl << "In to which account type would you like to transfer funds?";
-    menuUserSelection = inputErrorCatcher.chooseAccountType();
+    chooseAccountType();
 
     if (menuUserSelection == 1) sameAccountTypeTransfer();
     else if (menuUserSelection == 2)

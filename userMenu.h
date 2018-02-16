@@ -14,6 +14,8 @@ using namespace std;
 class UserMenu
 {
     private:
+        static const string CHECKING;
+        static const string SAVINGS;
 
         int menuUserSelection;
 
@@ -28,6 +30,8 @@ class UserMenu
         void validateUserInput(int);
         void selectAnAccountMenuOption();
         void createAnAccountMenuOption();
+        void chooseAccountType();
+        void displayAccountOptions();
         void requestTotalBalanceMenuOption();
         void editUserInfoMenuOption();
         void displayMenuEditOptions();         
