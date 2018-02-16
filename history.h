@@ -52,11 +52,8 @@ class History
         void displayTransactionHistory();
 
         void uploadHistory(fstream &);
-        void setHistoryNodeToBottomOfList();
-        void moveUpList();
-        void uploadFilesInReverseOrder(fstream &);
-        void uploadTopFile(fstream &);
-        void writeToFile(fstream &);
+        void uploadTransactionsInReverse(fstream&, accountHistory*);
+        void writeToFile(fstream &, accountHistory*);
 
         void downloadHistory(fstream &);
         void downloadFirstHistoryTransaction(fstream &);

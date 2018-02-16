@@ -138,7 +138,6 @@ void Accounts::nameAccount()
     string accountName;        
     
     cout << endl << "What would you like to name this account? ";
-    cin.ignore();
     getline(cin, accountName);
 
     inputErrorCatcher.removeExtraWhiteSpaceFromString(accountName);
@@ -193,8 +192,6 @@ void Accounts::selectAccount()
 
 void Accounts::requestAccountName()
 {
-    cin.ignore();
-
     do {
         cout << endl << "Enter the name of the account you wish to access: ";
         getline(cin, activeAccountName);
@@ -359,6 +356,7 @@ void Accounts::chooseAccountType()
 
     cin >> menuUserSelection;
     inputErrorCatcher.checkForValidUserInput(menuUserSelection, 1, 3);
+    inputErrorCatcher.clearKeyboardBuffer();
 }
 
 void Accounts::requestTransferAmount()
