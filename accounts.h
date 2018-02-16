@@ -76,6 +76,7 @@ class Accounts
         void confirmedMerge();
 
         void sameAccountTypeTransfer();
+        void chooseAccountType();
         void requestTransferAmount();
         void confirmedTransfer();
         void ammendAccountTotals();

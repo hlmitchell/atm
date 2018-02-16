@@ -1,40 +1,7 @@
-//ATM MACHINE
-//Hannah Mitchell
-//CS M10B
-//December 11th 2017
-
 #include "inputError.h"
 
-InputError::InputError()
-{}
-
-//choose account type for menu options
-int InputError::chooseAccountType()
-{   
-    //variable
-    int menuUserSelection;
-    
-    //display part of menu
-    cout << endl << endl;
-    cout << "1. Checking" << endl;
-    cout << "2. Savings" << endl;
-    cout << "3. Back" << endl;
-
-    //check bounds
-    cin >> menuUserSelection;
-    checkForValidUserInput(menuUserSelection, 1, 3);
-    return menuUserSelection;
-}
-
-//checks that pin is length of 4 and valid
 void InputError::checkForValidPinEntry(string &pinEntry)
 {
-    //constants
-    const int PIN_LENGTH = 4; 
-    const char ZERO = '0';
-    const char NINE = '9';
-
-    //variables
     bool pinIsAllInts = true;
 
     do
@@ -62,14 +29,11 @@ void InputError::checkForValidPinEntry(string &pinEntry)
     } while(pinEntry.length() != PIN_LENGTH || pinIsAllInts == false);
 }
 
-//checks for new user ID
 void InputError::checkForValidIDEntry(string &idEntry)
 {
     ofstream tempFile;
 
     removeExtraWhiteSpaceFromString(idEntry);
-
-    //converts to file name
     string fileName = idEntry + ".txt";
 
     //check to see if open, otherwise change id
