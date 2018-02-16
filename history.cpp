@@ -111,58 +111,26 @@ void History::displayTransactionHistory()
 }
 
 void History::uploadHistory(fstream &file)
-{    
-    setHistoryNodeToBottomOfList();
-    uploadFilesInReverseOrder(file);
-}
-
-void History::setHistoryNodeToBottomOfList()
 {
     accountHistoryNode = top;
-    while(accountHistoryNode) 
+    uploadTransactionsInReverse(file, accountHistoryNode);
+}
+
+void History::uploadTransactionsInReverse(fstream &file, accountHistory *transactionNode)
+{
+    if (transactionNode != NULL)
     {
-        if (accountHistoryNode->next == NULL) break;
-        accountHistoryNode = accountHistoryNode->next;
+        uploadTransactionsInReverse(file, transactionNode->next);
+        writeToFile(file, transactionNode);
     }
 }
 
-void History::uploadFilesInReverseOrder(fstream &file)
+void History::writeToFile(fstream &file, accountHistory *transactionNode)
 {
-    while (accountHistoryNode != top)
-    {
-        writeToFile(file);
-
-        moveUpList();
-        accountHistoryNode = nextaccountHistoryNode;
-
-        uploadTopFile(file);
-    } 
-}
-
-void History::moveUpList()
-{
-    nextaccountHistoryNode = top;
-    while (nextaccountHistoryNode)
-    {
-        if (nextaccountHistoryNode->next == accountHistoryNode || nextaccountHistoryNode->next == NULL) break;
-        nextaccountHistoryNode = nextaccountHistoryNode->next;
-    }
-}
-
-void History::uploadTopFile(fstream &file)
-{
-    if (accountHistoryNode == top)
-    {
-        writeToFile(file);
-    }
-}
-
-void History::writeToFile(fstream &file)
-{
-    file << accountHistoryNode->action << endl;
-    file << accountHistoryNode->amount << endl;
-    file << accountHistoryNode->total << endl;
-    file << accountHistoryNode->date << endl;
+    file << transactionNode->action << endl;
+    file << transactionNode->amount << endl;
+    file << transactionNode->total << endl;
+    file << transactionNode->date << endl;
 }
 
 void History::downloadHistory(fstream &accountFile)
