@@ -15,42 +15,13 @@ class UserMenu
 {
     private:
 
-        int menuUserSelection;            
-        bool accountTypeDoesNotExist;
+        int menuUserSelection;
 
-        accountNode *savingsAccount;
-        accountNode *checkingAccount;
-        double transferAmount;
-        
-        UserInfo myInfo;  
-        InputError inputErrorCatcher;          
-        
-        vector<string> accountFileNames;       
-        string textFileName;
-        
-        fstream userInfoFile;           
-
-        Checking myChecking;    
-        Savings mySavings;      
-
-    public:
-        UserMenu();
-        UserMenu(string, string);
-        ~UserMenu();
-
-        void initializeClassVariables();
-        void collectNewUserInfo();
-        void createUserFile();
-
-        void openUserFile(string);
-        void downloadAccountNamesFromFile();
-        void categorizeAccountNames();
-
-        void writeUserInfoToFile();
-        void getAndWriteAccountFileNames();
-        void getCheckingAccountFileNames();
-        void getSavingsAccountFileNames();
-        void writeAccountNamesToFile();
+        Checking *myChecking;    
+        Savings *mySavings;
+        UserInfo *myInfo;
+         
+        InputError inputErrorCatcher; 
 
         void mainMenu();
         void displayMenuOptions();
@@ -59,8 +30,12 @@ class UserMenu
         void createAnAccountMenuOption();
         void requestTotalBalanceMenuOption();
         void editUserInfoMenuOption();
-
-        void displayMenuEditOptions(); 
+        void displayMenuEditOptions();         
+                
+    public:
+        UserMenu();
+        UserMenu(Checking&, Savings&, UserInfo&);
+        ~UserMenu(); 
 };
 
 #endif

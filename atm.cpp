@@ -1,4 +1,4 @@
-#include "userMenu.h"
+#include "userFile.h"
 #include "inputError.h"
 
 #include <iostream>
@@ -36,7 +36,7 @@ int main()
             }
             case 2:
             {
-                UserMenu myClient;
+                UserFile myClient;
                 break;
             }
             default:
@@ -72,7 +72,7 @@ void attemptLogin(InputError &inputErrorCatcher)
     
     inputErrorCatcher.checkForValidPinEntry(pin);
     
-    UserMenu myClient(id, pin);
+    UserFile myClient(id, pin);
 }
 
 bool checkIfFileExists(string &idInquiry)

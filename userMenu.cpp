@@ -2,137 +2,24 @@
 
 UserMenu::UserMenu()
 {
-    initializeClassVariables();
-    collectNewUserInfo();
-}
-
-void UserMenu::initializeClassVariables()
-{
     menuUserSelection = 0;
-    accountTypeDoesNotExist = false;
 }
 
-void UserMenu::collectNewUserInfo()
+UserMenu::UserMenu(Checking &myCheck, Savings &mySave, UserInfo &myIn)
 {
-    myInfo.requestNewUserInfo();
-    createUserFile();
+    myChecking = &myCheck;
+    mySavings = &mySave;
+    myInfo = &myIn;
 
     mainMenu();
 }
-
-void UserMenu::createUserFile()
-{
-    textFileName = myInfo.getId() + ".txt";
-    userInfoFile.open(textFileName.c_str(), ios::out);
-    userInfoFile.close();
-}
-
-
-UserMenu::UserMenu(string userID, string userPin)
-{
-    initializeClassVariables();
-
-    openUserFile(userID);
-    myInfo.downloadUserInfoFromFile(userInfoFile);
-
-    if (userPin != myInfo.getPin())
-    {
-        cout << "Incorrect Pin." << endl;
-        userInfoFile.close();
-        return;
-    }
-
-    downloadAccountNamesFromFile();
-    userInfoFile.close();
-
-    cout << endl << "Welcome Back " << myInfo.getFirstName() << "!" << endl;
-    mainMenu();
-}
-
-void UserMenu::openUserFile(string id)
-{
-    textFileName = id;
-    userInfoFile.open(textFileName.c_str(), ios::in);
-}
-
-void UserMenu::downloadAccountNamesFromFile()
-{
-    string stringSetter;
-    
-    while (userInfoFile >> stringSetter) 
-    {
-        accountFileNames.push_back(stringSetter);
-    }
-
-    categorizeAccountNames();
-}
-
-void UserMenu::categorizeAccountNames()
-{
-    for (int i = 0; i < accountFileNames.size(); i++)
-    {
-        if (accountFileNames[i][0] == 'C')
-            myChecking.downloadExistingAccounts(accountFileNames[i]);
-        else if (accountFileNames[i][0] == 'S')
-            mySavings.downloadExistingAccounts(accountFileNames[i]);
-    }
-
-    accountFileNames.clear();
-}
-
-
 
 UserMenu::~UserMenu()
 {
-    userInfoFile.open(textFileName.c_str(), ios::out);
-
-    writeUserInfoToFile();
-    getAndWriteAccountFileNames();
-
-    userInfoFile.close();
+    myChecking = NULL;
+    mySavings = NULL;
+    myInfo = NULL;
 }
-
-void UserMenu::writeUserInfoToFile()
-{
-    userInfoFile << myInfo.getPin() << endl;
-    userInfoFile << myInfo.getId() << endl;
-    userInfoFile << myInfo.getFirstName() << endl;
-    userInfoFile << myInfo.getLastName() << endl;
-    userInfoFile << myInfo.getAge() << endl;
-}
-
-void UserMenu::getAndWriteAccountFileNames()
-{
-    getCheckingAccountFileNames();
-    writeAccountNamesToFile();
-
-    getSavingsAccountFileNames();
-    writeAccountNamesToFile();
-}
-
-void UserMenu::getCheckingAccountFileNames()
-{
-    accountFileNames = myChecking.getAccountFileNames();
-}
-
-void UserMenu::getSavingsAccountFileNames()
-{
-    accountFileNames = mySavings.getAccountFileNames();
-}
-
-void UserMenu::writeAccountNamesToFile()
-{
-    for (int i = 0; i < accountFileNames.size(); i++) 
-        userInfoFile << accountFileNames[i] << endl;
-}
-
-
-
-
-
-
-
-
 
 void UserMenu::mainMenu()
 {
@@ -186,12 +73,12 @@ void UserMenu::selectAnAccountMenuOption()
 
     if (menuUserSelection == 1) 
     {
-        myChecking.accessAccounts("checking");
+        myChecking->accessAccounts("checking");
     }
 
     else if (menuUserSelection == 2) 
     {
-        mySavings.accessAccounts("savings");
+        mySavings->accessAccounts("savings");
     }
 }
 
@@ -202,12 +89,12 @@ void UserMenu::createAnAccountMenuOption()
 
     if (menuUserSelection == 1) 
     {
-        myChecking.createAccount(myInfo.getId());
+        myChecking->createAccount(myInfo->getId());
     }
 
     else if (menuUserSelection == 2) 
     {
-        mySavings.createAccount(myInfo.getId());
+        mySavings->createAccount(myInfo->getId());
     }
 }
 
@@ -216,7 +103,7 @@ void UserMenu::requestTotalBalanceMenuOption()
     cout << fixed << setprecision(2);
 
     cout << endl << "Your total balance for all accounts is: $" 
-         << myChecking.getTotalMoneyForAllAccounts() + mySavings.getTotalMoneyForAllAccounts() 
+         << myChecking->getTotalMoneyForAllAccounts() + mySavings->getTotalMoneyForAllAccounts() 
          << endl;
 }
 
@@ -224,21 +111,21 @@ void UserMenu::editUserInfoMenuOption()
 {
     do {
 
-        myInfo.displayUserInfo();
+        myInfo->displayUserInfo();
         displayMenuEditOptions();
         validateUserInput(4);
 
         switch(menuUserSelection)
         {
             case 1:
-                myInfo.requestUserPin();
+                myInfo->requestUserPin();
                 break;
             case 2:
-                myInfo.requestFirstName();
-                myInfo.requestLastName();
+                myInfo->requestFirstName();
+                myInfo->requestLastName();
                 break;
             case 3:
-                myInfo.requestAge();
+                myInfo->requestAge();
                 break;
             default:
                 break;
