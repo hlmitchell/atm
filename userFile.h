@@ -9,14 +9,14 @@
 
 #include "userInfo.h"
 #include "userMenu.h"
+#include "accountTree.h"
 
 using namespace std;
 
 class UserFile
 {
     private:
-        Checking myChecking;    
-        Savings mySavings;
+        //AccountTree myAccounts;
                 
         UserInfo myInfo;
         InputError inputErrorCatcher;          
@@ -31,12 +31,8 @@ class UserFile
 
         void openUserFile(string);
         void downloadAccountNamesFromFile();
-        void categorizeAccountNames();
 
         void writeUserInfoToFile();
-        void getAndWriteAccountFileNames();
-        void getCheckingAccountFileNames();
-        void getSavingsAccountFileNames();
         void writeAccountNamesToFile();
         
     public:
