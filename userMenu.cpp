@@ -7,7 +7,7 @@ UserMenu::UserMenu()
 
 UserMenu::UserMenu(AccountTree &myTree, UserInfo &myIn)
 {
-    myAccounts = &myTree;//here too
+    myAccounts = &myTree;
     myInfo = &myIn;
 
     mainMenu();
@@ -15,7 +15,7 @@ UserMenu::UserMenu(AccountTree &myTree, UserInfo &myIn)
 
 UserMenu::~UserMenu()
 {
-    myAccounts = NULL; //myAccounts
+    myAccounts = NULL;
     myInfo = NULL;
 }
 
@@ -64,17 +64,17 @@ void UserMenu::validateUserInput(int upperBounds)
     inputErrorCatcher.clearKeyboardBuffer();
 }
 
-void UserMenu::selectAnAccountMenuOption()//myAccounts->selectAnAccount();
+void UserMenu::selectAnAccountMenuOption()
 {
     myAccounts->selectAnAccount();
 }
 
-void UserMenu::createAnAccountMenuOption()//myAccounts->createAnAccount(myInfo->getId());
+void UserMenu::createAnAccountMenuOption()
 {
     myAccounts->createAnAccount(myInfo->getId());
 }
 
-void UserMenu::requestTotalBalanceMenuOption()//myAccounts->requestTotalBalance();
+void UserMenu::requestTotalBalanceMenuOption()
 {
     myAccounts->requestTotalBalance();
 }
