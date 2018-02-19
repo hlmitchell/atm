@@ -10,7 +10,7 @@ void UserFile::collectNewUserInfo()
     myInfo.requestNewUserInfo();
     createUserFile();
 
-    //UserMenu myMenu(myAccounts, myInfo);
+    UserMenu myMenu(myAccounts, myInfo);
 }
 
 void UserFile::createUserFile()
@@ -39,7 +39,7 @@ UserFile::UserFile(string userID, string userPin)
 
     cout << endl << "Welcome Back " << myInfo.getFirstName() << "!" << endl;
     
-    //UserMenu myMenu(myAccounts, myInfo);
+    UserMenu myMenu(myAccounts, myInfo);
 }
 
 void UserFile::openUserFile(string id)
@@ -57,7 +57,7 @@ void UserFile::downloadAccountNamesFromFile()
         accountFileNames.push_back(stringSetter);
     }
 
-    //myAccounts.categorizeAccountFileNames(accountFileNames);
+    myAccounts.categorizeAccountFileNames(accountFileNames);
     accountFileNames.clear();
 }
 
@@ -83,7 +83,7 @@ void UserFile::writeUserInfoToFile()
 
 void UserFile::writeAccountNamesToFile()
 {
-    //accountFileNames = myAccounts.getAllAccountFileNames();
+    accountFileNames = myAccounts.getAllAccountFileNames();
 
     for (int i = 0; i < accountFileNames.size(); i++)
     { 

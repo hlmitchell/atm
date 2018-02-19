@@ -16,7 +16,7 @@ using namespace std;
 class UserFile
 {
     private:
-        //AccountTree myAccounts;
+        AccountTree myAccounts;
                 
         UserInfo myInfo;
         InputError inputErrorCatcher;          

@@ -2,8 +2,10 @@
 
 AccountTree::AccountTree()
 {
+    root = new treeNode;
     root->myChecking = new Checking;
     root->mySavings = new Savings;
+    menuUserSelection = 0;
 }
 
 AccountTree::~AccountTree()
