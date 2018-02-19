@@ -10,7 +10,8 @@ AccountTree::AccountTree()
 
 AccountTree::~AccountTree()
 {
-
+    delete root->myChecking;
+    delete root->mySavings;
 }
 
 void AccountTree::createAnAccount(string id)
