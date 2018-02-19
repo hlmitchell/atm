@@ -51,7 +51,6 @@ void accountList::deleteAccountList()
         delete pointerToAnAccount;
         pointerToAnAccount = pointerToNextAccount;
     }
-    activeAccount = NULL;
 }
 
 void accountList::setActiveAccount(accountNode *node)

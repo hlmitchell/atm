@@ -11,6 +11,7 @@ Accounts::Accounts()
 Accounts::~Accounts()
 {
     pointerToActiveAccount = NULL;
+    secondAccount = NULL;
 }
 
 void Accounts::downloadExistingAccounts(string accountName)
