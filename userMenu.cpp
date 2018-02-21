@@ -1,17 +1,13 @@
 #include "userMenu.h"
 
-const string UserMenu::CHECKING = "checking";
-const string UserMenu::SAVINGS = "savings";
-
 UserMenu::UserMenu()
 {
     menuUserSelection = 0;
 }
 
-UserMenu::UserMenu(Checking &myCheck, Savings &mySave, UserInfo &myIn)
+UserMenu::UserMenu(AccountTree &myTree, UserInfo &myIn)
 {
-    myChecking = &myCheck;
-    mySavings = &mySave;
+    myAccounts = &myTree;
     myInfo = &myIn;
 
     mainMenu();
@@ -19,8 +15,7 @@ UserMenu::UserMenu(Checking &myCheck, Savings &mySave, UserInfo &myIn)
 
 UserMenu::~UserMenu()
 {
-    myChecking = NULL;
-    mySavings = NULL;
+    myAccounts = NULL;
     myInfo = NULL;
 }
 
@@ -71,56 +66,17 @@ void UserMenu::validateUserInput(int upperBounds)
 
 void UserMenu::selectAnAccountMenuOption()
 {
-    chooseAccountType();
-
-    if (menuUserSelection == 1) 
-    {
-        myChecking->accessAccounts(CHECKING);
-    }
-
-    else if (menuUserSelection == 2) 
-    {
-        mySavings->accessAccounts(SAVINGS);
-    }
+    myAccounts->selectAnAccount();
 }
 
 void UserMenu::createAnAccountMenuOption()
 {
-    chooseAccountType();
-
-    if (menuUserSelection == 1) 
-    {
-        myChecking->createAccount(myInfo->getId());
-    }
-
-    else if (menuUserSelection == 2) 
-    {
-        mySavings->createAccount(myInfo->getId());
-    }
-}
-
-void UserMenu::chooseAccountType()
-{   
-    displayAccountOptions();
-    validateUserInput(3);
-}
-
-void UserMenu::displayAccountOptions()
-{
-    cout << endl << "Which type of account would you like to create?";
-    cout << endl << endl;
-    cout << "1. Checking" << endl;
-    cout << "2. Savings" << endl;
-    cout << "3. Back" << endl;
+    myAccounts->createAnAccount(myInfo->getId());
 }
 
 void UserMenu::requestTotalBalanceMenuOption()
 {
-    cout << fixed << setprecision(2);
-
-    cout << endl << "Your total balance for all accounts is: $" 
-         << myChecking->getTotalMoneyForAllAccounts() 
-         << endl;
+    myAccounts->requestTotalBalance();
 }
 
 void UserMenu::editUserInfoMenuOption()

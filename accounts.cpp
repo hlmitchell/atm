@@ -339,7 +339,6 @@ void Accounts::sameAccountTypeTransfer()
     if (!checkIfOtherAccountsExist()) return;
 
     pointerToActiveAccount = listOfOpenAccounts.getActiveAccount();
-    cin.ignore();
 
     requestSecondAccountName();         
 
