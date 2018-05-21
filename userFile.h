@@ -8,37 +8,45 @@
 #include <vector>
 
 #include "userInfo.h"
-#include "userMenu.h"
-#include "accountTree.h"
+#include "accounts.h"
 
 using namespace std;
 
 class UserFile
 {
-    private:
-        AccountTree myAccounts;
-                
-        UserInfo myInfo;
-        InputError inputErrorCatcher;          
-        
-        fstream userInfoFile;
-        vector<string> accountFileNames;       
-        string textFileName;
+private:
+    AccountsTree myAccounts;
+    UserInfo myInfo;
+    InputError inputErrorCatcher;
+    
+    int menuUserSelection;
+    
+    fstream userInfoFile;
+    string textFileName;
 
-        void initializeClassVariables();
-        void collectNewUserInfo();
-        void createUserFile();
+    //new user methods
+    void initializeClassVariables();
+    void createUserFile();
 
-        void openUserFile(string);
-        void downloadAccountNamesFromFile();
+    //returning user methods
+    void openUserFile(string);
+    void downloadAccountNamesFromFile();
 
-        void writeUserInfoToFile();
-        void writeAccountNamesToFile();
-        
-    public:
-        UserFile();
-        UserFile(string, string);
-        ~UserFile();
+    //destructor methods
+    void writeUserInfoToFile();
+    void writeAccountFileNamesToUserFile();
+    
+    //menu methods
+    void displayMainMenu();
+    void displayMenuOptions();
+    void validateUserInput(int);
+    void editUserInfoMenuOption();
+    void displayMenuEditOptions();
+    
+public:
+    UserFile();
+    UserFile(string, string);
+    ~UserFile();
 };
 
 #endif

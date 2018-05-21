@@ -6,31 +6,6 @@ UserInfo::UserInfo()
     age = 0;
 }
 
-string UserInfo::getPin()
-{
-    return pin;
-}
-
-string UserInfo::getId()
-{
-    return id;
-}
-
-string UserInfo::getFirstName()
-{
-    return firstName;
-}
-
-string UserInfo::getLastName()
-{
-    return lastName;
-}
-
-int UserInfo::getAge()
-{
-    return age;
-}
-
 void UserInfo::displayUserInfo()
 {
     cout << endl 

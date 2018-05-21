@@ -1,399 +1,279 @@
 #include "accounts.h"
 
-Accounts::Accounts()
+// public interface-------------------------------------------
+void AccountsTree::createAnAccount()
 {
-    activeAccountName = "";
-    secondAccountName = "";
-    menuUserSelection = 0;
-    withdrawOrDepositValue = 0;
-}
-
-Accounts::~Accounts()
-{
-    pointerToActiveAccount = NULL;
-    secondAccount = NULL;
-}
-
-void Accounts::downloadExistingAccounts(string accountName)
-{
-    listOfOpenAccounts.downloadNode(accountName);
-}
-
-void Accounts::setTextFileName(string id)
-{
-    pointerToActiveAccount = listOfOpenAccounts.getActiveAccount();
+    int menuSelector;
+    string name;
     
-    string accountNameWithoutSpaces = removeSpacesFromAccountName();
-
-    specifyFileType(id, accountNameWithoutSpaces);
-}
-
-string Accounts::removeSpacesFromAccountName()
-{
-    string accountNameWithoutSpaces;
-    string originalAccountName = pointerToActiveAccount->accountName;
-
-    for (int i = 0; i < originalAccountName.length(); i++)
-    {
-        if (originalAccountName[i] == ' ') continue;
-        accountNameWithoutSpaces += originalAccountName[i];
-    }
-
-    return accountNameWithoutSpaces;
-}
-
-void Accounts::resetActiveAccount()
-{
-    listOfOpenAccounts.setActiveAccount(NULL);
-    
-    pointerToActiveAccount = NULL;
-    activeAccountName = "";
-}
-
-bool Accounts::getHeadOfAccountList()
-{
-    if (listOfOpenAccounts.getListHead()) return true;
-    else return false;
-}
-
-vector<string> Accounts::getAccountFileNames()
-{
-    vector<string> fileNames;
-    pointerToActiveAccount = listOfOpenAccounts.getListHead();          
-
-    while (pointerToActiveAccount)
-    {
-        fileNames.push_back(pointerToActiveAccount->accountFileName);
-        pointerToActiveAccount = pointerToActiveAccount->next;
-    }
-
-    return fileNames;
-}
-
-accountNode *Accounts::callGetActiveAccount()
-{
-    return listOfOpenAccounts.getActiveAccount();
-}
-
-double Accounts::getTotalMoneyForAllAccounts()
-{
-    double accountTotals = 0;
-
-    pointerToActiveAccount = listOfOpenAccounts.getListHead();
-    if (pointerToActiveAccount == NULL) return 0;
-
-    while (pointerToActiveAccount)
-    {
-        accountTotals += pointerToActiveAccount->totalFunds;
-        pointerToActiveAccount = pointerToActiveAccount->next;
-    }
-    return accountTotals;
-}
-
-void Accounts::accessAccounts(string accountType)
-{
-    if (!getHeadOfAccountList()) 
-    {
-        cout << endl << "You have not created a " << accountType <<  " account yet!" << endl;
-        return;
-    }
-    else
-    {   
-        displayAccounts();       
-        selectAccount();
-        accountOptionsMenu();
-    }
-}
-
-void Accounts::displayActiveAccountDetails()
-{
-    cout << endl << "Current Account: " << pointerToActiveAccount->accountName << endl;
-    cout << "Account Funds: $" << pointerToActiveAccount->totalFunds << endl;
-}
-
-void Accounts::validateMenuInput(int max)
-{
-    cin >> menuUserSelection;
-    inputErrorCatcher.checkForValidUserInput(menuUserSelection, 1, max);
-    inputErrorCatcher.clearKeyboardBuffer();
-}
-
-void Accounts::createAccount(string id)
-{ 
-    nameAccount();
-    setTextFileName(id);
-
-    pointerToActiveAccount = listOfOpenAccounts.getActiveAccount();
-
-    makeInitialDeposit();
-
-    confirmationOfNewAccountMessage();
-    
-    sendToHistory("Open Deposit", pointerToActiveAccount->totalFunds, pointerToActiveAccount->totalFunds);
-
-    resetActiveAccount();
-}
-
-void Accounts::nameAccount()
-{
-    string accountName;        
-    
-    cout << endl << "What would you like to name this account? ";
-    getline(cin, accountName);
-
-    inputErrorCatcher.removeExtraWhiteSpaceFromString(accountName);
-    verifyUniqueAccountName(accountName);
-
-    setAccountName(accountName);
-}
-
-void Accounts::verifyUniqueAccountName(string accountName)
-{
-    accountNode *verifiedAccount;
-    verifiedAccount = listOfOpenAccounts.findNode(accountName);
-
-    while (verifiedAccount != NULL)
-    {
-        cout << "Name already taken! Please try again: ";
-        getline(cin, accountName);
-        verifiedAccount = listOfOpenAccounts.findNode(accountName);
-    }
-}
-
-void Accounts::setAccountName(string accountName)
-{
-    accountNode *newAccount;
-    
-    listOfOpenAccounts.createNode("NULL");
-    newAccount = listOfOpenAccounts.findNode("");
-
-    newAccount->accountName = accountName;
-    listOfOpenAccounts.setActiveAccount(newAccount);
-}
-
-void Accounts::makeInitialDeposit()
-{
-    cout << "How much money would you like to deposit (Enter 0 if none)? ";
-    cin >> pointerToActiveAccount->totalFunds;
-    inputErrorCatcher.checkForValidUserInput(pointerToActiveAccount->totalFunds, 0.0, 1000000000.0);
-}
-
-void Accounts::confirmationOfNewAccountMessage()
-{
-    cout << endl << "Successfully created account " << pointerToActiveAccount->accountName
-         << " with current value of $" << fixed << setprecision(2)
-         << pointerToActiveAccount->totalFunds << "!" << endl;
-}
-
-void Accounts::selectAccount()
-{
-    requestAccountName();
-    listOfOpenAccounts.setActiveAccount(pointerToActiveAccount);
-}
-
-void Accounts::requestAccountName()
-{
-    do {
-        cout << endl << "Enter the name of the account you wish to access: ";
-        getline(cin, activeAccountName);
-
-        pointerToActiveAccount = listOfOpenAccounts.findNode(activeAccountName);
-
-        if (pointerToActiveAccount == NULL)
-            cout << "Not an available account name!" << endl;
-
-    } while (pointerToActiveAccount == NULL);
-}
-
-void Accounts::deleteAccount()
-{
-    pointerToActiveAccount = listOfOpenAccounts.getActiveAccount();
-    
-    if (!checkIfAccountFundsAreZero()) return;
-
-    confirmAccountDeletion();
-    
-    if (yesOrNo == 'Y')
-    {
-        cout << "Account " << pointerToActiveAccount->accountName << " has been deleted!" << endl;
-        confirmedDeletion();
-    }
-}
-
-void Accounts::confirmedDeletion()
-{
-    listOfOpenAccounts.deleteNode(pointerToActiveAccount->accountName);
-    resetActiveAccount();
-}
-
-bool Accounts::checkIfAccountFundsAreZero()
-{
-    if (pointerToActiveAccount->totalFunds != 0)
-    {
-        cout << endl << "You must empty the account funds first!" << endl;
-        return false;
-    }
-    return true;
-}
-
-void Accounts::confirmAccountDeletion()
-{
-    cout << endl << "Delete account " << pointerToActiveAccount->accountName << " (Y/N)? ";
-    cin >> yesOrNo;
-    inputErrorCatcher.yesOrNoValidator(yesOrNo);
-}
-
-void Accounts::depositFunds()
-{
-    pointerToActiveAccount = listOfOpenAccounts.getActiveAccount();
-    
-    requestDepositAmount();
-    addFundsToTotal();
-}
-
-void Accounts::requestDepositAmount()
-{
-    cout << endl << "Deposit amount: ";
-    cin >> withdrawOrDepositValue;
-    inputErrorCatcher.checkForValidUserInput(withdrawOrDepositValue, 0.0, 1000000000.0);
-}
-
-void Accounts::addFundsToTotal()
-{
-    if (withdrawOrDepositValue > 0)
-    {
-        pointerToActiveAccount->totalFunds += withdrawOrDepositValue;
-    
-        cout << "Successfully deposited $" << withdrawOrDepositValue << endl;
-        cout << "New " << pointerToActiveAccount->accountName << " total is $" << pointerToActiveAccount->totalFunds << endl;
-
-        pointerToActiveAccount->myHistory.addToHistory("Deposit", withdrawOrDepositValue, pointerToActiveAccount->totalFunds);
-    }
-}
-
-void Accounts::mergeAccounts()
-{
-    if (!checkIfOtherAccountsExist()) return;
-
-    pointerToActiveAccount = listOfOpenAccounts.getActiveAccount();
-
-    requestSecondAccountName();
-    verifyAccountMerge();
-
-    if (yesOrNo == 'Y')
-    {
-        confirmedMerge();
-    }
-}
-
-bool Accounts::checkIfOtherAccountsExist()
-{
-    pointerToActiveAccount = listOfOpenAccounts.getListHead();
-
-    if (pointerToActiveAccount->next == NULL)
-    {
-        cout << endl << "There are no other accounts of the same type!" << endl;
-        return false;
-    }
-    else displayAccounts();
-    return true;
-}
-
-void Accounts::requestSecondAccountName()
-{
-    do {
-        cout << endl << "Enter the name of the account you wish to access: ";
-        getline(cin, secondAccountName);
-
-        secondAccount = listOfOpenAccounts.findNode(secondAccountName);
-
-        if (secondAccount == NULL || secondAccount->accountName == pointerToActiveAccount->accountName)
-        {
-            cout << "Not an available account name!" << endl;
-            secondAccount = NULL;
-        }
-
-    } while (secondAccount == NULL);
-}
-
-void Accounts::verifyAccountMerge()
-{
-    cout << "Are you sure you want to merge " << pointerToActiveAccount->accountName
-         << " into " << secondAccount->accountName << " (Y/N)? ";
-    cin >> yesOrNo;
-    inputErrorCatcher.yesOrNoValidator(yesOrNo);
-}
-
-void Accounts::confirmedMerge()
-{
-    secondAccount->totalFunds += pointerToActiveAccount->totalFunds;
-    cout << "Merge Successful!" << endl;
-
-    secondAccount->myHistory.addToHistory("Merger Deposit", pointerToActiveAccount->totalFunds, secondAccount->totalFunds);
-
-    confirmedDeletion();
-}
-
-void Accounts::sameAccountTypeTransfer()
-{
-    if (!checkIfOtherAccountsExist()) return;
-
-    pointerToActiveAccount = listOfOpenAccounts.getActiveAccount();
-
-    requestSecondAccountName();         
-
-    requestTransferAmount();
-
-    confirmedTransfer();
-}
-
-void Accounts::chooseAccountType()
-{
-    cout << endl << endl;
+    cout << "\nWhat type of account would you like to create?" << endl << endl;
     cout << "1. Checking" << endl;
     cout << "2. Savings" << endl;
     cout << "3. Back" << endl;
-
-    cin >> menuUserSelection;
-    inputErrorCatcher.checkForValidUserInput(menuUserSelection, 1, 3);
+    
+    cin >> menuSelector;
+    inputErrorCatcher.checkForValidUserInput(menuSelector, 1, 3);
     inputErrorCatcher.clearKeyboardBuffer();
-}
-
-void Accounts::requestTransferAmount()
-{
-    cout << "How much money would you like to transfer from " << pointerToActiveAccount->accountName
-         << " to " << secondAccount->accountName << "? ";
-    cin >> withdrawOrDepositValue;
-    inputErrorCatcher.checkForValidUserInput(withdrawOrDepositValue, 0.0, pointerToActiveAccount->totalFunds);
-}
-
-void Accounts::confirmedTransfer()
-{
-    if (withdrawOrDepositValue > 0)
-    {  
-        ammendAccountTotals();
-        transferSuccessMessage();
+    if (menuSelector == 3) return;
+    
+    cout << "\nWhat would you like to name the account?" << endl;
+    
+    do {
+        getline(cin, name);
+        inputErrorCatcher.removeExtraWhiteSpaceFromString(name);
         
-        pointerToActiveAccount->myHistory.addToHistory("Transfer Withdrawal", withdrawOrDepositValue, pointerToActiveAccount->totalFunds);
-        secondAccount->myHistory.addToHistory("Transfer Deposit", withdrawOrDepositValue, secondAccount->totalFunds);
+        if (contains(name))
+            cout << "Name already taken! Try again: ";
+        
+    } while (contains(name));
+    
+    switch (menuSelector) {
+        case 1:
+            insert(true, name);
+            break;
+        case 2:
+            insert(false, name);
+            break;
+        default:
+            return;
     }
 }
 
-void Accounts::ammendAccountTotals()
+void AccountsTree::selectAnAccount()
 {
-    pointerToActiveAccount->totalFunds -= withdrawOrDepositValue;
-    secondAccount->totalFunds += withdrawOrDepositValue;
+    string name;
+    cout <<  "\nWhich account would you like to access?" << endl;
+    
+    printNames(mRoot);
+    
+    getline(cin, name);
+    inputErrorCatcher.removeExtraWhiteSpaceFromString(name);
+    
+    if (contains(name)) displayAccountMenuOptions();
+    else cout << "Not a valid account name!" << endl << endl;
 }
 
-void Accounts::transferSuccessMessage()
+void AccountsTree::displayAccountMenuOptions()
 {
-    cout << endl << "Successfully transfered $" << withdrawOrDepositValue << "!" << endl;
-    cout << "New " << pointerToActiveAccount->accountName << " total is $" << pointerToActiveAccount->totalFunds << endl;
-    cout << "New " << secondAccount->accountName << " total is $" << secondAccount->totalFunds << endl;
+    cout << "Taco";
 }
 
-void Accounts::sendToHistory(string transactionType, double transactionAmount, double newTotal)
+vector<string> &AccountsTree::getFileNames(vector<string> &fileNames)
 {
-    pointerToActiveAccount = listOfOpenAccounts.getActiveAccount();
-    pointerToActiveAccount->myHistory.addToHistory(transactionType, transactionAmount, newTotal);
+    fileNames.clear();
+    
+    if (mRoot == NULL)
+        return fileNames;
+    
+    getFileNames(mRoot, fileNames);
+    return fileNames;
+}
+
+//private methods---------------------------------------------
+bool AccountsTree::insert(const bool type, const string name)
+{
+    if (mRoot == NULL)
+    {
+        mRoot = new AccountNode(type, name);
+        mSize++;
+        return true;
+    }
+    
+    splay(mRoot, name);
+    
+    if (name < mRoot->accountName)
+    {
+        AccountNode *newNode = new AccountNode(type, name);
+        newNode->leftChild = mRoot->leftChild;
+        newNode->rightChild = mRoot;
+        mRoot = newNode;
+        mSize++;
+        return true;
+    }
+    else if (mRoot->accountName < name)
+    {
+        AccountNode *newNode = new AccountNode(type, name);
+        newNode->rightChild = mRoot->rightChild;
+        newNode->leftChild = mRoot;
+        mRoot = newNode;
+        mSize++;
+        return true;
+    }
+    
+    return false;
+}
+
+bool AccountsTree::remove(const string name)
+{
+    if (mRoot == NULL)
+        return false;
+    
+    splay(mRoot, name);
+    
+    //node doesn't exist
+    if (mRoot->accountName < name || name < mRoot->accountName)
+        return false;
+    
+    AccountNode *newRoot = NULL;
+    
+    //move root easily if no lftChild exists
+    if (mRoot->leftChild == NULL)
+        newRoot = mRoot->rightChild;
+    
+    //if lftChild does exist
+    else {
+        newRoot = mRoot->leftChild;
+        splay(newRoot, name);
+        newRoot->rightChild = mRoot->rightChild;
+    }
+    
+    delete mRoot;
+    mRoot = newRoot;
+    
+    return true;
+}
+
+bool AccountsTree::contains(const string name)
+{
+    try {
+        find(name);
+    } catch (...) {
+        return false;
+    }
+    
+    return true;
+}
+
+const string &AccountsTree::find(const string name)
+{
+    if (mRoot == NULL)
+        throw NotFoundException();
+    
+    splay(mRoot, name);
+    
+    if (mRoot->accountName < name || name < mRoot->accountName)
+        throw NotFoundException();
+    
+    return mRoot->accountName;
+}
+
+void AccountsTree::splay(AccountNode *&root, const string name)
+{
+    AccountNode *rightTree = NULL, *leftTree = NULL;
+    AccountNode *rightTreeMin = NULL, *leftTreeMax = NULL;
+    
+    while (root != NULL)
+    {
+        if (name < root->accountName)
+        {
+            if (root->leftChild == NULL)
+                break;  //x not in tree
+            else if (name < root->leftChild->accountName)
+            {
+                //zig zig
+                rotateWithLeftChild(root);
+                if (root->leftChild == NULL)
+                    break;  //x not in tree
+            }
+            
+            //add root to right tree
+            //update the rightTreeMin to point to this node
+            if (rightTree == NULL)
+            {
+                rightTree = root;
+                rightTreeMin = root;
+            }
+            else {
+                rightTreeMin->leftChild = root;
+                rightTreeMin = root;
+            }
+            
+            //set mRoot to mRoot's lftChild
+            mRoot = root->leftChild;
+        }
+        
+        else if (root->accountName < name)
+        {
+            if (root->rightChild == NULL)
+                break;  //x not in tree
+            else if (root->rightChild->accountName < name)
+            {
+                //zig zig
+                rotateWithRightChild(root);
+                if (root->rightChild == NULL)
+                    break;  //x not in tree
+            }
+            
+            //add root to left tree
+            //update the leftTreeMax to point to this node
+            if (leftTree == NULL)
+            {
+                leftTree = root;
+                leftTreeMax = root;
+            }
+            else {
+                leftTreeMax->rightChild = root;
+                leftTreeMax = root;
+            }
+            
+            //set mRoot to mRoot's rtChild
+            mRoot = root->rightChild;
+        }
+        
+        else {
+            break;  //found x at root
+        }
+    } // end of while loop
+    
+    //reassemble tree
+    if (leftTree != NULL)
+    {
+        //hang root's lftChild on leftTreeMax
+        leftTreeMax->rightChild = root->leftChild;
+        //set root's lftChild = leftTree
+        root->leftChild = leftTree;
+    }
+    if (rightTree != NULL)
+    {
+        //hang root's rtChild on rightTreeMin
+        rightTreeMin->leftChild = root->rightChild;
+        //set root's rtChild = rightTree
+        root->rightChild = rightTree;
+    }
+}
+
+void AccountsTree::rotateWithLeftChild(AccountNode *&k2)
+{
+    AccountNode *k1 = k2->leftChild;
+    k2->leftChild = k1->rightChild;
+    k1->rightChild = k2;
+    k2 = k1;
+}
+
+void AccountsTree::rotateWithRightChild(AccountNode *&k2)
+{
+    AccountNode *k1 = k2->rightChild;
+    k2->rightChild = k1->leftChild;
+    k1->leftChild = k2;
+    k2 = k1;
+}
+
+void AccountsTree::printNames(AccountNode *&node)
+{
+    if (node == NULL)
+        return;
+    
+    printNames(node->leftChild);
+    cout << node->accountName << endl;
+    printNames(node->rightChild);
+}
+
+void AccountsTree::getFileNames(AccountNode *&node, vector<string> &fileNames)
+{
+    if (node == NULL)
+        return;
+    
+    getFileNames(node->leftChild, fileNames);
+    fileNames.push_back(node->accountName + ".txt");
+    getFileNames(node->rightChild, fileNames);
 }
