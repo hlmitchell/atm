@@ -10,15 +10,16 @@ UserFile::UserFile()
 
 void UserFile::createUserFile()
 {
-    textFileName = myInfo.id + ".txt";
-    userInfoFile.open(textFileName.c_str(), ios::out);
+    userFileName = myInfo.id + ".txt";
+    userInfoFile.open(userFileName.c_str(), ios::out);
     userInfoFile.close();
 }
 
 //returning user constructor constructor and methods---------------------------
-UserFile::UserFile(string userID, string userPin)
+UserFile::UserFile(string fileName, string userPin)
 {
-    openUserFile(userID);
+    userFileName = fileName;
+    userInfoFile.open(userFileName.c_str(), ios::in);
     myInfo.downloadUserInfoFromFile(userInfoFile);
     
     if (userPin != myInfo.pin)
@@ -35,23 +36,11 @@ UserFile::UserFile(string userID, string userPin)
     displayMainMenu();
 }
 
-void UserFile::openUserFile(string id)
-{
-    textFileName = id;
-    userInfoFile.open(textFileName.c_str(), ios::in);
-}
-
 void UserFile::downloadAccountNamesFromFile()
 {
-    /*string stringSetter;
-    
-    while (userInfoFile >> stringSetter)
-    {
-        accountFileNames.push_back(stringSetter);
-    }
-    
-    myAccounts.categorizeAccountFileNames(accountFileNames);
-    accountFileNames.clear();*/
+    string aTextFileName;
+    while (userInfoFile >> aTextFileName)
+        myAccounts.accessAccountFile(aTextFileName);
 }
 
 //main menu methods------------------------------------------------------------
@@ -139,7 +128,7 @@ void UserFile::displayMenuEditOptions()
 //destructor and methods-------------------------------------------------------
 UserFile::~UserFile()
 {
-    userInfoFile.open(textFileName.c_str(), ios::out);
+    userInfoFile.open(userFileName.c_str(), ios::out);
     
     writeUserInfoToFile();
     writeAccountFileNamesToUserFile();
