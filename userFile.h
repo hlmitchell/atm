@@ -20,14 +20,16 @@ private:
     InputError inputErrorCatcher;
     
     int menuUserSelection;
+    
     fstream userInfoFile;
-    string userFileName;
+    string textFileName;
 
     //new user methods
     void initializeClassVariables();
     void createUserFile();
 
     //returning user methods
+    void openUserFile(string);
     void downloadAccountNamesFromFile();
 
     //destructor methods

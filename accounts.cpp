@@ -41,11 +41,6 @@ void AccountsTree::createAnAccount()
 
 void AccountsTree::selectAnAccount()
 {
-    if (mRoot == NULL) {
-        cout << endl << "You have not created an account yet!" << endl;
-        return;
-    }
-    
     string name;
     cout <<  "\nWhich account would you like to access?" << endl;
     
@@ -74,35 +69,13 @@ vector<string> &AccountsTree::getFileNames(vector<string> &fileNames)
     return fileNames;
 }
 
-void AccountsTree::accessAccountFile(const string &textFileName)
-{
-    fstream accountFile;
-    bool accountType;
-    string accountName;
-    accountFile.open(textFileName.c_str(), ios::in);
-    
-    if (accountFile)
-    {
-        accountFile >> accountName;
-        accountFile >> accountType;
-        insert(accountType, accountName);
-        accountFile >> mRoot->accountFunds;
-        //history access
-        
-        accountFile.close();
-
-    } else {
-        cout << endl << "Problem locating " + textFileName + "..." << endl;
-        cout << "Deleting..." << endl;
-    }
-}
-
 //private methods---------------------------------------------
 bool AccountsTree::insert(const bool type, const string name)
 {
     if (mRoot == NULL)
     {
         mRoot = new AccountNode(type, name);
+        mSize++;
         return true;
     }
     
@@ -114,6 +87,7 @@ bool AccountsTree::insert(const bool type, const string name)
         newNode->leftChild = mRoot->leftChild;
         newNode->rightChild = mRoot;
         mRoot = newNode;
+        mSize++;
         return true;
     }
     else if (mRoot->accountName < name)
@@ -122,6 +96,7 @@ bool AccountsTree::insert(const bool type, const string name)
         newNode->rightChild = mRoot->rightChild;
         newNode->leftChild = mRoot;
         mRoot = newNode;
+        mSize++;
         return true;
     }
     
@@ -180,20 +155,6 @@ const string &AccountsTree::find(const string name)
         throw NotFoundException();
     
     return mRoot->accountName;
-}
-
-void AccountsTree::uploadAccountData(AccountNode *& accountNode)
-{
-    string accountFileName = accountNode->accountName + ".txt";
-    fstream accountFile;
-    accountFile.open(accountFileName.c_str(), ios::out);
-    
-    accountFile << accountNode->accountName << endl;
-    accountFile << accountNode->accountType << endl;
-    accountFile << accountNode->accountFunds << endl;
-    //history
-    
-    accountFile.close();
 }
 
 void AccountsTree::splay(AccountNode *&root, const string name)
@@ -315,19 +276,4 @@ void AccountsTree::getFileNames(AccountNode *&node, vector<string> &fileNames)
     getFileNames(node->leftChild, fileNames);
     fileNames.push_back(node->accountName + ".txt");
     getFileNames(node->rightChild, fileNames);
-}
-
-void AccountsTree::clearAccounts(AccountNode * &subtreeToDelete)
-{
-    if (subtreeToDelete == NULL)
-        return;
-    
-    // recurse through children and remove
-    clearAccounts(subtreeToDelete->leftChild);
-    clearAccounts(subtreeToDelete->rightChild);
-    
-    uploadAccountData(subtreeToDelete);
-    
-    delete subtreeToDelete;
-    subtreeToDelete = NULL;
 }
