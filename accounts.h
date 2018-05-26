@@ -11,7 +11,7 @@ using namespace std;
 class AccountNode
 {
 public:
-    bool accountType;
+    bool accountType;   //true is checking, false is savings
     string accountName;
     double accountFunds;
     //history
@@ -27,20 +27,21 @@ class AccountsTree
 {
 public:
     //clear
-    AccountsTree() { }
+    AccountsTree() {mRoot = NULL;}
+    ~AccountsTree() {clearAccounts(mRoot);}
     
     //interface
     void createAnAccount();
     void selectAnAccount();
     void displayAccountMenuOptions();
     vector<string> &getFileNames(vector<string> &);
+    void accessAccountFile(const string&);
     
     // for exception throwing
     class EmptyTreeException {};
     class NotFoundException {};
     
 private:
-    int mSize;
     AccountNode *mRoot;
     InputError inputErrorCatcher;
     
@@ -48,12 +49,14 @@ private:
     bool remove(const string);
     bool contains(const string);
     const string &find(const string);
+    void uploadAccountData(AccountNode *&);
     
     void splay(AccountNode *&, const string);
     void rotateWithLeftChild(AccountNode *&);
     void rotateWithRightChild(AccountNode *&);
     
     //recursive methods
+    void clearAccounts(AccountNode *&);
     void printNames(AccountNode *&);
     void getFileNames(AccountNode *&, vector<string>&);
 };
