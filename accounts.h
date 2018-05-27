@@ -26,7 +26,6 @@ public:
 class AccountsTree
 {
 public:
-    //clear
     AccountsTree() {mRoot = NULL;}
     ~AccountsTree() {clearAccounts(mRoot);}
     
@@ -50,6 +49,7 @@ private:
     bool contains(const string);
     const string &find(const string);
     void uploadAccountData(AccountNode *&);
+    string convertToFileName(const string &);
     
     void splay(AccountNode *&, const string);
     void rotateWithLeftChild(AccountNode *&);

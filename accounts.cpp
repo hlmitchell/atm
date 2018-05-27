@@ -83,7 +83,7 @@ void AccountsTree::accessAccountFile(const string &textFileName)
     
     if (accountFile)
     {
-        accountFile >> accountName;
+        getline(accountFile, accountName);
         accountFile >> accountType;
         insert(accountType, accountName);
         accountFile >> mRoot->accountFunds;
@@ -184,7 +184,7 @@ const string &AccountsTree::find(const string name)
 
 void AccountsTree::uploadAccountData(AccountNode *& accountNode)
 {
-    string accountFileName = accountNode->accountName + ".txt";
+    string accountFileName = convertToFileName(accountNode->accountName);
     fstream accountFile;
     accountFile.open(accountFileName.c_str(), ios::out);
     
@@ -194,6 +194,20 @@ void AccountsTree::uploadAccountData(AccountNode *& accountNode)
     //history
     
     accountFile.close();
+}
+
+string AccountsTree::convertToFileName(const string &accountName)
+{
+    string accountFileName;
+    for (int i = 0; i < accountName.length(); i++)
+    {
+        if (accountName[i] != ' ')
+            accountFileName += accountName[i];
+        else
+            accountFileName += '_';
+    }
+    accountFileName += ".txt";
+    return accountFileName;
 }
 
 void AccountsTree::splay(AccountNode *&root, const string name)
@@ -313,7 +327,7 @@ void AccountsTree::getFileNames(AccountNode *&node, vector<string> &fileNames)
         return;
     
     getFileNames(node->leftChild, fileNames);
-    fileNames.push_back(node->accountName + ".txt");
+    fileNames.push_back(convertToFileName(node->accountName));
     getFileNames(node->rightChild, fileNames);
 }
 
