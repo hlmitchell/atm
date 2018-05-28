@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <iomanip>
 #include "inputError.h"
 
 using namespace std;
@@ -32,7 +33,6 @@ public:
     //interface
     void createAnAccount();
     void selectAnAccount();
-    void displayAccountMenuOptions();
     vector<string> &getFileNames(vector<string> &);
     void accessAccountFile(const string&);
     
@@ -51,6 +51,17 @@ private:
     void uploadAccountData(AccountNode *&);
     string convertToFileName(const string &);
     
+    //account specific interface
+    void displayAccountMenuOptions();
+    void displayMenuInterface(int &);
+    void withdrawFunds();
+    void depositFunds();
+    void transferFunds();
+    void displayAccountHistory();
+    void deleteAccount();
+    void selectTransferAccount(const AccountNode *&);
+    
+    //tree splaying methods
     void splay(AccountNode *&, const string);
     void rotateWithLeftChild(AccountNode *&);
     void rotateWithRightChild(AccountNode *&);

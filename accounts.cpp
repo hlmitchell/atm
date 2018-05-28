@@ -60,7 +60,153 @@ void AccountsTree::selectAnAccount()
 
 void AccountsTree::displayAccountMenuOptions()
 {
-    cout << "Taco";
+    int userSelection;
+    
+    do {
+        displayMenuInterface(userSelection);
+        
+        switch(userSelection)
+        {
+            case 1:
+                withdrawFunds();
+                break;
+            case 2:
+                depositFunds();
+                break;
+            case 3:
+                transferFunds();
+                break;
+            case 4:
+                //pointerToActiveAccount->myHistory.displayHistory();
+                break;
+            case 5:
+                deleteAccount();
+                return;
+            default:
+                break;
+        }
+        if (mRoot == NULL) userSelection = 6;
+        
+    } while (userSelection != 6);
+    
+    userSelection = 0;
+}
+    
+void AccountsTree::displayMenuInterface(int &userSelection)
+{
+    cout << endl << "Current Account: " << mRoot->accountName << endl;
+    cout << "Account Type: ";
+    if (mRoot->accountType == 1) cout << "Checking" << endl;
+    else cout << "Savings" << endl;
+    cout << "Account Funds: $" << mRoot->accountFunds << endl;
+    
+    cout << endl << "*** " << mRoot->accountName << " Options ***" << endl;
+    cout << "1. Withdraw" << endl;
+    cout << "2. Deposit" << endl;
+    cout << "3. Transfer Money" << endl;
+    cout << "4. Display Account History" << endl;
+    cout << "5. Delete Account" << endl;
+    cout << "6. Back" << endl;
+    
+    cin >> userSelection;
+    inputErrorCatcher.checkForValidUserInput(userSelection, 1, 6);
+    inputErrorCatcher.clearKeyboardBuffer();
+}
+
+void AccountsTree::withdrawFunds()
+{
+    double withdrawAmount;
+    cout << endl << "How much would you like to withdraw? ";
+    cin >> withdrawAmount;
+    inputErrorCatcher.checkForValidUserInput
+                                    (withdrawAmount, 0.0, mRoot->accountFunds);
+    mRoot->accountFunds -= withdrawAmount;
+    cout << fixed << setprecision(2);
+    cout << "Successfully withdrew $" << withdrawAmount << endl;
+    //history
+}
+
+void AccountsTree::depositFunds()
+{
+    double depositAmount;
+    cout << endl << "How much would you like to deposit? ";
+    cin >> depositAmount;
+    inputErrorCatcher.checkForValidUserInput
+                                    (depositAmount, 0.0, 100000000000.0);
+    mRoot->accountFunds += depositAmount;
+    cout << fixed << setprecision(2);
+    cout << "Successfully deposited $" << depositAmount << endl;
+    //history
+}
+
+void AccountsTree::transferFunds()
+{
+    string transferAccount;
+    const AccountNode *currentNode = mRoot;
+    double transferAmount;
+    
+    selectTransferAccount(currentNode);
+    cout << endl << "How much would you like to transfer? ";
+    cin >> transferAmount;
+    inputErrorCatcher.checkForValidUserInput
+                                    (transferAmount, 0.0, mRoot->accountFunds);
+    mRoot->accountFunds += transferAmount;
+    splay(mRoot, currentNode->accountName);
+    mRoot->accountFunds -= transferAmount;
+    
+    cout << fixed << setprecision(2);
+    cout << "Successfully transfered $" << transferAmount << endl;
+    //history
+}
+
+void AccountsTree::displayAccountHistory()
+{
+    //history stuff
+}
+
+void AccountsTree::deleteAccount()
+{
+    char userSelection;
+    const AccountNode *currentNode = mRoot;
+    
+    cout << "Are you sure you want to delete " << mRoot->accountName
+    << "? (Y/N) ";
+    cin >> userSelection;
+    inputErrorCatcher.yesOrNoValidator(userSelection);
+    if (userSelection == 'N') return;
+    
+    if (mRoot->leftChild == NULL && mRoot->rightChild == NULL)
+        cout << "Successfully withdrew $" << mRoot->accountFunds << endl;
+
+    else if (mRoot->accountFunds != 0) {
+        selectTransferAccount(currentNode);
+        
+        cout << "Successfully transfered $" << currentNode->accountFunds
+        << " to " << mRoot->accountName << endl;
+        mRoot->accountFunds += currentNode->accountFunds;
+    }
+    
+    cout << "Successfully deleted " << currentNode->accountName << endl;
+    remove(currentNode->accountName);
+}
+
+void AccountsTree::selectTransferAccount(const AccountNode *&currentNode)
+{
+    string transferAccount;
+    
+    do {
+        cout << endl << "To which account would you like to transfer funds?"
+        << endl;
+        printNames(mRoot);
+        getline(cin, transferAccount);
+        inputErrorCatcher.removeExtraWhiteSpaceFromString(transferAccount);
+        
+        if (!contains(transferAccount) ||
+            transferAccount == currentNode->accountName) {
+            cout << "Not a valid option!" << endl;
+        }
+    } while (!contains(transferAccount) ||
+             transferAccount == currentNode->accountName);
 }
 
 vector<string> &AccountsTree::getFileNames(vector<string> &fileNames)
