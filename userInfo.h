@@ -6,41 +6,35 @@
 #include <string>
 #include <iomanip>
 
-#include "checking.h"
-#include "savings.h"
+#include "inputError.h"
 
 using namespace std;
 
 class UserInfo 
 {
-    private:
-        string pin;                 
-        string id;                  
-        string firstName;           
-        string lastName;            
-        int age;   
+friend class UserFile;
 
-        InputError inputErrorCatcher;                 
+protected:
+    string pin;
+    string id;
+    string firstName;
+    string lastName;
+    int age;
 
-    public:
-        UserInfo();
+    InputError inputErrorCatcher;
 
-        string getPin();
-        string getId();
-        string getFirstName();
-        string getLastName();
-        int getAge();
+    void displayUserInfo();
+    void requestNewUserInfo();
+    void requestUserName();
+    void requestUserPin();
+    void requestFirstName();
+    void requestLastName();
+    void requestAge();
 
-        void displayUserInfo();
-
-        void requestNewUserInfo();
-        void requestUserName();
-        void requestUserPin();
-        void requestFirstName();
-        void requestLastName();
-        void requestAge();
-
-        void downloadUserInfoFromFile(fstream&);
+    void downloadUserInfoFromFile(fstream&);
+    
+public:
+    UserInfo();
 };
 
 #endif

@@ -1,3 +1,11 @@
+//
+//  main.cpp
+//  atm
+//
+//  Created by Hannah Mitchell on 11/01/17.
+//  Copyright © 2017 Hannah Mitchell. All rights reserved.
+//
+
 #include "userFile.h"
 #include "inputError.h"
 
@@ -16,17 +24,19 @@ int main()
 {
     const int MINIMUM_MENU_INPUT = 1;
     const int MAXIMUM_MENU_INPUT = 3;
-
+    
     InputError inputErrorCatcher;
-    int menuUserSelection;  
-
+    int menuUserSelection;
+    
     do {
         displayMainMenu();
         
         cin >> menuUserSelection;
-        inputErrorCatcher.checkForValidUserInput(menuUserSelection, MINIMUM_MENU_INPUT, MAXIMUM_MENU_INPUT);
+        inputErrorCatcher.checkForValidUserInput(menuUserSelection,
+                                                 MINIMUM_MENU_INPUT,
+                                                 MAXIMUM_MENU_INPUT);
         inputErrorCatcher.clearKeyboardBuffer();
-
+        
         switch (menuUserSelection)
         {
             case 1:
@@ -42,9 +52,9 @@ int main()
             default:
                 break;
         }
-
+        
     } while (menuUserSelection != MAXIMUM_MENU_INPUT);
-
+    
     menuUserSelection = 0;
 }
 
@@ -59,18 +69,18 @@ void displayMainMenu()
 
 void attemptLogin(InputError &inputErrorCatcher)
 {
-    string id = "hlmitchell.txt";
-    string pin = "0000";
-
-    /*cout << endl << "Please Enter User ID: ";
+    string id;
+    string pin;
+    
+    cout << endl << "Please Enter User ID: ";
     getline(cin, id);
-
+    
     if (!checkIfFileExists(id)) return;
     
     cout << "Please Enter Pin: ";
     getline(cin, pin);
-    
-    inputErrorCatcher.checkForValidPinEntry(pin);*/
+     
+    inputErrorCatcher.checkForValidPinEntry(pin);
     
     UserFile myClient(id, pin);
 }
@@ -78,9 +88,9 @@ void attemptLogin(InputError &inputErrorCatcher)
 bool checkIfFileExists(string &idInquiry)
 {
     fstream clientFile;
-
+    
     idInquiry = idInquiry + ".txt";
-
+    
     clientFile.open(idInquiry.c_str());
     if (clientFile.fail())
     {

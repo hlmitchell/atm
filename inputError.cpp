@@ -111,7 +111,7 @@ void InputError::yesOrNoValidator(char &yORn)
     if (yORn == 'y') yORn = 'Y';
     else if (yORn == 'n') yORn = 'N';
 
-    //if user has entered y or n then reprompt
+    //if user has not entered y or n then reprompt
    while ((yORn != 'Y') && (yORn != 'N'))
     {
         cout << "Invalid Entry. Please try again: ";

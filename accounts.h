@@ -1,95 +1,76 @@
-#ifndef ACCOUNTS_H
-#define ACCOUNTS_H
+#ifndef accounts_h
+#define accounts_h
 
-#include <iostream>
-#include <fstream>
 #include <string>
-#include <iomanip>
 #include <vector>
-
+#include <iostream>
+#include <iomanip>
 #include "inputError.h"
-#include "accountList.h"
+#include "history.h"
 
 using namespace std;
 
-class Accounts
+class AccountNode
 {
-    protected:
-        InputError inputErrorCatcher;
-
-        accountList listOfOpenAccounts;   
-        accountNode *pointerToActiveAccount;
-        accountNode *secondAccount;
-        
-        string activeAccountName;   
-        string secondAccountName;
-
-
-        int menuUserSelection;                 
-        double withdrawOrDepositValue;     
-        char yesOrNo;                       
-
-    public:
-        Accounts();
-        virtual ~Accounts();
-
-        void downloadExistingAccounts(string);
-
-        void setTextFileName(string);
-        string removeSpacesFromAccountName();
-
-        void resetActiveAccount();
-
-        bool getHeadOfAccountList();
-        vector<string> getAccountFileNames();
-        accountNode *callGetActiveAccount();
-        double getTotalMoneyForAllAccounts();
-
-        void accessAccounts(string);
-
-        void displayActiveAccountDetails();
-        void validateMenuInput(int);
-
-        void createAccount(string);
-        void nameAccount();
-        void verifyUniqueAccountName(string);
-        void setAccountName(string);
-        void makeInitialDeposit();
-        void confirmationOfNewAccountMessage();
-
-        void selectAccount();
-        void requestAccountName();
-
-        void deleteAccount();
-        bool checkIfAccountFundsAreZero();
-        void confirmAccountDeletion();
-        void confirmedDeletion();
-
-        void depositFunds();
-        void requestDepositAmount();
-        void addFundsToTotal();
-
-        void mergeAccounts();
-        bool checkIfOtherAccountsExist();
-        void requestSecondAccountName();
-        void verifyAccountMerge();
-        void confirmedMerge();
-
-        void sameAccountTypeTransfer();
-        void chooseAccountType();
-        void requestTransferAmount();
-        void confirmedTransfer();
-        void ammendAccountTotals();
-        void transferSuccessMessage();
-
-        void sendToHistory(string, double, double);
-
-        virtual void displayMenuOptions() = 0;
-        virtual void menuInterface() = 0;
-        virtual void specifyFileType(string, string) = 0;
-        virtual void displayAccounts() = 0;
-        virtual void accountOptionsMenu() = 0;
-        virtual void transferFunds() = 0;
+public:
+    bool accountType;   //true is checking, false is savings
+    string accountName;
+    double accountFunds;
+    History myHistory;
+    
+    AccountNode *leftChild, *rightChild;
+    
+    AccountNode(bool AT, string AN)
+    { accountType = AT; accountName = AN; accountFunds = 0;
+        leftChild = NULL; rightChild = NULL;}
 };
 
-#endif
+class AccountsTree
+{
+public:
+    AccountsTree() {mRoot = NULL;}
+    ~AccountsTree() {clearAccounts(mRoot);}
+    
+    //interface
+    void createAnAccount();
+    void selectAnAccount();
+    vector<string> &getFileNames(vector<string> &);
+    void accessAccountFile(const string&);
+    
+    // for exception throwing
+    class EmptyTreeException {};
+    class NotFoundException {};
+    
+private:
+    AccountNode *mRoot;
+    InputError inputErrorCatcher;
+    
+    bool insert(const bool, const string);
+    bool remove(const string);
+    bool contains(const string);
+    const string &find(const string);
+    void uploadAccountData(AccountNode *&);
+    string convertToFileName(const string &);
+    
+    //account specific interface
+    void displayAccountMenuOptions();
+    void displayMenuInterface(int &);
+    void withdrawFunds();
+    void depositFunds();
+    void transferFunds();
+    void deleteAccount();
+    void selectTransferAccount(const AccountNode *&);
+    
+    //tree splaying methods
+    void splay(AccountNode *&, const string);
+    void rotateWithLeftChild(AccountNode *&);
+    void rotateWithRightChild(AccountNode *&);
+    
+    //recursive methods
+    void clearAccounts(AccountNode *&);
+    void printAllNames(AccountNode *&);
+    void printSelectNames(AccountNode *&, const string&);
+    void getFileNames(AccountNode *&, vector<string>&);
+};
+
+#endif /* FHsplayTree_h */

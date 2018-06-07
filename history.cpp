@@ -1,87 +1,82 @@
 #include "history.h"
 
-History::History()
-{
-    top = NULL;
-}
-
-History::~History()
-{
-    deleteHistory();
-}
-
 void History::deleteHistory()
 {
-    accountHistoryNode = top;
+    AccountHistory *nextNode;
 
-    while (accountHistoryNode != NULL)
+    while (top != NULL)
     {
-        nextaccountHistoryNode = accountHistoryNode->next;
-        delete accountHistoryNode;
-        accountHistoryNode = nextaccountHistoryNode;
+        nextNode = top->next;
+        delete top;
+        top = nextNode;
     }
 }
 
-void History::addToHistory(string transactionType, double transactionAmount, double newTotal)
+void History::addToHistory(string transactionType, double transactionAmount,
+                           double newTotal)
 {
-    allocateNewHistoryNode(transactionType, transactionAmount, newTotal);
-    timeStampTransaction();
+    AccountHistory *newNode;
+    newNode = allocateNewHistoryNode(transactionType, transactionAmount,
+                                     newTotal);
+    
+    time (&rawTime);
+    newNode->date = ctime(&rawTime);
+    newNode->date.pop_back();
 
-    appendHistoryNodeToList();  
+    appendHistoryNodeToList(newNode);
 }
 
-void History::addToHistory(string transactionType, double transactionAmount, double newTotal, string date)
+void History::addToHistory(string transactionType, double transactionAmount,
+                           double newTotal, string date)
 {
-    allocateNewHistoryNode(transactionType, transactionAmount, newTotal);
-    newTransactionHistory->date = date;
+    AccountHistory *newNode;
+    newNode = allocateNewHistoryNode(transactionType, transactionAmount, newTotal);
+    newNode->date = date;
 
-    appendHistoryNodeToList();
+    appendHistoryNodeToList(newNode);
 }
 
-void History::allocateNewHistoryNode(string transactionType, double transactionAmount, double newTotal)
+AccountHistory* History::allocateNewHistoryNode(string transactionType,
+                                    double transactionAmount, double newTotal)
 {
-    newTransactionHistory = new accountHistory;
+    AccountHistory *newTransactionHistory = new AccountHistory;
     newTransactionHistory->action = transactionType;
     newTransactionHistory->amount = transactionAmount;
     newTransactionHistory->total = newTotal;
+    return newTransactionHistory;
 }
 
-void History::timeStampTransaction()
-{
-    time (&rawTime);
-    newTransactionHistory->date = ctime(&rawTime);
-    newTransactionHistory->date.pop_back();
-}
-
-void History::appendHistoryNodeToList()
+void History::appendHistoryNodeToList(AccountHistory *newNode)
 {
     if (top == NULL)
     {
-        top = newTransactionHistory;
+        top = newNode;
         top->next = NULL;
     }
     else
     {
-        newTransactionHistory->next = top;
-        top = newTransactionHistory;
+        newNode->next = top;
+        top = newNode;
     }  
 }
 
 void History::displayHistory()
 {
-    accountHistoryNode = top;
-
     if (!checkForHistory()) return;
 
-    displayHistoryHeader();
-    displayTransactionHistory();
+    cout << endl << "***Transaction History***" << endl;
+    cout << endl << left << setw(21) << "Description" << setw(14) << "Amount"
+         << setw(23) << "Available Balance";
+    cout << setw(20) << "Posting Date" << endl;
+    
+    displayTransactions();
 
     cout << endl << "***End Transaction History***" << endl;
 }
 
 bool History::checkForHistory()
 {
-    if (accountHistoryNode == NULL) 
+    if (top == NULL)
     {
         cout << endl << "There seems to be nothing here!" << endl;
         return false;
@@ -89,55 +84,46 @@ bool History::checkForHistory()
     return true;
 }
 
-void History::displayHistoryHeader()
+void History::displayTransactions()
 {
-    cout << endl << "***Transaction History***" << endl;
-    cout << endl << left << setw(21) << "Description" << setw(14) << "Amount" << setw(23) << "Available Balance";
-    cout << setw(20) << "Posting Date" << endl;
-}
-
-void History::displayTransactionHistory()
-{
-    while (accountHistoryNode)
+    AccountHistory *node = top;
+    
+    while (node)
     {
         cout << fixed << setprecision(2) << left;
-        cout << endl << setw(21) << accountHistoryNode->action;
-        cout << setw(14) << accountHistoryNode->amount;
-        cout << setw(23)<< accountHistoryNode->total;
-        cout << setw(20) << accountHistoryNode->date << endl;
+        cout << endl << setw(21) << node->action;
+        cout << setw(14) << node->amount;
+        cout << setw(23)<< node->total;
+        cout << setw(20) << node->date << endl;
 
-        accountHistoryNode = accountHistoryNode->next;
+        node = node->next;
     }
 }
 
 void History::uploadHistory(fstream &file)
 {
-    accountHistoryNode = top;
-    uploadTransactionsInReverse(file, accountHistoryNode);
+    uploadHistory(file, top);   //call private, recursive overload
 }
 
-void History::uploadTransactionsInReverse(fstream &file, accountHistory *transactionNode)
+void History::uploadHistory(fstream &file, AccountHistory *node)
 {
-    if (transactionNode != NULL)
+    if (node != NULL)
     {
-        uploadTransactionsInReverse(file, transactionNode->next);
-        writeToFile(file, transactionNode);
+        uploadHistory(file, node->next);
+        writeToFile(file, node);
     }
 }
 
-void History::writeToFile(fstream &file, accountHistory *transactionNode)
+void History::writeToFile(fstream &file, AccountHistory *node)
 {
-    file << transactionNode->action << endl;
-    file << transactionNode->amount << endl;
-    file << transactionNode->total << endl;
-    file << transactionNode->date << endl;
+    file << node->action << endl;
+    file << node->amount << endl;
+    file << node->total << endl;
+    file << node->date << endl;
 }
 
 void History::downloadHistory(fstream &accountFile)
 {
-    string accountType, date, dummy;
-    double transactionAmount, finalTotal;
-
     downloadFirstHistoryTransaction(accountFile);
     downloadRemainingHistoryTransactions(accountFile);
 }
@@ -147,7 +133,8 @@ void History::downloadFirstHistoryTransaction(fstream &accountFile)
     string accountType, date, dummy;
     double transactionAmount, finalTotal;
     
-    //read first history transaction which has 2 dummy variables that I can't figure out
+    //read first history transaction which has 2 dummy variables
+    //that I can't figure out
     getline(accountFile, dummy);
     getline(accountFile, accountType);
     accountFile >> transactionAmount;
@@ -163,7 +150,8 @@ void History::downloadRemainingHistoryTransactions(fstream &accountFile)
     string accountType, date, dummy;
     double transactionAmount, finalTotal;
     
-    //read remaining history transactions which have 1 dummy variable that I can't figure out
+    //read remaining history transactions which have 1 dummy
+    //variable that I can't figure out
     while (accountFile)
     {
         getline(accountFile, accountType);
@@ -175,6 +163,7 @@ void History::downloadRemainingHistoryTransactions(fstream &accountFile)
         addToHistory(accountType, transactionAmount, finalTotal, date);
     }
 
-    //the top node will be a weird incomplete Node that I can't figure out so this step ignores it
+    //the top node will be a weird incomplete Node that I can't figure out
+    //so this step ignores it
     top = top->next;
 }
