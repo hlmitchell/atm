@@ -69,10 +69,10 @@ void displayMainMenu()
 
 void attemptLogin(InputError &inputErrorCatcher)
 {
-    string id = "hlmitchell.txt";
-    string pin = "0000";
+    string id;
+    string pin;
     
-    /*cout << endl << "Please Enter User ID: ";
+    cout << endl << "Please Enter User ID: ";
     getline(cin, id);
     
     if (!checkIfFileExists(id)) return;
@@ -80,7 +80,7 @@ void attemptLogin(InputError &inputErrorCatcher)
     cout << "Please Enter Pin: ";
     getline(cin, pin);
      
-    inputErrorCatcher.checkForValidPinEntry(pin);*/
+    inputErrorCatcher.checkForValidPinEntry(pin);
     
     UserFile myClient(id, pin);
 }

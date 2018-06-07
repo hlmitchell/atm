@@ -30,9 +30,11 @@ void AccountsTree::createAnAccount()
     switch (menuSelector) {
         case 1:
             insert(true, name);
+            mRoot->myHistory.addToHistory("Created", 0.0, 0.0);
             break;
         case 2:
             insert(false, name);
+            mRoot->myHistory.addToHistory("Created", 0.0, 0.0);
             break;
         default:
             return;
@@ -49,7 +51,7 @@ void AccountsTree::selectAnAccount()
     string name;
     cout <<  "\nWhich account would you like to access?" << endl;
     
-    printNames(mRoot);
+    printAllNames(mRoot);
     
     getline(cin, name);
     inputErrorCatcher.removeExtraWhiteSpaceFromString(name);
@@ -77,7 +79,7 @@ void AccountsTree::displayAccountMenuOptions()
                 transferFunds();
                 break;
             case 4:
-                //pointerToActiveAccount->myHistory.displayHistory();
+                mRoot->myHistory.displayHistory();
                 break;
             case 5:
                 deleteAccount();
@@ -123,7 +125,9 @@ void AccountsTree::withdrawFunds()
     mRoot->accountFunds -= withdrawAmount;
     cout << fixed << setprecision(2);
     cout << "Successfully withdrew $" << withdrawAmount << endl;
-    //history
+    
+    mRoot->myHistory.addToHistory("Withdrawal", withdrawAmount,
+                                  mRoot->accountFunds);
 }
 
 void AccountsTree::depositFunds()
@@ -136,7 +140,9 @@ void AccountsTree::depositFunds()
     mRoot->accountFunds += depositAmount;
     cout << fixed << setprecision(2);
     cout << "Successfully deposited $" << depositAmount << endl;
-    //history
+    
+    mRoot->myHistory.addToHistory("Deposit", depositAmount,
+                                  mRoot->accountFunds);
 }
 
 void AccountsTree::transferFunds()
@@ -145,23 +151,33 @@ void AccountsTree::transferFunds()
     const AccountNode *currentNode = mRoot;
     double transferAmount;
     
+    if (mRoot->accountFunds == 0) {
+        cout << "This account has no funds to transfer!" << endl;
+        return;
+    }
+    
+    if (mRoot->rightChild == NULL && mRoot->leftChild == NULL) {
+        cout << "You have no other accounts with which to transfer!" << endl;
+        return;
+    }
+    
     selectTransferAccount(currentNode);
     cout << endl << "How much would you like to transfer? ";
     cin >> transferAmount;
-    inputErrorCatcher.checkForValidUserInput
-                                    (transferAmount, 0.0, mRoot->accountFunds);
+    inputErrorCatcher.checkForValidUserInput(transferAmount, 0.0,
+                                              mRoot->accountFunds);
     mRoot->accountFunds += transferAmount;
+    mRoot->myHistory.addToHistory("Transfer Deposit", transferAmount,
+                                  mRoot->accountFunds);
+    
     splay(mRoot, currentNode->accountName);
     mRoot->accountFunds -= transferAmount;
+    mRoot->myHistory.addToHistory("Transfer Withdrawal", transferAmount,
+                                  mRoot->accountFunds);
     
     cout << fixed << setprecision(2);
     cout << "Successfully transfered $" << transferAmount << endl;
-    //history
-}
-
-void AccountsTree::displayAccountHistory()
-{
-    //history stuff
+    
 }
 
 void AccountsTree::deleteAccount()
@@ -197,7 +213,7 @@ void AccountsTree::selectTransferAccount(const AccountNode *&currentNode)
     do {
         cout << endl << "To which account would you like to transfer funds?"
         << endl;
-        printNames(mRoot);
+        printSelectNames(mRoot, mRoot->accountName);
         getline(cin, transferAccount);
         inputErrorCatcher.removeExtraWhiteSpaceFromString(transferAccount);
         
@@ -233,7 +249,7 @@ void AccountsTree::accessAccountFile(const string &textFileName)
         accountFile >> accountType;
         insert(accountType, accountName);
         accountFile >> mRoot->accountFunds;
-        //history access
+        mRoot->myHistory.downloadHistory(accountFile);
         
         accountFile.close();
 
@@ -337,7 +353,7 @@ void AccountsTree::uploadAccountData(AccountNode *& accountNode)
     accountFile << accountNode->accountName << endl;
     accountFile << accountNode->accountType << endl;
     accountFile << accountNode->accountFunds << endl;
-    //history
+    mRoot->myHistory.uploadHistory(accountFile);
     
     accountFile.close();
 }
@@ -457,14 +473,24 @@ void AccountsTree::rotateWithRightChild(AccountNode *&k2)
     k2 = k1;
 }
 
-void AccountsTree::printNames(AccountNode *&node)
+void AccountsTree::printAllNames(AccountNode *&node)
 {
     if (node == NULL)
         return;
     
-    printNames(node->leftChild);
+    printAllNames(node->leftChild);
     cout << node->accountName << endl;
-    printNames(node->rightChild);
+    printAllNames(node->rightChild);
+}
+
+void AccountsTree::printSelectNames(AccountNode *&node, const string &current)
+{
+    if (node == NULL)
+        return;
+    
+    printAllNames(node->leftChild);
+    if (node->accountName != current) cout << node->accountName << endl;
+    printAllNames(node->rightChild);
 }
 
 void AccountsTree::getFileNames(AccountNode *&node, vector<string> &fileNames)

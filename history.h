@@ -10,54 +10,43 @@
 
 using namespace std;
 
-struct accountHistory
+struct AccountHistory
 {
     string action;
     double amount;
     double total;
     string date;
-    struct accountHistory *next;
-};
-
-enum transactionType
-{
-    Withdrawal, Deposit, Merger_Deposit
+    struct AccountHistory *next;
 };
 
 class History
 {
-    protected:
-        accountHistory *top;
-        time_t rawTime;
+protected:
+    AccountHistory *top;
+    time_t rawTime;
 
-        accountHistory *accountHistoryNode;
-        accountHistory *nextaccountHistoryNode;
-        accountHistory *newTransactionHistory;
+    void deleteHistory();
+    AccountHistory* allocateNewHistoryNode(string, double, double);
+    void appendHistoryNodeToList(AccountHistory*);
+    
+    bool checkForHistory();
+    void displayTransactions();
+    
+    void uploadHistory(fstream&, AccountHistory*);
+    void writeToFile(fstream &, AccountHistory*);
+    void downloadFirstHistoryTransaction(fstream &);
+    void downloadRemainingHistoryTransactions(fstream &);
+    
+public:
+    History() {top = NULL;};
+    ~History() {deleteHistory();}
 
-    public:
-        History();
-        ~History();
+    void addToHistory(string, double, double);
+    void addToHistory(string, double, double, string);
+    void displayHistory();
 
-        void deleteHistory();
-
-        void addToHistory(string, double, double);
-        void addToHistory(string, double, double, string);
-        void timeStampTransaction();
-        void allocateNewHistoryNode(string, double, double);
-        void appendHistoryNodeToList();
-
-        void displayHistory();
-        bool checkForHistory();
-        void displayHistoryHeader();
-        void displayTransactionHistory();
-
-        void uploadHistory(fstream &);
-        void uploadTransactionsInReverse(fstream&, accountHistory*);
-        void writeToFile(fstream &, accountHistory*);
-
-        void downloadHistory(fstream &);
-        void downloadFirstHistoryTransaction(fstream &);
-        void downloadRemainingHistoryTransactions(fstream &);
+    void uploadHistory(fstream &);
+    void downloadHistory(fstream &);
 };
 
 #endif

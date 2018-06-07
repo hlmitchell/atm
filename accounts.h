@@ -6,6 +6,7 @@
 #include <iostream>
 #include <iomanip>
 #include "inputError.h"
+#include "history.h"
 
 using namespace std;
 
@@ -15,7 +16,7 @@ public:
     bool accountType;   //true is checking, false is savings
     string accountName;
     double accountFunds;
-    //history
+    History myHistory;
     
     AccountNode *leftChild, *rightChild;
     
@@ -57,7 +58,6 @@ private:
     void withdrawFunds();
     void depositFunds();
     void transferFunds();
-    void displayAccountHistory();
     void deleteAccount();
     void selectTransferAccount(const AccountNode *&);
     
@@ -68,7 +68,8 @@ private:
     
     //recursive methods
     void clearAccounts(AccountNode *&);
-    void printNames(AccountNode *&);
+    void printAllNames(AccountNode *&);
+    void printSelectNames(AccountNode *&, const string&);
     void getFileNames(AccountNode *&, vector<string>&);
 };
 
